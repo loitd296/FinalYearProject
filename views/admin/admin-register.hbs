@@ -1,21 +1,33 @@
-<html>
-  <head>
-    <title>Admin Registration</title>
-    <!-- Add your CSS and other header content here -->
-  </head>
-  <body>
-    <h1>Admin Registration</h1>
-    <form action="/admin/register" method="POST">
-      <label for="name">Name:</label>
-      <input type="text" name="name" required />
-      <br />
-      <label for="email">Email:</label>
-      <input type="email" name="email" required />
-      <br />
-      <label for="password">Password:</label>
-      <input type="password" name="password" required />
-      <br />
-      <button type="submit">Register</button>
-    </form>
-  </body>
-</html>
+{{> header_admin}}
+<div class="content">
+  <h1>Sign Up</h1>
+  <form action="/admin/register" method="POST">
+    <div class="form-group row">
+      <label for="name" class="col-sm-2 col-form-label">Name:</label>
+      <div class="col-sm-6">
+        <input type="text" class="form-control" name="name" required>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="email" class="col-sm-2 col-form-label">Email:</label>
+      <div class="col-sm-6">
+        <input type="email" class="form-control" name="email" required>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="password" class="col-sm-2 col-form-label">Password:</label>
+      <div class="col-sm-6">
+        <input type="password" class="form-control" name="password" required>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <div class="offset-sm-2 col-sm-6">
+        <button type="submit" class="btn btn-primary">Register</button>
+      </div>
+    </div>
+  </form>
+</div>
+

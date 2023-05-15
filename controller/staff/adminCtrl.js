@@ -3,33 +3,25 @@ const Admin = require("../../model/Staff/Admin");
 const generateToken = require("../../utils/generateToken");
 const verifyToken = require("../../utils/verifyToken");
 
+// adminCtrl.js
 //@desc admin register
 //@route POST /api/v1/admin/register
 //@access Private
 exports.adminRegisterCtrl = async (req, res) => {
   const { name, email, password } = req.body;
   try {
-    //Check if email exists
+    // Check if email exists
     const adminFound = await Admin.findOne({ email });
     if (adminFound) {
-      res.json("Admin Exists");
+      return res.json("Admin Exists");
     }
-    //register
-    const user = await Admin.create({
-      name,
-      email,
-      password,
-    });
-    res.status(201).json({
-      status: "success",
-      data: user,
-    });
-    res.render("admin/admin-register", { title: "Admin Registration" });
+    // Register
+    const user = await Admin.create({ name, email, password });
+
+    // Redirect to the dashboard page
+    res.redirect("/admin/login");
   } catch (error) {
-    res.json({
-      status: "failed",
-      error: error.message,
-    });
+    res.json({ status: "failed", error: error.message });
   }
 };
 
@@ -39,19 +31,24 @@ exports.adminRegisterCtrl = async (req, res) => {
 
 exports.adminLoginCtrl = AsyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  //find user
+  // Find user
   const user = await Admin.findOne({ email });
   if (!user) {
-    return res.json({ message: "Invliad login crendentials" });
+    return res.render("admin/admin-login", {
+      message: "Invalid login credentials",
+    });
   }
   if (user && (await user.verifyPassword(password))) {
     const token = generateToken(user._id);
 
     const verify = verifyToken(token);
 
-    return res.json({ data: generateToken(user._id), user, verify });
+    // Redirect to the dashboard page
+    res.redirect("/admin/dashboard");
   } else {
-    return res.json({ message: "Invliad login crendentials" });
+    return res.render("admin/admin-login", {
+      message: "Invalid login credentials",
+    });
   }
 });
 
@@ -83,10 +80,7 @@ exports.adminGetProfileCtrl = AsyncHandler(async (req, res) => {
   if (!admin) {
     throw new Error("Admin not found");
   } else {
-    res.status(200).json({
-      status: "success",
-      data: admin,
-    });
+    res.render("admin/admin-profile", { title: "Admin Profile", admin });
   }
 });
 

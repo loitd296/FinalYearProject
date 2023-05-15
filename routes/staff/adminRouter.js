@@ -27,13 +27,20 @@ adminRouter.get("/register", (req, res) => {
 
 //login
 adminRouter.post("/login", adminLoginCtrl);
+// Login route
+adminRouter.get("/login", (req, res) => {
+  res.render("admin/admin-login", { title: "Admin Login" });
+});
 
 //get all admin
 adminRouter.get("/", adminGetAllCtrl);
 
 //get a admin
-
 adminRouter.get("/profile", isLogin, adminGetProfileCtrl);
+// Profile route
+adminRouter.get("/profile", (req, res) => {
+  res.render("admin/admin-profile", { title: "Admin Profile" });
+});
 //Update admin
 adminRouter.put("/:id", adminUpdateCtrl);
 

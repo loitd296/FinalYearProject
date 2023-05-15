@@ -39,7 +39,6 @@ app.use("/about", userRouter);
 
 // Admin Routes
 app.use("/admin", adminRouter);
-app.use("/admin-register", adminRouter);
 
 // Middlewares
 app.use(morgan("dev"));
