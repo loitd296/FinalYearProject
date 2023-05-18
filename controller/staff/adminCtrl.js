@@ -2,7 +2,7 @@ const AsyncHandler = require("express-async-handler");
 const Admin = require("../../model/Staff/Admin");
 const generateToken = require("../../utils/generateToken");
 const verifyToken = require("../../utils/verifyToken");
-const { isMatched, isPassMatched } = require("../../utils/helpers");
+const { hashPassword, isPassMatched } = require("../../utils/helpers");
 const jwt = require("jsonwebtoken");
 
 // adminCtrl.js
@@ -89,22 +89,37 @@ exports.adminGetProfileCtrl = AsyncHandler(async (req, res) => {
   }
 });
 
-//@desc update admin
-//@route POST /api/v1/admin/:id
-//@access Private
-exports.adminUpdateCtrl = (req, res) => {
-  try {
-    res.status(201).json({
-      status: "success",
-      data: "Update admin successfully",
-    });
-  } catch (error) {
-    res.json({
-      status: "failed",
-      error: error.message,
-    });
+// @desc    Update admin
+// @route   PUT /api/v1/admin/:id
+// @access  Private
+exports.adminUpdateCtrl = AsyncHandler(async (req, res) => {
+  const { email, name, password } = req.body;
+  const adminId = req.params.id;
+
+  // if email is taken by another admin
+  const emailExist = await Admin.findOne({ email, _id: { $ne: adminId } });
+  if (emailExist) {
+    throw new Error("This email is already taken by another admin.");
   }
-};
+
+  // hash the password
+  const hashedPassword = await hashPassword(password);
+
+  // Prepare the update fields
+  const updateFields = { email, name, password: hashedPassword };
+
+  // Update the admin
+  const admin = await Admin.findByIdAndUpdate(adminId, updateFields, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.render("admin/admin-profile", {
+    title: "Admin Profile",
+    admin: admin,
+    message: "Admin updated successfully",
+  });
+});
 
 //@desc delete admin
 //@route POST /api/v1/admin/:id

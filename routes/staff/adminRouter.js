@@ -48,8 +48,14 @@ adminRouter.get("/profile", isLogin, adminGetProfileCtrl, (req, res, next) => {
   });
 });
 
-//Update admin
-adminRouter.put("/:id", adminUpdateCtrl);
+// Update admin
+adminRouter.post("/:id", isLogin, isAdmin, adminUpdateCtrl, (req, res) => {
+  res.render("admin/admin-profile", {
+    title: "Admin Profile",
+    admin: req.userAuth,
+    message: "Admin updated successfully",
+  });
+});
 
 //Delete admin
 adminRouter.delete("/:id", adminDeleteCtrl);
