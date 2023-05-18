@@ -14,6 +14,8 @@ const {
   adminPublicExam,
   adminUnpublishExam,
 } = require("../../controller/staff/adminCtrl");
+const { globalErrHandler } = require("../../middlewares/globalErrorHandler");
+const isAdmin = require("../../middlewares/isAdmin");
 const isLogin = require("../../middlewares/isLogin");
 
 const adminRouter = express.Router();
@@ -33,14 +35,19 @@ adminRouter.get("/login", (req, res) => {
 });
 
 //get all admin
-adminRouter.get("/", adminGetAllCtrl);
+adminRouter.get("/", isLogin, isAdmin, adminGetAllCtrl);
 
 //get a admin
-adminRouter.get("/profile", isLogin, adminGetProfileCtrl);
+// adminRouter.get("/profile", isLogin, adminGetProfileCtrl);
 // Profile route
-adminRouter.get("/profile", (req, res) => {
-  res.render("admin/admin-profile", { title: "Admin Profile" });
+// Admin Routes
+adminRouter.get("/profile", isLogin, adminGetProfileCtrl, (req, res, next) => {
+  res.render("admin/admin-profile", {
+    title: "Admin Profile",
+    admin: req.userAuth,
+  });
 });
+
 //Update admin
 adminRouter.put("/:id", adminUpdateCtrl);
 

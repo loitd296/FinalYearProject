@@ -1,38 +1,28 @@
-const Admin = require("../model/Staff/Admin");
-const verifyToken = require("../utils/verifyToken");
+const jwt = require("jsonwebtoken");
 
-const isLogin = async (req, res, next) => {
-  // Get token from header
-  const headerObj = req.headers;
-  const authorizationHeader = headerObj.authorization;
+const isLogin = (req, res, next) => {
+  let token;
 
-  if (!authorizationHeader) {
-    const err = new Error("Authorization header is missing");
-    return next(err);
+  if (req.headers.authorization) {
+    token = req.headers.authorization.split(" ")[1];
+  } else if (req.cookies.token) {
+    token = req.cookies.token;
+  } else if (req.headers["x-access-token"]) {
+    token = req.headers["x-access-token"];
   }
 
-  const token = authorizationHeader.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ message: "Token not provided" });
+  }
 
-  // Verify token
-  const verifiedToken = verifyToken(token);
-
-  if (verifiedToken) {
-    try {
-      // Find the admin
-      const user = await Admin.findById(verifiedToken.id).select(
-        "name email role"
-      );
-
-      // Save the user into req.userAuth
-      req.userAuth = user;
-      next();
-    } catch (error) {
-      next(error);
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: "Token expired/invalid" });
     }
-  } else {
-    const err = new Error("Token expired/invalid");
-    next(err);
-  }
+
+    req.userAuth = decoded;
+    next();
+  });
 };
 
 module.exports = isLogin;

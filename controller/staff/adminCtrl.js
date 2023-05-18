@@ -2,6 +2,8 @@ const AsyncHandler = require("express-async-handler");
 const Admin = require("../../model/Staff/Admin");
 const generateToken = require("../../utils/generateToken");
 const verifyToken = require("../../utils/verifyToken");
+const { isMatched, isPassMatched } = require("../../utils/helpers");
+const jwt = require("jsonwebtoken");
 
 // adminCtrl.js
 //@desc admin register
@@ -28,7 +30,6 @@ exports.adminRegisterCtrl = async (req, res) => {
 //@desc admin login
 //@route POST /api/v1/admin/login
 //@access Private
-
 exports.adminLoginCtrl = AsyncHandler(async (req, res) => {
   const { email, password } = req.body;
   // Find user
@@ -38,10 +39,17 @@ exports.adminLoginCtrl = AsyncHandler(async (req, res) => {
       message: "Invalid login credentials",
     });
   }
-  if (user && (await user.verifyPassword(password))) {
-    const token = generateToken(user._id);
+  // Verify password
+  const isMatched = await isPassMatched(password, user.password);
+  if (isMatched) {
+    // Generate JWT token
+    const token = jwt.sign(
+      { _id: user._id.toString() },
+      process.env.SECRET_KEY
+    );
 
-    const verify = verifyToken(token);
+    // Set the token in the response cookie or header
+    res.cookie("token", token); // Or res.header("Authorization", "Bearer " + token);
 
     // Redirect to the dashboard page
     res.redirect("/admin/dashboard");
@@ -55,19 +63,14 @@ exports.adminLoginCtrl = AsyncHandler(async (req, res) => {
 //@desc all admin
 //@route POST /api/v1/admin
 //@access Private
-exports.adminGetAllCtrl = (req, res) => {
-  try {
-    res.status(201).json({
-      status: "success",
-      data: "All admin",
-    });
-  } catch (error) {
-    res.json({
-      status: "failed",
-      error: error.message,
-    });
-  }
-};
+exports.adminGetAllCtrl = AsyncHandler(async (req, res) => {
+  const admins = await Admin.find();
+  res.status(200).json({
+    status: "success",
+    message: "Get all admin successful",
+    data: admins,
+  });
+});
 
 //@desc get a admin
 //@route GET /api/v1/admin/:id
@@ -76,11 +79,13 @@ exports.adminGetProfileCtrl = AsyncHandler(async (req, res) => {
   const admin = await Admin.findById(req.userAuth._id).select(
     "-password -createdAt -updatedAt"
   );
-  console.log(admin);
   if (!admin) {
     throw new Error("Admin not found");
   } else {
-    res.render("admin/admin-profile", { title: "Admin Profile", admin });
+    res.render("admin/admin-profile", {
+      title: "Admin Profile",
+      admin: admin.toJSON(), // Convert admin to plain JSON object
+    });
   }
 });
 

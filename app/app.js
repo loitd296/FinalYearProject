@@ -1,10 +1,11 @@
-const session = require("express-session");
-const MongoStore = require("connect-mongo");
 const express = require("express");
 const morgan = require("morgan");
 const exphbs = require("express-handlebars");
 const path = require("path");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const userRouter = require("../routes/academics/userRouter");
 const adminRouter = require("../routes/staff/adminRouter");
 const {
@@ -12,8 +13,20 @@ const {
   notFoundErr,
 } = require("../middlewares/globalErrorHandler");
 const isLogin = require("../middlewares/isLogin");
+const mongoose = require("mongoose");
 
 const app = express();
+
+// Set up mongoose connection
+mongoose
+  .connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+  })
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("Error connecting to MongoDB:", err));
 
 // Set the views directory
 app.set("views", path.join(__dirname, "../views"));
@@ -36,24 +49,8 @@ app.set("view engine", "hbs");
 // Use body-parser middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// User Routes
-app.use("/", userRouter);
-app.use("/about", userRouter);
-
-// Admin Routes
-app.use("/admin", adminRouter);
-// app.use("/api/v1/admin", adminRouter);
-
-// Middlewares
-app.use(morgan("dev"));
-app.use(express.json());
-app.get("/favicon.ico", (req, res) => res.status(204));
-
-// Create a new instance of MongoStore
-const store = new MongoStore({
-  mongoUrl: process.env.MONGO_URL,
-  collectionName: "sessions",
-});
+// Use cookie-parser middleware
+app.use(cookieParser());
 
 // Configure the session middleware
 app.use(
@@ -61,9 +58,23 @@ app.use(
     secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: false,
-    store: store,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URL,
+      collectionName: "sessions",
+    }),
   })
 );
+
+// Middlewares
+app.use(morgan("dev"));
+app.use(express.json());
+app.use(isLogin);
+
+// User Routes
+app.use("/", userRouter);
+
+// Admin Routes
+app.use("/admin", adminRouter);
 
 // Error middlewares
 app.use(globalErrHandler);

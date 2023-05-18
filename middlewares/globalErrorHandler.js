@@ -19,4 +19,15 @@ const notFoundErr = (req, res, next) => {
   next(err);
 };
 
-module.exports = { globalErrHandler, notFoundErr };
+// Middleware to check if the user is logged in
+const isAuthenticated = (req, res, next) => {
+  if (req.session.userId) {
+    // User is logged in, proceed to the next middleware
+    next();
+  } else {
+    // User is not logged in, redirect to the login page
+    res.redirect("/admin/login");
+  }
+};
+
+module.exports = { globalErrHandler, notFoundErr, isAuthenticated };
