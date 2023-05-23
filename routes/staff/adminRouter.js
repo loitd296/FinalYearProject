@@ -37,10 +37,8 @@ adminRouter.get("/login", (req, res) => {
 //get all admin
 adminRouter.get("/", isLogin, isAdmin, adminGetAllCtrl);
 
-//get a admin
 // adminRouter.get("/profile", isLogin, adminGetProfileCtrl);
 // Profile route
-// Admin Routes
 adminRouter.get("/profile", isLogin, adminGetProfileCtrl, (req, res, next) => {
   res.render("admin/admin-profile", {
     title: "Admin Profile",

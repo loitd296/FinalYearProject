@@ -8,6 +8,7 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const userRouter = require("../routes/academics/userRouter");
 const adminRouter = require("../routes/staff/adminRouter");
+const academicYear = require("../routes/academics/academicYear");
 const {
   globalErrHandler,
   notFoundErr,
@@ -37,6 +38,10 @@ const hbs = exphbs.create({
   defaultLayout: "main",
   layoutsDir: path.join(__dirname, "../views/layouts"),
   partialsDir: path.join(__dirname, "../views/partials"),
+  runtimeOptions: {
+    allowProtoPropertiesByDefault: true,
+    allowProtoMethodsByDefault: true,
+  },
 });
 
 // Serve static files from the "public" directory
@@ -48,7 +53,6 @@ app.set("view engine", "hbs");
 
 // Use body-parser middleware
 app.use(bodyParser.urlencoded({ extended: true }));
-
 // Use cookie-parser middleware
 app.use(cookieParser());
 
@@ -68,13 +72,14 @@ app.use(
 // Middlewares
 app.use(morgan("dev"));
 app.use(express.json());
-app.use(isLogin);
+app.get("/favicon.ico", (req, res) => res.status(204));
 
 // User Routes
 app.use("/", userRouter);
 
 // Admin Routes
 app.use("/admin", adminRouter);
+app.use("/academic-years", academicYear);
 
 // Error middlewares
 app.use(globalErrHandler);

@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 
 // adminCtrl.js
 //@desc admin register
-//@route POST /api/v1/admin/register
+//@route POST /admin/register
 //@access Private
 exports.adminRegisterCtrl = async (req, res) => {
   const { name, email, password } = req.body;
@@ -28,7 +28,7 @@ exports.adminRegisterCtrl = async (req, res) => {
 };
 
 //@desc admin login
-//@route POST /api/v1/admin/login
+//@route POST /admin/login
 //@access Private
 exports.adminLoginCtrl = AsyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -61,7 +61,7 @@ exports.adminLoginCtrl = AsyncHandler(async (req, res) => {
 });
 
 //@desc all admin
-//@route POST /api/v1/admin
+//@route POST /admin
 //@access Private
 exports.adminGetAllCtrl = AsyncHandler(async (req, res) => {
   const admins = await Admin.find();
@@ -73,12 +73,12 @@ exports.adminGetAllCtrl = AsyncHandler(async (req, res) => {
 });
 
 //@desc get a admin
-//@route GET /api/v1/admin/:id
+//@route GET /admin/:id
 //@access Private
 exports.adminGetProfileCtrl = AsyncHandler(async (req, res) => {
-  const admin = await Admin.findById(req.userAuth._id).select(
-    "-password -createdAt -updatedAt"
-  );
+  const admin = await Admin.findById(req.userAuth._id)
+    .select("-password -createdAt -updatedAt")
+    .populate("academicYears");
   if (!admin) {
     throw new Error("Admin not found");
   } else {
@@ -90,7 +90,7 @@ exports.adminGetProfileCtrl = AsyncHandler(async (req, res) => {
 });
 
 // @desc    Update admin
-// @route   PUT /api/v1/admin/:id
+// @route   PUT /admin/:id
 // @access  Private
 exports.adminUpdateCtrl = AsyncHandler(async (req, res) => {
   const { email, name, password } = req.body;
@@ -122,7 +122,7 @@ exports.adminUpdateCtrl = AsyncHandler(async (req, res) => {
 });
 
 //@desc delete admin
-//@route POST /api/v1/admin/:id
+//@route POST /admin/:id
 //@access Private
 exports.adminDeleteCtrl = (req, res) => {
   try {

@@ -1,0 +1,41 @@
+{{> header_admin}}
+<style>
+    .content {
+        background-color: #f7fafc;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        color: rgba(0, 0, 0, 0.836);
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    p {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+</style>
+<div class="content">
+  <h1>Create Academic Year</h1>
+  <form method="POST" action="/academic-years/createAcademicYear">
+    <div class="mb-3">
+      <label for="name" class="form-label">Name</label>
+      <input type="text" name="name" id="name" class="form-control" required />
+    </div>
+    <div class="mb-3">
+      <label for="fromYear" class="form-label">From Year</label>
+      <input type="text" name="fromYear" id="fromYear" class="form-control" required />
+    </div>
+    <div class="mb-3">
+      <label for="toYear" class="form-label">To Year</label>
+      <input type="text" name="toYear" id="toYear" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+  </form>
+</div>
+

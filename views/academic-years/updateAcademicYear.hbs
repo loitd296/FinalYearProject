@@ -1,0 +1,23 @@
+{{> header_admin}}
+
+<div class="content">
+  <div class="container mt-4">
+    <h1>Update Academic Year</h1>
+    <form method="POST" action="/academic-years/{{academicYear._id}}/update">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" class="form-control" id="name" name="name" value="{{academicYear.name}}" required>
+      </div>
+      <div class="form-group">
+        <label for="fromYear">From Year</label>
+        <input type="text" class="form-control" id="fromYear" name="fromYear" value="{{academicYear.fromYear}}"
+          required>
+      </div>
+      <div class="form-group">
+        <label for="toYear">To Year</label>
+        <input type="text" class="form-control" id="toYear" name="toYear" value="{{academicYear.toYear}}" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+  </div>
+</div>
