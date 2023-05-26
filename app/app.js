@@ -6,14 +6,16 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
+
 const userRouter = require("../routes/academics/userRouter");
 const adminRouter = require("../routes/staff/adminRouter");
-const academicYear = require("../routes/academics/academicYear");
+const academicYearRouter = require("../routes/academics/academicYear");
+const academicTermRouter = require("../routes/academics/academicTerm");
+
 const {
   globalErrHandler,
   notFoundErr,
 } = require("../middlewares/globalErrorHandler");
-const isLogin = require("../middlewares/isLogin");
 const mongoose = require("mongoose");
 
 const app = express();
@@ -79,7 +81,8 @@ app.use("/", userRouter);
 
 // Admin Routes
 app.use("/admin", adminRouter);
-app.use("/academic-years", academicYear);
+app.use("/academic-years", academicYearRouter);
+app.use("/academic-term", academicTermRouter);
 
 // Error middlewares
 app.use(globalErrHandler);

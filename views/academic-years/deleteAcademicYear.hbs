@@ -28,10 +28,16 @@
 
 
 <div class="content">
-    <form method="POST" action="/academic-years/{{academicYear._id}}/delete">
-        <button type="submit" class="btn btn-danger">Delete</button>
-    </form>
+    <h1>Academic Year Details</h1>
+    <p>Name: {{academicYear.name}}</p>
+    <p>From Year: {{academicYear.fromYear}}</p>
+    <p>To Year: {{academicYear.toYear}}</p>
+
+    <div class="action-buttons">
+        <a href="/academic-years/{{academicYear._id}}/update" class="btn btn-primary">Edit</a>
+
+        <form method="POST" action="/academic-years/{{academicYear._id}}/delete">
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </div>
 </div>
-
-
-

@@ -1,0 +1,35 @@
+{{> header_admin}}
+<div class="content">
+  <div class="container mt-4">
+    <h2>Academic Term Details</h2>
+    <p>Name: {{academicTerm.name}}</p>
+    <p>Description: {{academicTerm.description}}</p>
+    <p>Duration: {{academicTerm.duration}}</p>
+    <button id="deleteBtn" class="btn btn-danger">Delete Academic Term</button>
+  </div>
+</div>
+
+<script>
+  document.getElementById("deleteBtn").addEventListener("click", function () {
+    if (confirm("Are you sure you want to delete this academic term?")) {
+      const academicTermId = "{{academicTerm._id}}";
+      const deleteUrl = "/academic-term/{{academicTermId}}/delete";
+
+      fetch(deleteUrl, { method: "DELETE" })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === "success") {
+            // Redirect to the index page
+            window.location.href = "/academic-term/index";
+          } else {
+            // Handle error case if needed
+            console.log(data.message);
+          }
+        })
+        .catch(error => {
+          // Handle error case if needed
+          console.log(error.message);
+        });
+    }
+  });
+</script>

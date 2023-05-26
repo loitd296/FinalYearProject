@@ -27,7 +27,7 @@ exports.createAcademicYear = async (req, res) => {
     await admin.save();
 
     // Redirect to the dashboard page
-    res.redirect("/academic-year/index");
+    res.redirect("/academic-years/index");
   } catch (error) {
     res.json({ status: "failed", error: error.message });
   }
@@ -88,26 +88,36 @@ exports.searchAcademicYears = AysncHandler(async (req, res) => {
 //@acess  Private
 exports.updateAcademicYear = async (req, res) => {
   try {
-    const academicYear = await AcademicYear.findById(req.params._id);
-    if (!academicYear) {
-      throw new Error("Academic year not found");
-    }
-
     // Retrieve the data from the request body
     const { name, fromYear, toYear } = req.body;
+    const academicYearId = req.params.id; // Retrieve the academic year ID from the request parameters
 
-    // Update the academic year
-    academicYear.name = name;
-    academicYear.fromYear = fromYear;
-    academicYear.toYear = toYear;
-    academicYear.createdBy = req.userAuth._id;
+    // Check if the academic term with the same name already exists
+    const existingAcademicYear = await AcademicYear.findOne({ name });
+    if (existingAcademicYear) {
+      throw new Error("Academic term already exists");
+    }
 
-    const updatedAcademicYear = await academicYear.save();
+    // Find and update the academic year by ID
+    const academicYear = await AcademicYear.findByIdAndUpdate(
+      academicYearId,
+      {
+        name,
+        fromYear,
+        toYear,
+        createdBy: req.userAuth._id,
+      },
+      { new: true }
+    );
 
-    res.render("academic-years/index", {
+    // Render the updateAcademicYear template with the updated academicYear data
+    res.render("academic-years/updateAcademicYear", {
       title: "Update Academic Year",
       academicYear: academicYear,
     });
+    if (academicYear && name && fromYear && toYear) {
+      res.redirect("/academic-years/index");
+    }
   } catch (error) {
     res.status(400).json({
       status: "error",
@@ -121,17 +131,22 @@ exports.updateAcademicYear = async (req, res) => {
 //@acess  Private
 exports.deleteAcademicYear = async (req, res) => {
   try {
-    const deletedAcademicYear = await AcademicYear.findByIdAndDelete(
-      req.params.id
-    );
-    if (!deletedAcademicYear) {
+    const academicYearId = req.params.id;
+
+    // Find the academic year by ID
+    const academicYear = await AcademicYear.findById(academicYearId);
+
+    if (!academicYear) {
       throw new Error("Academic year not found");
     }
 
-    res.render("academic-years/index", {
-      title: "Delete Academic Year",
-      academicYear: academicYear,
-    });
+    // Perform any additional checks or validations before deleting the academic year
+
+    // Delete the academic year
+    await AcademicYear.findByIdAndDelete(academicYearId);
+
+    // Redirect to the academic years index page
+    res.redirect("/academic-years/index");
   } catch (error) {
     res.status(400).json({
       status: "error",

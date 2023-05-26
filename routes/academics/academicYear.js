@@ -24,20 +24,24 @@ academicYearRouter.get("/createAcademicYear", (req, res) => {
 academicYearRouter.get("/index", isLogin, isAdmin, getAcademicYears);
 academicYearRouter.get("/search", isLogin, isAdmin, searchAcademicYears);
 
+academicYearRouter.get("/:id/update", isLogin, isAdmin, updateAcademicYear);
 academicYearRouter.post("/:id/update", isLogin, isAdmin, updateAcademicYear);
-academicYearRouter.get("/:id/update", (req, res) => {
-  res.render("academic-years/updateAcademicYear", {
-    title: "Update Academic Year",
-  });
-});
 
 academicYearRouter.get("/:id", isLogin, isAdmin, getAcademicYear);
 
+academicYearRouter.get(
+  "/:id/delete",
+  isLogin,
+  isAdmin,
+  deleteAcademicYear,
+  (req, res) => {
+    res.render("academic-years/deleteAcademicYear", {
+      title: "Delete Academic Year",
+      academicYearId: req.params.id,
+    });
+  }
+);
+
 academicYearRouter.delete("/:id/delete", isLogin, isAdmin, deleteAcademicYear);
-academicYearRouter.get("/:id/delete", (req, res) => {
-  res.render("academic-years/deleteAcademicYear", {
-    title: "Update Academic Year",
-  });
-});
 
 module.exports = academicYearRouter;
