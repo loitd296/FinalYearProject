@@ -1,0 +1,19 @@
+{{> header_admin}}
+
+<style>
+    /* CSS styles here */
+</style>
+
+<div class="content">
+    <h1>{{ title }}</h1>
+
+    <form action="/class-level/{{ classLevel._id }}/update" method="POST">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="{{ classLevel.name }}" required>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required>{{ classLevel.description }}</textarea>
+
+        <button type="submit" class="btn btn-primary">Update Class Level</button>
+    </form>
+</div>

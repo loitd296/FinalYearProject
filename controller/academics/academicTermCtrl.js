@@ -1,11 +1,11 @@
-const AysncHandler = require("express-async-handler");
+const AsyncHandler = require("express-async-handler");
 const AcademicTerm = require("../../model/Academic/AcademicTerm");
 const Admin = require("../../model/Staff/Admin");
 
 //@desc Create Academic Term Year
 //@route POST /api/v1/academic-terms
 //@acess  Private
-exports.createAcademicTerm = AysncHandler(async (req, res) => {
+exports.createAcademicTerm = AsyncHandler(async (req, res) => {
   const { name, description, duration } = req.body;
   //check if exists
   const academicTerm = await AcademicTerm.findOne({ name });
@@ -30,7 +30,7 @@ exports.createAcademicTerm = AysncHandler(async (req, res) => {
 //@desc  get all Academic terms
 //@route GET /api/v1/academic-terms
 //@acess  Private
-exports.getAcademicTerms = AysncHandler(async (req, res) => {
+exports.getAcademicTerms = AsyncHandler(async (req, res) => {
   const academicTerms = await AcademicTerm.find();
 
   res.render("academic-term/index", {
@@ -42,7 +42,7 @@ exports.getAcademicTerms = AysncHandler(async (req, res) => {
 //@desc  get single Academic term
 //@route GET /api/v1/academic-terms/:id
 //@acess  Private
-exports.getAcademicTerm = AysncHandler(async (req, res) => {
+exports.getAcademicTerm = AsyncHandler(async (req, res) => {
   const academicTerm = await AcademicTerm.findById(req.params.id);
 
   res.render("academic-term/academicTerm", {
@@ -54,7 +54,7 @@ exports.getAcademicTerm = AysncHandler(async (req, res) => {
 //@desc  get single Academic Year
 //@route GET /api/v1/academic-years/:id
 //@acess  Private
-exports.searchAcademicTerms = AysncHandler(async (req, res) => {
+exports.searchAcademicTerms = AsyncHandler(async (req, res) => {
   const searchQuery = req.query.search;
   const academicTerms = await AcademicTerm.find({
     name: { $regex: searchQuery, $options: "i" },
@@ -114,9 +114,7 @@ exports.updateAcademicTerms = async (req, res) => {
 //@desc   Delete  Academic term
 //@route  PUT /api/v1/academic-terms/:id
 //@acess  Private
-exports.deleteAcademicTerm = async (req, res) => {
+exports.deleteAcademicTerm = AsyncHandler(async (req, res) => {
   await AcademicTerm.findByIdAndDelete(req.params.id);
-  res.render("academic-term/index", {
-    title: "Delete Academic Year",
-  });
-};
+  res.redirect("/academic-term/index"); // Redirect to the list or any other desired page
+});

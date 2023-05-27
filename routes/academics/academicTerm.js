@@ -45,6 +45,6 @@ academicTermRouter.get("/:id/delete", isLogin, isAdmin, async (req, res) => {
   });
 });
 
-academicTermRouter.delete("/:id/delete", isLogin, isAdmin, deleteAcademicTerm);
+academicTermRouter.post("/:id/delete", isLogin, isAdmin, deleteAcademicTerm);
 
 module.exports = academicTermRouter;

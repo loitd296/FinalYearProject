@@ -11,6 +11,7 @@ const userRouter = require("../routes/academics/userRouter");
 const adminRouter = require("../routes/staff/adminRouter");
 const academicYearRouter = require("../routes/academics/academicYear");
 const academicTermRouter = require("../routes/academics/academicTerm");
+const classLevelRouter = require("../routes/academics/classLevel");
 
 const {
   globalErrHandler,
@@ -83,6 +84,7 @@ app.use("/", userRouter);
 app.use("/admin", adminRouter);
 app.use("/academic-years", academicYearRouter);
 app.use("/academic-term", academicTermRouter);
+app.use("/class-level", classLevelRouter);
 
 // Error middlewares
 app.use(globalErrHandler);

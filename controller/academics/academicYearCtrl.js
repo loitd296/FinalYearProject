@@ -130,27 +130,6 @@ exports.updateAcademicYear = async (req, res) => {
 //@route  PUT /api/v1/academic-years/:id
 //@acess  Private
 exports.deleteAcademicYear = async (req, res) => {
-  try {
-    const academicYearId = req.params.id;
-
-    // Find the academic year by ID
-    const academicYear = await AcademicYear.findById(academicYearId);
-
-    if (!academicYear) {
-      throw new Error("Academic year not found");
-    }
-
-    // Perform any additional checks or validations before deleting the academic year
-
-    // Delete the academic year
-    await AcademicYear.findByIdAndDelete(academicYearId);
-
-    // Redirect to the academic years index page
-    res.redirect("/academic-years/index");
-  } catch (error) {
-    res.status(400).json({
-      status: "error",
-      message: error.message,
-    });
-  }
+  await AcademicYear.findByIdAndDelete(req.params.id);
+  res.redirect("/academic-years/index"); // Redirect to the class levels list or any other desired page
 };
