@@ -63,7 +63,7 @@ exports.searchSubject = asyncHandler(async (req, res) => {
 exports.getSubjects = asyncHandler(async (req, res) => {
   const subjects = await Subject.find()
     .populate("program", "name") // Populate the 'program' field with the 'name' property
-    .populate("academicTerm", "name"); // Populate the 'academicTerm' field with the 'name' property
+    .populate("academicYear", "name"); // Populate the 'academicTerm' field with the 'name' property
 
   res.render("subject/index", {
     title: "Subject",
