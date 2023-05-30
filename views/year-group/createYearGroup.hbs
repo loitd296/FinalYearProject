@@ -1,0 +1,23 @@
+{{> header_admin}}
+
+<div class="content">
+  <div class="container mt-4">
+    <h2>Create Year Group</h2>
+    <form action="/year-group/createYearGroup" method="POST">
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" class="form-control" value="{{name}}" required>
+      </div>
+      <div class="form-group">
+        <label for="academicYear">Academic Year:</label>
+        <select name="academicYear" id="academicYear" class="form-control" required>
+          <option value="">Select an academic year</option>
+          {{#each academicYears}}
+          <option value="{{this._id}}">{{this.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Create Year Group</button>
+    </form>
+  </div>
+</div>
