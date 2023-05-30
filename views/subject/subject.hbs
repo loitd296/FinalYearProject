@@ -1,0 +1,28 @@
+{{> header_admin}}
+
+<div class="content">
+  <div class="container mt-4">
+    <h2>Subject</h2>
+    <table class="table table-striped">
+      <tbody>
+        <tr>
+          <th>Name</th>
+          <td>{{subject.name}}</td>
+        </tr>
+        <tr>
+          <th>Description</th>
+          <td>{{subject.description}}</td>
+        </tr>
+        <tr>
+          <th>Program</th>
+          <td>{{subject.program.name}}</td>
+        </tr>
+        <tr>
+          <th>Academic term</th>
+          <td>{{subject.academicTerm.name}}</td>
+        </tr>
+        <!-- Additional rows if needed -->
+      </tbody>
+    </table>
+  </div>
+</div>

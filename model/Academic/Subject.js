@@ -21,6 +21,11 @@ const subjectSchema = new Schema(
       ref: "AcademicTerm",
       required: true,
     },
+    program: {
+      type: Schema.Types.ObjectId,
+      ref: "Program",
+      required: true,
+    },
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "Admin",

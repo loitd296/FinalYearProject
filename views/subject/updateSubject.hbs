@@ -1,0 +1,36 @@
+{{> header_admin}}
+
+<div class="content">
+    <div class="container mt-4">
+        <h2>Update Subject</h2>
+        <form action="/subject/{{subject._id}}/update" method="POST">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" name="name" id="name" class="form-control" value="{{subject.name}}" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <input type="text" name="description" id="description" class="form-control" value="{{subject.description}}" required>
+            </div>
+            <div class="form-group">
+                <label for="academicTerm">Academic Term:</label>
+                <select name="academicTerm" id="academicTerm" class="form-control" required>
+                    <option value="">Select an academic term</option>
+                    {{#each academicTerms}}
+                    <option value="{{this._id}}" {{#if (equals this._id oldAcademicTerm)}}selected{{/if}}>{{this.name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="program">Program:</label>
+                <select name="program" id="program" class="form-control" required>
+                    <option value="">Select a program</option>
+                    {{#each programs}}
+                    <option value="{{this._id}}" {{#if (equals this._id oldProgram)}}selected{{/if}}>{{this.name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Subject</button>
+        </form>
+    </div>
+</div>

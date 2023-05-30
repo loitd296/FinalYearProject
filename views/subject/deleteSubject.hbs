@@ -1,0 +1,12 @@
+{{> header_admin}}
+
+<div class="content">
+  <div class="container mt-4">
+    <h2>Delete Subject</h2>
+    <form action="/subject/{{subjectid}}/delete" method="POST">
+      <p>Are you sure you want to delete the subject: {{subject.name}}?</p>
+      <button type="submit" class="btn btn-danger">Delete</button>
+      <a href="/subject/index" class="btn btn-secondary">Cancel</a>
+    </form>
+  </div>
+</div>
