@@ -1,19 +1,42 @@
 {{> header_admin}}
 
 <style>
-    /* CSS styles here */
+    .content {
+        background-color: #f7fafc;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        color: rgba(0, 0, 0, 0.836);
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    p {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
 </style>
 
 <div class="content">
     <h1>{{ title }}</h1>
 
-    <form action="/class-level/{{ classLevel._id }}/update" method="POST">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" value="{{ classLevel.name }}" required>
+    <form action="/class-level/{{ classLevel._id }}/update" method="POST" class="mt-4">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" value="{{ classLevel.name }}" class="form-control" required>
+        </div>
 
-        <label for="description">Description:</label>
-        <textarea id="description" name="description" required>{{ classLevel.description }}</textarea>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" class="form-control" required>{{ classLevel.description }}</textarea>
+        </div>
 
         <button type="submit" class="btn btn-primary">Update Class Level</button>
     </form>
 </div>
+
