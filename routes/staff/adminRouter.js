@@ -7,6 +7,7 @@ const {
   adminGetProfileCtrl,
   adminUpdateCtrl,
   adminDeleteCtrl,
+  adminLogoutCtrl,
   adminSuspendingTeacherCtrl,
   adminUnsuspendingTeacherCtrl,
   adminWithdrawTeacher,
@@ -52,6 +53,7 @@ adminRouter.post("/:id", isLogin, isAdmin, adminUpdateCtrl, (req, res) => {
     title: "Admin Profile",
     admin: req.userAuth,
     message: "Admin updated successfully",
+    loggedIn: res.locals.loggedIn,
   });
 });
 
@@ -77,8 +79,13 @@ adminRouter.put("/unpublic/exam/:id", adminUnpublishExam);
 
 // Define admin routes
 
-adminRouter.get("/dashboard", (req, res) => {
-  res.render("admin/index", { title: "Admin Dashboard" });
+adminRouter.get("/dashboard", isLogin, isAdmin, (req, res) => {
+  res.render("admin/index", {
+    title: "Admin Dashboard",
+    loggedIn: res.locals.loggedIn,
+  });
 });
+
+adminRouter.get("/logout", isLogin, isAdmin, adminLogoutCtrl);
 
 module.exports = adminRouter;

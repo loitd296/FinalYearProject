@@ -12,15 +12,18 @@ const isLogin = (req, res, next) => {
   }
 
   if (!token) {
-    return res.status(401).json({ message: "Token not provided" });
+    res.locals.loggedIn = false;
+    return next();
   }
 
   jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
     if (err) {
-      return res.status(401).json({ message: "Token expired/invalid" });
+      res.locals.loggedIn = false;
+      return next();
     }
 
     req.userAuth = decoded;
+    res.locals.loggedIn = true;
     next();
   });
 };

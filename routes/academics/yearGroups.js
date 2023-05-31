@@ -1,11 +1,12 @@
 const express = require("express");
 const {
-  createYearGroup,
+  postCreateYearGroup,
   deleteYearGroup,
   getYearGroup,
   getYearGroups,
   updateYearGroup,
   searchYearGroups,
+  getCreateYearGroup,
 } = require("../../controller/academics/yearGroups");
 
 const isAdmin = require("../../middlewares/isAdmin");
@@ -13,8 +14,8 @@ const isLogin = require("../../middlewares/isLogin");
 
 const yearGroupRouter = express.Router();
 
-yearGroupRouter.get("/createYearGroup", isLogin, isAdmin, createYearGroup);
-yearGroupRouter.post("/createYearGroup", isLogin, isAdmin, createYearGroup);
+yearGroupRouter.get("/createYearGroup", isLogin, isAdmin, getCreateYearGroup);
+yearGroupRouter.post("/createYearGroup", isLogin, isAdmin, postCreateYearGroup);
 
 yearGroupRouter.get("/index", isLogin, isAdmin, getYearGroups);
 

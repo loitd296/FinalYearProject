@@ -239,3 +239,23 @@ exports.adminUnpublishExam = (req, res) => {
     });
   }
 };
+
+// Admin Logout
+exports.adminLogoutCtrl = (req, res) => {
+  // Clear the token cookie
+  res.clearCookie("token");
+
+  // Redirect to the login page
+  res.redirect("/admin/login");
+};
+
+exports.renderAdminPage = (req, res) => {
+  // Check if the user is logged in
+  const loggedIn = req.isAuthenticated(); // Example, replace this with your own authentication logic
+
+  // Set loggedIn to false in res.locals
+  res.locals.loggedIn = false;
+
+  // Render the template and pass the loggedIn variable
+  res.render("/admin/index", { loggedIn });
+};

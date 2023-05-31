@@ -7,31 +7,37 @@ const AcademicYear = require("../../model/Academic/AcademicYear");
 //@route POST /api/v1/year-groups
 //@acess  Private
 
-exports.createYearGroup = asyncHandler(async (req, res) => {
+exports.getCreateYearGroup = asyncHandler(async (req, res) => {
+  const academicYears = await AcademicYear.find();
+  res.render("year-group/createYearGroup", {
+    title: "Create Year Group",
+    academicYears: academicYears,
+  });
+});
+
+exports.postCreateYearGroup = asyncHandler(async (req, res) => {
   const { name, academicYear } = req.body;
 
-  // Check if the year group already exists
+  if (!name || !academicYear) {
+    res.status(400).send({
+      message: "Missing required fields: name and academicYear",
+    });
+    return;
+  }
+
   const existingYearGroup = await YearGroup.findOne({ name });
   if (existingYearGroup) {
     throw new Error("Year Group/Graduation already exists");
   }
 
-  // Fetch all academic years
-  const academicYears = await AcademicYear.find();
-
-  // Create the year group
   const yearGroup = await YearGroup.create({
     name,
     academicYear,
     createdBy: req.userAuth._id,
   });
 
-  // Render the createYearGroup template with the form values
-  res.render("year-group/createYearGroup", {
-    title: "Create Year Group",
-    yearGroup: { name, academicYear }, // Pass the submitted form values as an object
-    academicYears: academicYears,
-  });
+  // Perhaps you want to redirect to the new year group page, or elsewhere
+  res.redirect("/year-group/index");
 });
 
 exports.searchYearGroups = asyncHandler(async (req, res) => {
@@ -100,18 +106,17 @@ exports.updateYearGroup = asyncHandler(async (req, res) => {
     }
   );
 
+  // If not successful, render the update page again with old values and options
+  res.render("year-group/updateYearGroup", {
+    title: "Update Year Group",
+    yearGroup: yearGroup,
+    academicYears: academicYears,
+    oldAcademicYear: yearGroup.academicYear,
+  });
   // Check if the update was successful
-  if (yearGroup && name && academicYear) {
+  if (yearGroup && name) {
     // If successful, redirect to the index page
     res.redirect("/year-group/index");
-  } else {
-    // If not successful, render the update page again with old values and options
-    res.render("year-group/updateYearGroup", {
-      title: "Update Year Group",
-      yearGroup: yearGroup,
-      academicYears: academicYears,
-      oldAcademicYear: yearGroup.academicYear,
-    });
   }
 });
 
