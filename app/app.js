@@ -15,6 +15,7 @@ const classLevelRouter = require("../routes/academics/classLevel");
 const programRouter = require("../routes/academics/program");
 const subjectsRouter = require("../routes/academics/subjects");
 const yearGroupRouter = require("../routes/academics/yearGroups");
+const teachersRouter = require("../routes/staff/teachers");
 
 const {
   globalErrHandler,
@@ -91,6 +92,7 @@ app.use("/class-level", classLevelRouter);
 app.use("/program", programRouter);
 app.use("/subject", subjectsRouter);
 app.use("/year-group", yearGroupRouter);
+app.use("/teacher", teachersRouter);
 
 // Error middlewares
 app.use(globalErrHandler);

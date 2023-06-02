@@ -35,7 +35,7 @@
       </div>
       <div class="sidebar-wrapper">
         <ul class="nav">
-          <li class="active">
+          <li>
             <a href="/admin/dashboard">
               <i class="nc-icon nc-bank"></i>
               <p>Dashboard</p>
@@ -43,37 +43,50 @@
           </li>
           <li>
             <a href="/academic-term/index">
+              <i class="fas fa-calendar-alt"></i>
+
               <p>Academic Term</p>
             </a>
           </li>
           <li>
             <a href="/academic-years/index">
+              <i class="fas fa-calendar"></i>
+
               <p>Academic Year</p>
             </a>
           </li>
           <li>
             <a href="/class-level/index">
+              <i class="fas fa-layer-group"></i>
+
               <p>Class level</p>
             </a>
           </li>
           <li>
             <a href="/program/index">
+              <i class="fas fa-graduation-cap"></i>
+
               <p>Program</p>
             </a>
           </li>
           <li>
             <a href="/subject/index">
+              <i class="fas fa-book"></i>
+
               <p>Subject</p>
+
             </a>
           </li>
           <li>
             <a href="/year-group/index">
+              <i class="fas fa-users"></i>
+
               <p>Year Group</p>
             </a>
           </li>
           <li class="active-pro">
-            <a href="./upgrade.html">
-              <p>Upgrade to PRO</p>
+            <a href="http://localhost:2020/teacher/index">
+              <p>teacher</p>
             </a>
           </li>
         </ul>
@@ -173,6 +186,28 @@
         $(document).ready(function () {
           // Javascript method's body can be found in assets/assets-for-demo/js/demo.js
           demo.initChartsPages();
+        });
+      </script>
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          // Get the current path
+          var path = window.location.pathname;
+
+          // Remove the trailing slash if exists
+          path = path.replace(/\/$/, "");
+
+          // Get the list items in the sidebar
+          var sidebarItems = document.querySelectorAll(".sidebar-wrapper .nav li");
+
+          // Loop through the items and check if the path matches
+          sidebarItems.forEach(function (item) {
+            var link = item.querySelector("a").getAttribute("href");
+
+            // Check if the link matches the path
+            if (link === path) {
+              item.classList.add("active");
+            }
+          });
         });
       </script>
 </body>
