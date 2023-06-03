@@ -30,10 +30,8 @@ teachersRouter.get("/:id", isLogin, isAdmin, getTeacherByAdmin);
 
 teachersRouter.get("/:id", isTeacherLogin, isTeacher, teacherUpdateProfile);
 teachersRouter.post("/:id", isTeacherLogin, isTeacher, teacherUpdateProfile);
-teachersRouter.put(
-  "/:teacherID/update/admin",
-  isLogin,
-  isAdmin,
-  adminUpdateTeacher
-);
+
+teachersRouter.get("/:id/update", isLogin, isAdmin, adminUpdateTeacher);
+teachersRouter.post("/:id/update", isLogin, isAdmin, adminUpdateTeacher);
+
 module.exports = teachersRouter;

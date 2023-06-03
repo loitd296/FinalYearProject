@@ -1,5 +1,10 @@
 const AysncHandler = require("express-async-handler");
 const Teacher = require("../../model/Staff/Teacher");
+const Program = require("../../model/Academic/Program");
+const ClassLevel = require("../../model/Academic/ClassLevel"); // Import the ClassLevel model
+const AcademicYear = require("../../model/Academic/AcademicYear"); // Import the AcademicYear model
+const Subject = require("../../model/Academic/Subject"); // Import the Subject model
+
 const generateToken = require("../../utils/generateToken");
 const { hashPassword, isPassMatched } = require("../../utils/helpers");
 const jwt = require("jsonwebtoken");
@@ -174,7 +179,9 @@ exports.teacherUpdateProfile = AysncHandler(async (req, res) => {
 exports.adminUpdateTeacher = AysncHandler(async (req, res) => {
   const { program, classLevel, academicYear, subject } = req.body;
   //if email is taken
-  const teacherFound = await Teacher.findById(req.params.teacherID);
+
+  const teacherFound = await Teacher.findById(req.params.id);
+  console.log(teacherFound);
   if (!teacherFound) {
     throw new Error("Teacher not found");
   }
@@ -182,6 +189,11 @@ exports.adminUpdateTeacher = AysncHandler(async (req, res) => {
   if (teacherFound.isWitdrawn) {
     throw new Error("Action denied, teacher is withdraw");
   }
+  // Fetch programs, class levels, academic years, and subjects from the database
+  const programs = await Program.find();
+  const classLevels = await ClassLevel.find();
+  const academicYears = await AcademicYear.find();
+  const subjects = await Subject.find();
   //assign a program
   if (program) {
     teacherFound.program = program;
@@ -225,7 +237,11 @@ exports.adminUpdateTeacher = AysncHandler(async (req, res) => {
       message: "Teacher updated successfully",
     });
   }
-  res.render("teacher-profile", {
+  res.render("teacher/admin-update-teacher", {
+    programs,
+    classLevels,
+    academicYears,
+    subjects,
     program,
     classLevel,
     academicYear,
