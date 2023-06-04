@@ -25,7 +25,15 @@ teachersRouter.get("/login", (req, res) => {
 });
 
 teachersRouter.get("/index", isLogin, isAdmin, getAllTeachersAdmin);
-// teachersRouter.get("/profile", isTeacherLogin, isTeacher, getTeacherProfile);
+
+teachersRouter.get("/profile", isTeacherLogin, isTeacher, teacherUpdateProfile);
+teachersRouter.post(
+  "/profile",
+  isTeacherLogin,
+  isTeacher,
+  teacherUpdateProfile
+);
+
 teachersRouter.get("/:id", isLogin, isAdmin, getTeacherByAdmin);
 
 teachersRouter.get("/:id", isTeacherLogin, isTeacher, teacherUpdateProfile);
