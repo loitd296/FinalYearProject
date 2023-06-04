@@ -53,7 +53,7 @@ const hbs = exphbs.create({
 });
 
 // Serve static files from the "public" directory
-app.use(express.static(path.join(__dirname, "../public")));
+app.use(express.static("public"));
 
 // Set the view engine
 app.engine("hbs", hbs.engine);
