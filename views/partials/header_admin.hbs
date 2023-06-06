@@ -26,27 +26,38 @@
     body {
       font-family: 'Handlee', 'Nunito', sans-serif;
     }
-    h1, h2, h3, h4, h5, h6,
-.h1, .h2, .h3, .h4, .h5, .h6 {
-  margin-bottom: 0.5rem;
-  font-family: "Handlee", cursive;
-  font-weight: bold;
-  line-height: 1.2;
-  color: #00394f;
-}
+
+    h1,
+    h2,
+    .h1,
+    .h2 {
+      margin-bottom: 0.5rem;
+      font-family: "Handlee", cursive;
+      font-weight: bold;
+      line-height: 1.2;
+      color: #00394f;
+    }
+
     a {
       color: #17a2b8;
       text-decoration: none;
       background-color: transparent;
     }
 
-    li p{
+    li p {
       font-weight: bold;
       color: #00394f;
       text-decoration: none;
       background-color: transparent;
       font-size: 16px;
       margin-right: 20px;
+    }
+
+    /* Table font style */
+    table td {
+      font-weight: normal;
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 16px;
     }
   </style>
 </head>
@@ -110,13 +121,19 @@
           <li>
             <a href="/year-group/index">
               <i class="fas fa-users"></i>
-
               <p>Year Group</p>
             </a>
           </li>
-          <li class="active-pro">
+          <li>
+            <a href="/student/index">
+              <i class="fas fa-user-graduate"></i>
+              <p>Student</p>
+            </a>
+          </li>
+          <li>
             <a href="http://localhost:2020/teacher/index">
-              <p>teacher</p>
+              <i class="fas fa-chalkboard-teacher"></i>
+              <p>Teacher</p>
             </a>
           </li>
         </ul>
