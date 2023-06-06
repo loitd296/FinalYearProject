@@ -1,0 +1,63 @@
+{{> header}}
+
+<div class="content">
+    <div class="container mt-4">
+        <h2>Academic Term Details</h2>
+        <table class="table table-striped">
+            <tbody>
+                <tr>
+                    <th>Name</th>
+                    <td>{{exam.name}}</td>
+                </tr>
+                <tr>
+                    <th>Description</th>
+                    <td>{{exam.description}}</td>
+                </tr>
+                <tr>
+                    <th>Academic Term</th>
+                    <td>{{exam.academicTerm.name}}</td>
+                </tr>
+                <tr>
+                    <th>Academic Year</th>
+                    <td>{{exam.academicYear.name}}</td>
+                </tr>
+            
+                <tr>
+                    <th>Class Level</th>
+                    <td>{{exam.classLevel.name}}</td>
+                </tr>
+                <tr>
+                    <th>Create By</th>
+                    <td>{{exam.createdBy.name}}</td>
+                </tr>
+                <tr>
+                    <th>Duration</th>
+                    <td>{{exam.duration}}</td>
+                </tr>
+                <tr>
+                    <th>Exam Date</th>
+                    <td>{{exam.examDate}}</td>
+                </tr>
+                <tr>
+                    <th>Exam Time</th>
+                    <td>{{exam.examTime}}</td>
+                </tr>
+                <tr>
+                    <th>Exam Type</th>
+                    <td>{{exam.examType}}</td>
+                </tr>
+                <tr>
+                    <th>Subject</th>
+                    <td>{{exam.subject.name}}</td>
+                </tr>
+                <tr>
+                    <th>Program</th>
+                    <td>{{exam.program.name}}</td>
+                </tr>
+                <!-- Additional rows if needed -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{{> footer}}

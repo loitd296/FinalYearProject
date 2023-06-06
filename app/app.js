@@ -81,7 +81,7 @@ app.use(
 app.use(morgan("dev"));
 app.use(express.json());
 app.get("/favicon.ico", (req, res) => res.status(204));
-
+app.use(cookieParser());
 // User Routes
 app.use("/", userRouter);
 

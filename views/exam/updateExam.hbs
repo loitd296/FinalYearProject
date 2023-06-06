@@ -1,0 +1,123 @@
+{{> header}}
+
+<style>
+  .content {
+    background-color: #f7fafc;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  h1 {
+    color: rgba(0, 0, 0, 0.836);
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  form {
+    margin-top: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  .btn-primary {
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+</style>
+
+<div class="content">
+  <div class="container mt-4">
+    <h1>Update Exam</h1>
+
+    <form action="/api/v1/exams/{{exam._id}}" method="POST">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" class="form-control" value="{{exam.name}}">
+      </div>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" class="form-control">{{exam.description}}</textarea>
+      </div>
+      <div class="form-group">
+        <label for="subject">Subject</label>
+        <select id="subject" name="subject" class="form-control">
+          {{#each subjects}}
+          <option value="{{this._id}}" {{#ifCond this._id ../exam.subject._id}}selected{{/ifCond}}>{{this.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="program">Program</label>
+        <select id="program" name="program" class="form-control">
+          {{#each programs}}
+          <option value="{{this._id}}" {{#ifCond this._id ../exam.program._id}}selected{{/ifCond}}>{{this.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="academicTerm">Academic Term</label>
+        <select id="academicTerm" name="academicTerm" class="form-control">
+          {{#each academicTerms}}
+          <option value="{{this._id}}" {{#ifCond this._id ../exam.academicTerm._id}}selected{{/ifCond}}>{{this.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="duration">Duration</label>
+        <input type="text" id="duration" name="duration" class="form-control" value="{{exam.duration}}">
+      </div>
+      <div class="form-group">
+        <label for="examDate">Exam Date</label>
+        <input type="date" id="examDate" name="examDate" class="form-control" value="{{exam.examDate}}">
+      </div>
+      <div class="form-group">
+        <label for="examTime">Exam Time</label>
+        <input type="time" id="examTime" name="examTime" class="form-control" value="{{exam.examTime}}">
+      </div>
+      <div class="form-group">
+        <label for="examType">Exam Type</label>
+        <input type="text" id="examType" name="examType" class="form-control" value="{{exam.examType}}">
+      </div>
+      <div class="form-group">
+        <label for="createdBy">Created By</label>
+        <input type="text" id="createdBy" name="createdBy" class="form-control" value="{{exam.createdBy}}">
+      </div>
+      <div class="form-group">
+        <label for="academicYear">Academic Year</label>
+        <select id="academicYear" name="academicYear" class="form-control">
+          {{#each academicYears}}
+          <option value="{{this._id}}" {{#ifCond this._id ../exam.academicYear._id}}selected{{/ifCond}}>{{this.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="classLevel">Class Level</label>
+        <select id="classLevel" name="classLevel" class="form-control">
+          {{#each classLevels}}
+          <option value="{{this._id}}" {{#ifCond this._id ../exam.classLevel._id}}selected{{/ifCond}}>{{this.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Update Exam</button>
+    </form>
+  </div>
+</div>

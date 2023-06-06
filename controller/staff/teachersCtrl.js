@@ -10,6 +10,7 @@ const { hashPassword, isPassMatched } = require("../../utils/helpers");
 const jwt = require("jsonwebtoken");
 const isAdmin = require("../../middlewares/isAdmin");
 const isTeacher = require("../../middlewares/isTeacher");
+const cookieParser = require("cookie-parser");
 
 //@desc  Admin Register Teacher
 //@route POST /api/teachers/admin/register
@@ -50,7 +51,7 @@ exports.loginTeacher = AysncHandler(async (req, res) => {
     return res.json({ message: "Invalid login crendentials" });
   }
   //verify the password
-  const isMatched = await isPassMatched(password, teacher?.password);
+  const isMatched = await isPassMatched(password, teacher.password);
   if (isMatched) {
     // Generate JWT token
     const token = jwt.sign(
@@ -64,11 +65,7 @@ exports.loginTeacher = AysncHandler(async (req, res) => {
     // Redirect to the dashboard page
     res.redirect("/teacher/profile");
   } else {
-    res.status(200).json({
-      status: "success",
-      message: "Teacher logged in successfully",
-      data: generateToken({ _id: teacher._id, role: teacher.role }),
-    });
+    res.redirect("/teacher/login");
   }
 });
 
@@ -149,6 +146,8 @@ exports.teacherUpdateProfile = AysncHandler(async (req, res) => {
     res.render("teacher/teacher-profile", {
       data: teacher,
       myMiddlewareProperty: res.locals.isTeacher,
+      loggedIn: res.locals.loggedIn,
+      teacher: teacher.userAuth,
     });
   } else {
     // Update profile without password
@@ -163,11 +162,12 @@ exports.teacherUpdateProfile = AysncHandler(async (req, res) => {
         runValidators: true,
       }
     );
-    console.log(teacher);
 
     res.render("teacher/teacher-profile", {
       data: teacher,
+      loggedIn: res.locals.loggedIn,
       myMiddlewareProperty: res.locals.isTeacher,
+      teacher: teacher.role,
     });
   }
 });
@@ -251,3 +251,23 @@ exports.adminUpdateTeacher = AysncHandler(async (req, res) => {
     throw: Error,
   });
 });
+
+// Admin Logout
+exports.teacherLogoutCtrl = (req, res) => {
+  // Clear the token cookie
+  res.clearCookie("token");
+
+  // Redirect to the login page
+  res.redirect("/teacher/login");
+};
+
+exports.renderTeacherPage = (req, res) => {
+  // Check if the user is logged in
+  const loggedIn = req.isAuthenticated(); // Example, replace this with your own authentication logic
+
+  // Set loggedIn to false in res.locals
+  res.locals.loggedIn = false;
+
+  // Render the template and pass the loggedIn variable
+  res.render("/", { loggedIn });
+};

@@ -7,11 +7,14 @@ const {
   getTeacherProfile,
   teacherUpdateProfile,
   adminUpdateTeacher,
+  teacherLogoutCtrl,
+  renderTeacherPage,
 } = require("../../controller/staff/teachersCtrl");
 const isAdmin = require("../../middlewares/isAdmin");
 const isLogin = require("../../middlewares/isLogin");
 const isTeacher = require("../../middlewares/isTeacher");
 const isTeacherLogin = require("../../middlewares/isTeacherLogin");
+
 const teachersRouter = express.Router();
 
 teachersRouter.get("/admin/register", isLogin, isAdmin, (req, res) => {
@@ -26,6 +29,8 @@ teachersRouter.get("/login", (req, res) => {
 
 teachersRouter.get("/index", isLogin, isAdmin, getAllTeachersAdmin);
 
+teachersRouter.get("/logout", isTeacherLogin, isTeacher, teacherLogoutCtrl);
+
 teachersRouter.get("/profile", isTeacherLogin, isTeacher, teacherUpdateProfile);
 teachersRouter.post(
   "/profile",
@@ -34,7 +39,7 @@ teachersRouter.post(
   teacherUpdateProfile
 );
 
-teachersRouter.get("/:id", isLogin, isAdmin, getTeacherByAdmin);
+teachersRouter.get("/:id/view", isLogin, isAdmin, getTeacherByAdmin);
 
 teachersRouter.get("/:id", isTeacherLogin, isTeacher, teacherUpdateProfile);
 teachersRouter.post("/:id", isTeacherLogin, isTeacher, teacherUpdateProfile);
