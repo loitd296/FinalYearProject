@@ -1,0 +1,86 @@
+{{> header}}
+
+<style>
+    .content {
+        background-color: #f7fafc;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        color: rgba(0, 0, 0, 0.836);
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    p {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: space-evenly;
+    }
+
+    .search-form {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .search-form .form-control {
+        margin-right: 10px;
+    }
+</style>
+
+<div class="content">
+    <div class="container mt-4">
+        <h1>Questions</h1>
+
+        <div class="mb-3">
+            <a href="/question/create" class="btn btn-primary"><i class="fas fa-plus"></i> Create</a>
+            <div class="search-form">
+                <form action="/question/search" method="GET">
+                    <input type="text" class="form-control" name="search" placeholder="Search">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Find</button>
+                </form>
+            </div>
+        </div>
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Question</th>
+                    <th scope="col">Option A</th>
+                    <th scope="col">Option B</th>
+                    <th scope="col">Option C</th>
+                    <th scope="col">Option D</th>
+                    <th scope="col">Correct Answer</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each questions}}
+                <tr>
+                    <td>{{this.question}}</td>
+                    <td>{{this.optionA}}</td>
+                    <td>{{this.optionB}}</td>
+                    <td>{{this.optionC}}</td>
+                    <td>{{this.optionD}}</td>
+                    <td>{{this.correctAnswer}}</td>
+                    <td class="action-buttons">
+                        <a href="/question/{{this._id}}/update" class="btn btn-sm btn-success"><i class="fas fa-edit"></i> Update</a>
+                        <a href="/question/{{this._id}}/delete" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</a>
+                        <a href="/question/{{this._id}}/view" class="btn btn-sm btn-info"><i class="fas fa-eye"></i> View</a>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{> footer}}

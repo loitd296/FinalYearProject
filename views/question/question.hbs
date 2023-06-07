@@ -1,0 +1,39 @@
+{{> header}}
+
+<div class="content">
+  <div class="container mt-4">
+    <h2>Subject</h2>
+    <table class="table table-striped">
+      <tbody>
+        <tr>
+          <th>Name</th>
+          <td>{{data.question}}</td>
+        </tr>
+        <tr>
+          <th>Option A</th>
+          <td>{{data.optionA}}</td>
+        </tr>
+        <tr>
+          <th>Option B</th>
+          <td>{{data.optionB}}</td>
+        </tr>
+        <tr>
+          <th>Option C</th>
+          <td>{{data.optionC}}</td>
+        </tr>
+        <tr>
+          <th>Option D</th>
+          <td>{{data.optionD}}</td>
+        </tr>
+        <tr>
+          <th>correctAnswer</th>
+          <td>{{data.correctAnswer}}</td>
+        </tr>
+        <!-- Additional rows if needed -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{{> footer}}
+
