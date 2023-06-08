@@ -1,0 +1,35 @@
+{{> header}}
+
+<div class="content">
+  <h1>Exam</h1>
+  <form action="/student/submit/{{exam._id}}" method="POST">
+    <h2>Student: {{student.name}}</h2>
+    <h3>Instructions: {{exam.instructions}}</h3>
+    {{#each exam.questions}}
+    <div class="question">
+      <h4>{{this.question}}</h4>
+      <ul>
+        <li>
+          <label for="optionA">{{this.optionA}}</label>
+          <input type="radio" id="optionA" name="answers[{{@index}}]" value="{{this.optionA}}">
+        </li>
+        <li>
+          <label for="optionB">{{this.optionB}}</label>
+          <input type="radio" id="optionB" name="answers[{{@index}}]" value="{{this.optionB}}">
+        </li>
+        <li>
+          <label for="optionC">{{this.optionC}}</label>
+          <input type="radio" id="optionC" name="answers[{{@index}}]" value="{{this.optionC}}">
+        </li>
+        <li>
+          <label for="optionD">{{this.optionD}}</label>
+          <input type="radio" id="optionD" name="answers[{{@index}}]" value="{{this.optionD}}">
+        </li>
+      </ul>
+    </div>
+    {{/each}}
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+
+{{> footer}}

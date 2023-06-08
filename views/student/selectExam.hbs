@@ -1,0 +1,34 @@
+{{> header}}
+
+<div class="content">
+  <h1>Select Exam</h1>
+  <form id="selectExamForm">
+    <div class="form-group">
+      <label for="examID">Exam:</label>
+      <select class="form-control" id="examID" name="examID">
+        {{#each exams}}
+        <option value="{{this._id}}">{{this.name}}</option>
+        {{/each}}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Take exam</button>
+  </form>
+</div>
+
+{{> footer}}
+
+<script>
+  // Get the select exam form
+  const selectExamForm = document.getElementById('selectExamForm');
+
+  // Add event listener for form submission
+  selectExamForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    // Get the selected exam ID
+    const selectedExamID = document.getElementById('examID').value;
+
+    // Redirect to the create question page with the selected exam ID
+    window.location.href = `/student/write/${selectedExamID}`;
+  });
+</script>

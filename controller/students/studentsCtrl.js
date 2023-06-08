@@ -3,6 +3,8 @@ const Student = require("../../model/Academic/Student");
 const Program = require("../../model/Academic/Program");
 const ClassLevel = require("../../model/Academic/ClassLevel"); // Import the ClassLevel model
 const AcademicYear = require("../../model/Academic/AcademicYear"); // Import the AcademicYear model
+const Exam = require("../../model/Academic/Exam");
+const ExamResult = require("../../model/Academic/ExamResults");
 
 const generateToken = require("../../utils/generateToken");
 const { hashPassword, isPassMatched } = require("../../utils/helpers");
@@ -244,5 +246,197 @@ exports.adminUpdateStudent = AysncHandler(async (req, res) => {
     studentFound,
     res,
     throw: Error,
+  });
+});
+
+exports.renderSelectExam = async (req, res) => {
+  try {
+    const exams = await Exam.find();
+    res.render("student/selectExam", { exams });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to retrieve exams" });
+  }
+};
+
+exports.writeExam = async (req, res) => {
+  try {
+    // Get student
+    const studentFound = await Student.findById(req.userAuth?._id);
+    if (!studentFound) {
+      throw new Error("Student not found");
+    }
+
+    // Get exam
+    const examFound = await Exam.findById(req.params.examID)
+      .populate("questions")
+      .populate("academicTerm");
+
+    if (!examFound) {
+      throw new Error("Exam not found");
+    }
+    console.log(examFound);
+    // Render the exam page with questions
+    res.render("student/student-take-exam", {
+      exam: examFound,
+      student: studentFound,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to retrieve exam" });
+  }
+};
+
+exports.submitExam = AysncHandler(async (req, res) => {
+  // Get student
+  const studentFound = await Student.findById(req.userAuth?._id);
+  if (!studentFound) {
+    throw new Error("Student not found");
+  }
+
+  // Get exam
+  const examFound = await Exam.findById(req.params.examID)
+    .populate("questions")
+    .populate("academicTerm");
+
+  if (!examFound) {
+    throw new Error("Exam not found");
+  }
+
+  // Get questions
+  const questions = examFound?.questions;
+  // Get student's answers
+  const studentAnswers = req.body.answers;
+
+  // Check if student answered all questions
+  if (studentAnswers.length !== questions.length) {
+    throw new Error("You have not answered all the questions");
+  }
+
+  // Check if student has already taken the exam
+  const studentFoundInResults = await ExamResult.findOne({
+    student: studentFound?._id,
+    exam: examFound?._id,
+  });
+  if (studentFoundInResults) {
+    throw new Error("You have already written this exam");
+  }
+
+  // Check if student is suspended/withdrawn
+  if (studentFound.isWithdrawn || studentFound.isSuspended) {
+    throw new Error("You are suspended/withdrawn, you can't take this exam");
+  }
+
+  // Build report object
+  let correctAnswers = 0;
+  let wrongAnswers = 0;
+  let status = ""; // failed/passed
+  let grade = 0;
+  let remarks = "";
+  let score = 0;
+  let answeredQuestions = [];
+
+  // Check answers
+  for (let i = 0; i < questions.length; i++) {
+    // Find the question
+    const question = questions[i];
+    // Check if the answer is correct
+    if (question.correctAnswer === studentAnswers[i]) {
+      correctAnswers++;
+      score++;
+      question.isCorrect = true;
+    } else {
+      wrongAnswers++;
+    }
+  }
+
+  // Calculate report values
+  const totalQuestions = questions.length;
+  grade = (correctAnswers / totalQuestions) * 100;
+  answeredQuestions = questions.map((question) => {
+    return {
+      question: question.question,
+      correctanswer: question.correctAnswer,
+      isCorrect: question.isCorrect,
+    };
+  });
+
+  // Calculate status
+  if (grade >= 50) {
+    status = "passed";
+  } else {
+    status = "failed";
+  }
+
+  // Remarks
+  if (grade >= 80) {
+    remarks = "Excellent";
+  } else if (grade >= 70) {
+    remarks = "Very Good";
+  } else if (grade >= 60) {
+    remarks = "Good";
+  } else if (grade >= 50) {
+    remarks = "Fair";
+  } else {
+    remarks = "Poor";
+  }
+
+  // Generate ExamResult document
+  const examResult = await ExamResult.create({
+    student: studentFound?._id,
+    exam: examFound?._id,
+    grade,
+    score,
+    status,
+    remarks,
+    position: 0, // Provide a value for the position field if needed
+    subject: examFound?.subject,
+    classLevel: examFound?.classLevel,
+    academicTerm: examFound?.academicTerm,
+    academicYear: examFound?.academicYear,
+    isPublished: false,
+    answeredQuestions: answeredQuestions,
+  });
+
+  // Push the results into the student's examResults array
+  studentFound.examResults.push(examResult._id);
+  await studentFound.save();
+
+  // Promoting
+  if (
+    examFound.academicTerm.name === "3rd term" &&
+    status === "passed" &&
+    studentFound?.currentClassLevel === "Level 100"
+  ) {
+    studentFound.classLevels.push("Level 200");
+    studentFound.currentClassLevel = "Level 200";
+    await studentFound.save();
+  } else if (
+    examFound.academicTerm.name === "3rd term" &&
+    status === "passed" &&
+    studentFound?.currentClassLevel === "Level 200"
+  ) {
+    studentFound.classLevels.push("Level 300");
+    studentFound.currentClassLevel = "Level 300";
+    await studentFound.save();
+  } else if (
+    examFound.academicTerm.name === "3rd term" &&
+    status === "passed" &&
+    studentFound?.currentClassLevel === "Level 300"
+  ) {
+    studentFound.classLevels.push("Level 400");
+    studentFound.currentClassLevel = "Level 400";
+    await studentFound.save();
+  } else if (
+    examFound.academicTerm.name === "3rd term" &&
+    status === "passed" &&
+    studentFound?.currentClassLevel === "Level 400"
+  ) {
+    studentFound.isGraduated = true;
+    studentFound.yearGraduated = new Date();
+    await studentFound.save();
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: "You have submitted your exam. Check later for the results",
   });
 });

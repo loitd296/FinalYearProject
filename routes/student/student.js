@@ -7,6 +7,9 @@ const {
   getStudentByAdmin,
   studentUpdateProfile,
   adminUpdateStudent,
+  renderSelectExam,
+  writeExam,
+  submitExam,
 } = require("../../controller/students/studentsCtrl");
 
 const isAdmin = require("../../middlewares/isAdmin");
@@ -37,4 +40,11 @@ studentRouter.post("/profile", isStudentLogin, isStudent, studentUpdateProfile);
 
 studentRouter.get("/:id/update", isLogin, isAdmin, adminUpdateStudent);
 studentRouter.post("/:id/update", isLogin, isAdmin, adminUpdateStudent);
+
+// Render the select exam page
+studentRouter.get("/take-exam", isStudentLogin, isStudent, renderSelectExam);
+studentRouter.get("/write/:examID", isStudentLogin, isStudent, writeExam);
+
+studentRouter.post("/submit/:examID", isStudentLogin, submitExam);
+
 module.exports = studentRouter;
