@@ -1,84 +1,100 @@
 {{> header_admin}}
 
-
-<style>
-    .content {
-        background-color: #f7fafc;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    h1 {
-        color: rgba(0, 0, 0, 0.836);
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 20px;
-    }
-
-    p {
-        font-size: 16px;
-        margin-bottom: 10px;
-    }
-
-    .action-buttons {
-        display: flex;
-        justify-content: space-evenly;
-    }
-
-    .search-form {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        margin-bottom: 10px;
-    }
-
-    .search-form .form-control {
-        margin-right: 10px;
-    }
-</style>
 <div class="content">
-    <h1>{{ title }}</h1>
-    <div class="mb-3">
-        <a href="/class-level/createClassLevel" class="btn btn-primary"><i class="fas fa-plus"> Create</i></a>
-        <div class="search-form">
-            <form action="/class-level/search" method="GET" class="d-flex">
-                <input type="text" class="form-control me-2" name="search" placeholder="Search">
-                <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Find</button>
-            </form>
+    <div class="row">
+        <div class="col-md-offset-1 col-md-10">
+            <div class="panel">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col col-sm-3 col-xs-12">
+                            <h4 class="title">Year Group <span>List</span></h4>
+                        </div>
+                        <div class="col-sm-9 col-xs-12 text-right">
+                            <form action="/class-level/search" method="GET" class="form-inline float-right">
+                                <div class="input-group">
+                                    <input type="text" name="search" class="form-control form-control-sm flex-fill"
+                                        placeholder="Search">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-primary btn-sm">Search</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-sm-9 col-xs-12 text-right">
+                            <div class="btn_group text-right">
+                                <button class="btn btn-default" title="Create">
+                                    <a href="/class-level/createClassLevel" class="btn btn-primary"><i
+                                            class="fas fa-plus"></i></a>
+                                </button>
+                                <button class="btn btn-default" title="Pdf"><i class="fa fa-file-pdf"></i></button>
+                                <button class="btn btn-default" title="Excel"><i class="fas fa-file-excel"></i></button>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="panel-body table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Created By</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                {{#each classes}}
+                            <tr>
+                                <td>{{ this.name }}</td>
+                                <td>{{ this.description }}</td>
+                                <td>{{ this.createdBy }}</td>
+                                <td>
+                                    <ul class="action-list">
+                                        <li><a href="/class-level/{{this._id}}/update" data-tip="edit"><i
+                                                    class="fa fa-edit"></i></a></li>
+                                        <li><a href="/class-level/{{this._id}}/delete" data-tip="delete"><i
+                                                    class="fa fa-trash"></i></a></li>
+                                        <li><a href="/class-level/{{this._id}}" data-tip="view"><i
+                                                    class="fas fa-eye"></i></a></li>
+
+                                    </ul>
+                                </td>
+                                <!-- Other table data -->
+                            </tr>
+                            {{/each}}
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col col-sm-6 col-xs-6">showing <b>5</b> out of <b>25</b> entries</div>
+                        <div class="col-sm-6 col-xs-6">
+                            <ul class="pagination hidden-xs pull-right">
+                                <li><a href="#">
+                                        << /a>
+                                </li>
+                                <li class="active"><a href="#">1</a></li>
+                                <li><a href="#">2</a></li>
+                                <li><a href="#">3</a></li>
+                                <li><a href="#">4</a></li>
+                                <li><a href="#">5</a></li>
+                                <li><a href="#">></a></li>
+                            </ul>
+                            <ul class="pagination visible-xs pull-right">
+                                <li><a href="#">
+                                        << /a>
+                                </li>
+                                <li><a href="#">></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-    <table class="table table-responsive table-bordered table-striped">
-        <thead class="thead-dark">
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Created By</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each classes}}
-            <tr>
-                <td>{{ this.name }}</td>
-                <td>{{ this.description }}</td>
-                <td>{{ this.createdBy }}</td>
-                <td class="action-buttons">
-                    <a href="/class-level/{{this._id}}/update" class="btn btn-success"><i class="fas fa-edit"></i>
-                        Update</a>
-                    <a href="/class-level/{{this._id}}/delete" class="btn btn-danger"
-                        onclick="return confirm('Are you sure you want to delete this class level?')"><i
-                            class="fas fa-trash"></i> Delete</a>
-
-
-                    <a href="/class-level/{{this._id}}" class="btn btn-sm btn-info"><i class="fas fa-eye">
-                            View</i></a>
-                </td>
-
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
 </div>

@@ -1,108 +1,119 @@
 {{> header}}
 
-<style>
-    .content {
-        background-color: #f7fafc;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    h1 {
-        color: rgba(0, 0, 0, 0.836);
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 20px;
-    }
-
-    p {
-        font-size: 16px;
-        margin-bottom: 10px;
-    }
-
-    .action-buttons {
-        display: flex;
-        justify-content: space-evenly;
-    }
-
-    .search-form {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        margin-bottom: 10px;
-    }
-
-    .search-form .form-control {
-        margin-right: 10px;
-    }
-</style>
-
 <div class="content">
-    <div class="container mt-4">
-        <h1>Academic Years</h1>
 
-        <div class="mb-3">
-            <a href="/exam/createExam" class="btn btn-primary"><i class="fas fa-plus"> Create</i></a>
-            <div class="search-form">
+    <div class="row">
+        <div class="col-md-offset-1 col-md-10">
+            <div class="panel">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col col-sm-3 col-xs-12">
+                            <h4 class="title">Year Group <span>List</span></h4>
+                        </div>
+                        <div class="col-sm-9 col-xs-12 text-right">
+                            <form action="/exam/search" method="GET" class="form-inline float-right">
+                                <div class="input-group">
+                                    <input type="text" name="search" class="form-control form-control-sm flex-fill"
+                                        placeholder="Search">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-primary btn-sm">Search</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-sm-9 col-xs-12 text-right">
+                            <div class="btn_group text-right">
+                                <button class="btn btn-default" title="Create">
+                                    <a href="/exam/createExam" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+                                </button>
+                                <button class="btn btn-default" title="Pdf"><i class="fa fa-file-pdf"></i></button>
+                                <button class="btn btn-default" title="Excel"><i class="fas fa-file-excel"></i></button>
+                            </div>
+                        </div>
 
-                <form action="/exam/search" method="GET">
-                    <input type="text" class="form-control" name="search" placeholder="Search">
-                    <button type="submit" class="btn btn-primary"><i class="fas fa-search"> Find</i></button>
-                </form>
+
+                    </div>
+                </div>
+                <div class="panel-body table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">description</th>
+                                <th scope="col">academicTerm</th>
+                                <th scope="col">academicYear</th>
+                                <th scope="col">classLevel</th>
+                                <th scope="col">createdBy</th>
+                                <th scope="col">duration</th>
+                                <th scope="col">examDate</th>
+                                <th scope="col">examTime</th>
+                                <th scope="col">examType</th>
+                                <th scope="col">subject</th>
+                                <th scope="col">program</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                {{#each exams}}
+                            <tr>
+                                <td>{{this.name}}</td>
+                                <td>{{this.description}}</td>
+                                <td>{{this.academicTerm.name}}</td>
+                                <td>{{this.academicYear.name}}</td>
+                                <td>{{this.classLevel.name}}</td>
+                                <td>{{this.createdBy}}</td>
+                                <td>{{this.duration}}</td>
+                                <td>{{this.examDate}}</td>
+                                <td>{{this.examTime}}</td>
+                                <td>{{this.examType}}</td>
+                                <td>{{this.subject.name}}</td>
+                                <td>{{this.program.name}}</td>
+                                <td>
+                                    <ul class="action-list">
+                                        <li><a href="/exam/{{this._id}}/update" data-tip="edit"><i
+                                                    class="fa fa-edit"></i></a></li>
+                                        <li><a href="/exam/{{this._id}}/delete" data-tip="delete"><i
+                                                    class="fa fa-trash"></i></a></li>
+                                        <li><a href="/exam/{{this._id}}" data-tip="view"><i class="fas fa-eye"></i></a>
+                                        </li>
+
+                                    </ul>
+                                </td>
+                                <!-- Other table data -->
+                            </tr>
+                            {{/each}}
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col col-sm-6 col-xs-6">showing <b>5</b> out of <b>25</b> entries</div>
+                        <div class="col-sm-6 col-xs-6">
+                            <ul class="pagination hidden-xs pull-right">
+                                <li><a href="#">
+                                        << /a>
+                                </li>
+                                <li class="active"><a href="#">1</a></li>
+                                <li><a href="#">2</a></li>
+                                <li><a href="#">3</a></li>
+                                <li><a href="#">4</a></li>
+                                <li><a href="#">5</a></li>
+                                <li><a href="#">></a></li>
+                            </ul>
+                            <ul class="pagination visible-xs pull-right">
+                                <li><a href="#">
+                                        << /a>
+                                </li>
+                                <li><a href="#">></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-
-        </div>
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped">
-                <thead class="thead-dark">
-                    <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">description</th>
-                        <th scope="col">academicTerm</th>
-                        <th scope="col">academicYear</th>
-                        <th scope="col">classLevel</th>
-                        <th scope="col">createdBy</th>
-                        <th scope="col">duration</th>
-                        <th scope="col">examDate</th>
-                        <th scope="col">examTime</th>
-                        <th scope="col">examType</th>
-                        <th scope="col">subject</th>
-                        <th scope="col">program</th>
-                        <th scope="col">Action</th>
-
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each exams}}
-                    <tr>
-                        <td>{{this.name}}</td>
-                        <td>{{this.description}}</td>
-                        <td>{{this.academicTerm.name}}</td>
-                        <td>{{this.academicYear.name}}</td>
-                        <td>{{this.classLevel.name}}</td>
-                        <td>{{this.createdBy}}</td>
-                        <td>{{this.duration}}</td>
-                        <td>{{this.examDate}}</td>
-                        <td>{{this.examTime}}</td>
-                        <td>{{this.examType}}</td>
-                        <td>{{this.subject.name}}</td>
-                        <td>{{this.program.name}}</td>
-
-
-
-                        <td class="action-buttons">
-                            <a href="/exam/{{this._id}}/update" class="btn btn-sm btn-success"><i class="fas fa-edit">
-                                    Update</i></a>
-                            <a href="/exam/{{this._id}}/delete" class="btn btn-sm btn-danger"><i class="fas fa-trash">
-                                    Delete</i></a>
-                            <a href="/exam/{{this._id}}" class="btn btn-sm btn-info"><i class="fas fa-eye"> View</i></a>
-                        </td>
-                    </tr>
-                    {{/each}}
-                </tbody>
-            </table>
         </div>
     </div>
 </div>
+{{> footer}}

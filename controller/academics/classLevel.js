@@ -54,16 +54,12 @@ exports.getClassLevel = AsyncHandler(async (req, res) => {
 exports.searchClassLevels = AsyncHandler(async (req, res, next) => {
   try {
     const searchQuery = req.query.search;
-    const classLevels = await ClassLevel.find({
+    const classes = await ClassLevel.find({
       name: { $regex: searchQuery, $options: "i" },
     });
-
-    console.log("Search Query:", searchQuery);
-    console.log("Search Results:", classLevels);
-
     res.render("class-level/index", {
       title: "Class Levels",
-      classLevels: classLevels,
+      classes: classes,
     });
   } catch (error) {
     console.error("Error in searchClassLevels:", error);
