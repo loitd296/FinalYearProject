@@ -1,0 +1,10 @@
+{{! Assuming you have access to exam and questions variables }}
+<form action="/exam/{{exam._id}}/attach-question" method="POST">
+  <label for="questionId">Select a question:</label>
+  <select name="questionId" id="questionId">
+    {{#each questions}}
+      <option value="{{this._id}}">{{this.question}}</option>
+    {{/each}}
+  </select>
+  <button type="submit">Attach Question</button>
+</form>

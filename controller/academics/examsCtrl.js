@@ -6,6 +6,7 @@ const Program = require("../../model/Academic/Program");
 const AcademicYear = require("../../model/Academic/AcademicYear");
 const ClassLevel = require("../../model/Academic/ClassLevel");
 const AcademicTerm = require("../../model/Academic/AcademicTerm");
+const Question = require("../../model/Academic/Questions");
 //@desc  Create Exam
 //@route POST /api/v1/exams
 //@acess Private  Teachers only
@@ -242,3 +243,78 @@ exports.updateExam = AysncHandler(async (req, res) => {
     exam: examUpdated,
   });
 });
+
+// Controller function for rendering the add question page
+exports.renderAddQuestionPage = async (req, res) => {
+  try {
+    const { examId } = req.params;
+    const exam = await Exam.findById(examId);
+    res.render("exam/add-question", { exam });
+  } catch (error) {
+    console.error("Error rendering add question page:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+// Controller function for adding a question to an exam
+exports.addQuestionToExam = async (req, res) => {
+  try {
+    const { examId } = req.params;
+    const { question, optionA, optionB, optionC, optionD, correctAnswer } =
+      req.body;
+
+    const newQuestion = new Question({
+      question,
+      optionA,
+      optionB,
+      optionC,
+      optionD,
+      correctAnswer,
+      exam: examId,
+    });
+
+    await newQuestion.save();
+
+    const exam = await Exam.findById(examId);
+    exam.questions.push(newQuestion);
+    await exam.save();
+
+    res.redirect(`/exam/${examId}`);
+  } catch (error) {
+    console.error("Error adding question to exam:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+// Render the add question form for an exam
+exports.renderAddQuestionForm = async (req, res) => {
+  try {
+    const exam = await Exam.findById(req.params.id);
+    const questions = await Question.find();
+    res.render("exam/attach-question", { exam, questions });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+// Attach a question to an exam
+exports.attachQuestionToExam = async (req, res) => {
+  try {
+    const examId = req.params.examId;
+    const questionId = req.body.questionId;
+
+    // Find the exam and question
+    const exam = await Exam.findById(req.params.id);
+    const question = await Question.findById(questionId);
+
+    // Attach the question to the exam
+    exam.questions.push(question);
+    await exam.save();
+
+    res.redirect(`/exam/attach-question`);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+};

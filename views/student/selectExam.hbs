@@ -1,34 +1,66 @@
 {{> header}}
+  <style>
+    .content {
+  border: 2px solid #ccc;
+  padding: 20px;
+}
+  </style>
 
-<div class="content">
-  <h1>Select Exam</h1>
-  <form id="selectExamForm">
-    <div class="form-group">
-      <label for="examID">Exam:</label>
-      <select class="form-control" id="examID" name="examID">
+
+  <div class="content">
+    <div class="card-group ">
+      <div class="row row-cols-1 row-cols-md-5">
         {{#each exams}}
-        <option value="{{this._id}}">{{this.name}}</option>
+        <div class="col mb-4 stack">
+          <div class="card-take-exam bg-primary text-white">
+            <div class="card-body">
+              <h5 class="card-title">{{this.name}}</h5> <br>
+              <p class="card-text">
+                <i class="fas fa-book"></i> <strong class="variable-name">Subject:</strong> <span class="variable-value">{{this.subject.name}}</span><br>
+                <hr>
+                <i class="fas fa-calendar-alt"></i> <strong class="variable-name">Academic Year:</strong> <span class="variable-value">{{this.academicYear.name}}</span><br>
+                <hr>
+                <i class="fas fa-calendar"></i> <strong class="variable-name">Academic Term:</strong> <span class="variable-value">{{this.academicTerm.name}}</span><br>
+                <hr>
+                <i class="fas fa-users"></i> <strong class="variable-name">Class Level:</strong> <span class="variable-value">{{this.classLevel.name}}</span><br>
+                <hr>
+                <i class="fas fa-file-alt"></i> <strong class="variable-name">Exam Type:</strong> <span class="variable-value">{{this.examType}}</span><br>
+                <hr>
+                <i class="fas fa-graduation-cap"></i> <strong class="variable-name">Program:</strong> <span class="variable-value">{{this.program.name}}</span><br>
+              </p>
+              <div class="text-center">
+                <button class="btn btn-light" onclick="takeExam('{{this._id}}')">Take Exam</button>
+              </div>
+            </div>
+          </div>
+        </div>
         {{/each}}
-      </select>
+      </div>
     </div>
-    <button type="submit" class="btn btn-primary">Take exam</button>
-  </form>
-</div>
+  </div>
+
+
+
 
 {{> footer}}
 
 <script>
-  // Get the select exam form
-  const selectExamForm = document.getElementById('selectExamForm');
+  // Add event listener for button click
+  function takeExam(examId) {
+    // Redirect to the selected exam page with the exam ID
+    window.location.href = '/student/write/' + examId;
+  }
 
-  // Add event listener for form submission
-  selectExamForm.addEventListener('submit', (e) => {
-    e.preventDefault();
 
-    // Get the selected exam ID
-    const selectedExamID = document.getElementById('examID').value;
+  // Get the content element
+  const contentElement = document.querySelector('.content');
 
-    // Redirect to the create question page with the selected exam ID
-    window.location.href = `/student/write/${selectedExamID}`;
-  });
+  // Calculate the height of the content element
+  const contentHeight = contentElement.offsetHeight;
+
+  // Set the height of the content element plus some additional padding
+  const frameHeight = contentHeight + 40; // Adjust the padding as needed
+
+  // Apply the frame height to the content element
+  contentElement.style.height = `${frameHeight}px`;
 </script>

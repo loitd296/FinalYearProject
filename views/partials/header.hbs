@@ -9,7 +9,7 @@
   <meta content="Free HTML Templates" name="description" />
 
   <!-- Favicon -->
-  <link href="img/favicon.ico" rel="icon" />
+  <link href="/img/favicon.ico" rel="icon" />
 
   <!-- Google Web Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com" />
@@ -27,14 +27,57 @@
 
   <!-- Customized Bootstrap Stylesheet -->
   <link href="/css/style.css" rel="stylesheet" />
-      <link href="/css/style-for-admin-page.css" rel="stylesheet" />
+  <link href="/css/style-for-admin-page.css" rel="stylesheet" />
+  <!-- Custom Stylesheet -->
+  <style>
+    /* Add your custom styles here */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      border: 3px solid #ccc;
+      border-top-color: #007bff;
+      border-radius: 50%;
+      animation: loading-spinner 1s ease-in-out infinite;
+    }
+
+    @keyframes loading-spinner {
+      0% {
+        transform: rotate(0);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
 
 </head>
 
 <body>
   <!-- Navbar Start -->
-  <div class="container-fluid bg-light position-relative shadow">
-    <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0 px-lg-5">
+  <!-- Loading overlay -->
+  <div class="loading-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+
+
+
+  <div class="container-fluid bg-light position-relative shadow" style="color: #2F4F4F">
+    <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0 px-lg-5" >
       <a href="" class="navbar-brand font-weight-bold text-secondary" style="font-size: 50px">
         <i class="flaticon-043-teddy-bear"></i>
         <span class="text-primary">KidKinder</span>
@@ -45,7 +88,13 @@
       <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
         <div class="navbar-nav font-weight-bold mx-auto py-0">
           <a href="/" class="nav-item nav-link active">Home</a>
-          <a href="/about" class="nav-item nav-link">About</a>
+          {{#if loggedIn}}
+          {{#if student}}
+          <a href="/student/take-exam" class="nav-item nav-link">Join Exam</a>
+          {{/if}}
+
+          {{/if}}
+
           <a href="class.html" class="nav-item nav-link">Classes</a>
           <a href="team.html" class="nav-item nav-link">Teachers</a>
           <a href="gallery.html" class="nav-item nav-link">Gallery</a>
@@ -102,10 +151,69 @@
               <a class="dropdown-item" href="#">Forgot password?</a>
             </div>
             {{/if}}
+
           </div>
         </div>
+    </nav>
+    <header>
 
+  <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+      <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner">
+      <div class="carousel-item active" style="background-image: url('https://source.unsplash.com/RCAhiGJsUUE/1920x1080')">
+        <div class="carousel-caption">
+          <h5>First slide label</h5>
+          <p>Some representative placeholder content for the first slide.</p>
+        </div>
       </div>
+      <div class="carousel-item" style="background-image: url('https://source.unsplash.com/wfh8dDlNFOk/1920x1080')">
+        <div class="carousel-caption">
+          <h5>Second slide label</h5>
+          <p>Some representative placeholder content for the second slide.</p>
+        </div>
+      </div>
+      <div class="carousel-item" style="background-image: url('https://source.unsplash.com/lHGeqh3XhRY/1920x1080')">
+        <div class="carousel-caption">
+          <h5>Third slide label</h5>
+          <p>Some representative placeholder content for the third slide.</p>
+        </div>
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+</header>
+
+
+   
+
+  </div>
   </div>
   </nav>
+
   </div>
+  <!-- Custom JavaScript -->
+  <!-- Custom JavaScript -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const loadingOverlay = document.querySelector('.loading-overlay');
+
+      // Remove the loading overlay when the page finishes loading
+      window.addEventListener('load', function () {
+        loadingOverlay.classList.add('hide');
+        setTimeout(function () {
+          loadingOverlay.style.display = 'none';
+        }, 500);
+      });
+    });
+  </script>

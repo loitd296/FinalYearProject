@@ -124,19 +124,16 @@ exports.adminUpdateCtrl = AsyncHandler(async (req, res) => {
 //@desc delete admin
 //@route POST /admin/:id
 //@access Private
-exports.adminDeleteCtrl = (req, res) => {
-  try {
-    res.status(201).json({
-      status: "success",
-      data: "Delete admin successfully",
-    });
-  } catch (error) {
-    res.json({
-      status: "failed",
-      error: error.message,
-    });
+exports.deleteAdmin = AsyncHandler(async (req, res) => {
+  const admin = await Admin.findById(req.params.id);
+  if (!admin) {
+    throw new Error("Subject not found");
   }
-};
+
+  await Admin.deleteOne({ _id: req.params.id });
+
+  res.redirect("/admin/index"); // Redirect to the list or any other desired page
+});
 
 //@desc Admin suspending teacher
 //@route POST /api/v1/admin/suspend/teacher/:id

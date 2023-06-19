@@ -252,6 +252,17 @@ exports.adminUpdateTeacher = AysncHandler(async (req, res) => {
   });
 });
 
+exports.deleteTeacher = AysncHandler(async (req, res) => {
+  const teacher = await Teacher.findById(req.params.id);
+  if (!teacher) {
+    throw new Error("Subject not found");
+  }
+
+  await Teacher.deleteOne({ _id: req.params.id });
+
+  res.redirect("/teacher/index"); // Redirect to the list or any other desired page
+});
+
 // Admin Logout
 exports.teacherLogoutCtrl = (req, res) => {
   // Clear the token cookie

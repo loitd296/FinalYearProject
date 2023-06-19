@@ -9,6 +9,7 @@ const {
   adminUpdateTeacher,
   teacherLogoutCtrl,
   renderTeacherPage,
+  deleteTeacher,
 } = require("../../controller/staff/teachersCtrl");
 const isAdmin = require("../../middlewares/isAdmin");
 const isLogin = require("../../middlewares/isLogin");
@@ -46,5 +47,14 @@ teachersRouter.post("/:id", isTeacherLogin, isTeacher, teacherUpdateProfile);
 
 teachersRouter.get("/:id/update", isLogin, isAdmin, adminUpdateTeacher);
 teachersRouter.post("/:id/update", isLogin, isAdmin, adminUpdateTeacher);
+
+teachersRouter.get("/:id/delete", isLogin, isAdmin, async (req, res) => {
+  res.render("teacher/deleteTeacher", {
+    title: "Delete Subject",
+    teacherId: req.params.id,
+  });
+});
+
+teachersRouter.post("/:id/delete", isLogin, isAdmin, deleteTeacher);
 
 module.exports = teachersRouter;

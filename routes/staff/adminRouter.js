@@ -14,6 +14,7 @@ const {
   adminUnwithdrawTeacher,
   adminPublicExam,
   adminUnpublishExam,
+  deleteAdmin,
 } = require("../../controller/staff/adminCtrl");
 const { globalErrHandler } = require("../../middlewares/globalErrorHandler");
 const isAdmin = require("../../middlewares/isAdmin");
@@ -56,9 +57,6 @@ adminRouter.post("/:id", isLogin, isAdmin, adminUpdateCtrl, (req, res) => {
     loggedIn: res.locals.loggedIn,
   });
 });
-
-//Delete admin
-adminRouter.delete("/:id", adminDeleteCtrl);
 
 //Admin suspending teacher
 adminRouter.put("/suspend/teacher/:id", adminSuspendingTeacherCtrl);

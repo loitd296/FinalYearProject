@@ -1,30 +1,84 @@
 {{> header}}
 
+<style>
+  /* Add your custom CSS styles here */
+  .content {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 40px;
+    background-color: #F3F5F7;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .content h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .form-group label {
+    color: #333;
+  }
+
+  .form-control {
+    background-color: #FFF;
+    color: #555;
+    border: 2px solid #FFF;
+    transition: border-color 0.3s ease-in-out;
+  }
+
+  .form-control:focus {
+    border-color: #5CB85C;
+    outline: none;
+  }
+
+  button.btn-primary {
+    background-color: #337AB7;
+    border-color: #337AB7;
+    color: #FFF;
+  }
+
+  button.btn-primary:hover {
+    background-color: #286090;
+    border-color: #204D74;
+  }
+
+  a.btn.btn-primary {
+    background-color: #5CB85C;
+    border-color: #5CB85C;
+    color: #FFF;
+    margin-left: 10px;
+  }
+
+  a.btn.btn-primary:hover {
+    background-color: #449D44;
+    border-color: #398439;
+  }
+</style>
+
 <div class="content">
-  <h1>Student Login</h1>
+  <h1>Admin Login</h1>
   <form action="/student/login" method="POST">
-    <div class="form-group">
-      <label for="email">Email:</label>
-      <input
-        type="email"
-        class="form-control"
-        id="email"
-        name="email"
-        required
-      />
+    <div class="form-group row">
+      <label for="email" class="col-sm-2 col-form-label">Email:</label>
+      <div class="col-sm-6">
+        <input type="email" name="email" class="form-control" required />
+      </div>
     </div>
-    <div class="form-group">
-      <label for="password">Password:</label>
-      <input
-        type="password"
-        class="form-control"
-        id="password"
-        name="password"
-        required
-      />
+    <div class="form-group row">
+      <label for="password" class="col-sm-2 col-form-label">Password:</label>
+      <div class="col-sm-6">
+        <input type="password" name="password" class="form-control" required />
+      </div>
     </div>
-    <button type="submit" class="btn btn-primary">Login</button>
+    <div class="form-group row">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-6">
+        <button type="submit" class="btn btn-primary">Login</button>
+      </div>
+    </div>
   </form>
 </div>
+{{>footer}}
 
-{{> footer}}

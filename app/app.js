@@ -19,12 +19,14 @@ const teachersRouter = require("../routes/staff/teachers");
 const examRouter = require("../routes/academics/examRoutes");
 const studentRouter = require("../routes/student/student");
 const questionRouter = require("../routes/academics/questionRoutes");
+const examResultRouter = require("../routes/academics/examResultRoute");
 
 const {
   globalErrHandler,
   notFoundErr,
 } = require("../middlewares/globalErrorHandler");
 const mongoose = require("mongoose");
+const ExamResult = require("../model/Academic/ExamResults");
 
 const app = express();
 
@@ -99,6 +101,7 @@ app.use("/teacher", teachersRouter);
 app.use("/exam", examRouter);
 app.use("/student", studentRouter);
 app.use("/question", questionRouter);
+app.use("/exam-result", examResultRouter);
 
 // Error middlewares
 app.use(globalErrHandler);

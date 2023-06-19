@@ -1,0 +1,15 @@
+<div class="container">
+  <h1>Exam Result</h1>
+  {{#if data}}
+    <h2>Student: {{student.name}}</h2>
+    <h3>Class Level: {{data.classLevel.name}}</h3>
+    <h3>Academic Term: {{data.academicTerm.name}}</h3>
+    <h3>Academic Year: {{data.academicYear.name}}</h3>
+    <h3>Exam Result:</h3>
+    {{#each data.exam.questions}}
+      <p>{{this}}</p>
+    {{/each}}
+  {{else}}
+    <p>No exam result found.</p>
+  {{/if}}
+</div>
