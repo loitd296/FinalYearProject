@@ -38,9 +38,9 @@ const examResultSchema = new Schema(
     //Excellent/Good/Poor
     remarks: {
       type: String,
+      enum: ["Merit", "Pass", "Distinction"],
       required: true,
-      enum: ["Excellent", "Good", "Bad"],
-      default: "Bad",
+      default: "Pass",
     },
     position: {
       type: Number,

@@ -1,5 +1,13 @@
 const AsyncHandler = require("express-async-handler");
+const AcademicYear = require("../../model/Academic/AcademicYear");
+const AcademicTerm = require("../../model/Academic/AcademicTerm");
 const Admin = require("../../model/Staff/Admin");
+const Student = require("../../model/Academic/Student");
+const Program = require("../../model/Academic/Program");
+const Teacher = require("../../model/Staff/Teacher");
+const Exam = require("../../model/Academic/Exam");
+const ExamResult = require("../../model/Academic/ExamResults");
+
 const generateToken = require("../../utils/generateToken");
 const verifyToken = require("../../utils/verifyToken");
 const { hashPassword, isPassMatched } = require("../../utils/helpers");
@@ -255,4 +263,109 @@ exports.renderAdminPage = (req, res) => {
 
   // Render the template and pass the loggedIn variable
   res.render("/admin/index", { loggedIn });
+};
+
+exports.renderDashboard = async (req, res) => {
+  try {
+    const adminCount = await Admin.countDocuments();
+    const studentCount = await Student.countDocuments();
+    const teacherCount = await Teacher.countDocuments();
+    const programCount = await Program.countDocuments();
+
+    // Get the top 10 students with the highest grades
+    const studentGrades = await ExamResult.aggregate([
+      {
+        $group: {
+          _id: "$student",
+          totalGrade: { $sum: "$grade" },
+        },
+      },
+      {
+        $lookup: {
+          from: "students",
+          localField: "_id",
+          foreignField: "_id",
+          as: "studentInfo",
+        },
+      },
+      {
+        $unwind: "$studentInfo",
+      },
+      {
+        $project: {
+          studentName: "$studentInfo.name",
+          totalGrade: 1,
+        },
+      },
+      {
+        $sort: { totalGrade: -1 },
+      },
+      {
+        $limit: 10,
+      },
+    ]);
+
+    const studentNames = studentGrades.map((student) => student.studentName);
+    const studentTotalGrades = studentGrades.map(
+      (student) => student.totalGrade
+    );
+
+    // Retrieve the exams and their average scores
+    const exams = await Exam.find({}, "name");
+    const examIds = exams.map((exam) => exam._id);
+
+    // Retrieve exam performance data from the database
+    const examPerformanceData = await ExamResult.aggregate([
+      {
+        $match: { exam: { $in: examIds } },
+      },
+      {
+        $group: {
+          _id: "$exam",
+          totalScore: { $sum: "$grade" },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $lookup: {
+          from: "exams",
+          localField: "_id",
+          foreignField: "_id",
+          as: "examInfo",
+        },
+      },
+      {
+        $unwind: "$examInfo",
+      },
+      {
+        $project: {
+          examName: "$examInfo.name",
+          averageScore: { $divide: ["$totalScore", "$count"] },
+        },
+      },
+    ]);
+
+    // Create arrays for chart data
+    const examNames = examPerformanceData.map((exam) => exam.examName);
+    const averageScores = examPerformanceData.map((exam) => exam.averageScore);
+
+    console.log(examNames, averageScores);
+
+    res.render("admin/index", {
+      adminCount,
+      studentCount,
+      teacherCount,
+      programCount,
+      studentGrades,
+      studentNames,
+      studentTotalGrades,
+      examNames,
+      averageScores,
+      title: "Admin Dashboard",
+      loggedIn: res.locals.loggedIn,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Failed to retrieve dashboard data" });
+  }
 };

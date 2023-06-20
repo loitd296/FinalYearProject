@@ -15,6 +15,7 @@ const {
   adminPublicExam,
   adminUnpublishExam,
   deleteAdmin,
+  renderDashboard,
 } = require("../../controller/staff/adminCtrl");
 const { globalErrHandler } = require("../../middlewares/globalErrorHandler");
 const isAdmin = require("../../middlewares/isAdmin");
@@ -77,11 +78,10 @@ adminRouter.put("/unpublic/exam/:id", adminUnpublishExam);
 
 // Define admin routes
 
-adminRouter.get("/dashboard", isLogin, isAdmin, (req, res) => {
-  res.render("admin/index", {
-    title: "Admin Dashboard",
-    loggedIn: res.locals.loggedIn,
-  });
+adminRouter.get("/dashboard", isLogin, isAdmin, renderDashboard);
+
+adminRouter.get("/test", async (req, res) => {
+  res.render("admin/test");
 });
 
 adminRouter.get("/logout", isLogin, isAdmin, adminLogoutCtrl);

@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
+const Chart = require("chart.js");
 
 const userRouter = require("../routes/academics/userRouter");
 const adminRouter = require("../routes/staff/adminRouter");

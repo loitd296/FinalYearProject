@@ -310,171 +310,119 @@ exports.writeExam = async (req, res) => {
 };
 
 exports.submitExam = async (req, res) => {
-  // Get student
   try {
-    const studentFound = await Student.findById(req.userAuth?._id);
-    if (!studentFound) {
+    const studentId = req.userAuth?._id;
+    const examId = req.params.examID;
+
+    // Check if the student exists
+    const student = await Student.findById(studentId);
+    if (!student) {
       throw new Error("Student not found");
     }
 
-    // Get exam
-    const examFound = await Exam.findById(req.params.examID)
+    // Check if the exam exists and populate related data
+    const exam = await Exam.findById(examId)
       .populate("questions")
       .populate("academicTerm");
-
-    if (!examFound) {
+    if (!exam) {
       throw new Error("Exam not found");
     }
-    const examEndTime = req.session.examEndTime;
-    const currentTime = new Date().getTime();
 
-    // Check if the exam time has expired
-    if (currentTime > examEndTime) {
-      // Get questions
-      const questions = examFound?.questions;
-      // Get student's answers
-      const studentAnswers = req.body.answers;
+    // Get questions and student's answers
+    const questions = exam.questions;
+    const studentAnswers = req.body.answers;
 
-      // Check if student answered all questions
-      if (studentAnswers.length !== questions.length) {
-        throw new Error("You have not answered all the questions");
-      }
-
-      // Check if student has already taken the exam
-      const studentFoundInResults = await ExamResult.findOne({
-        student: studentFound?._id,
-        exam: examFound?._id,
-      });
-      if (studentFoundInResults) {
-        throw new Error("You have already written this exam");
-      }
-
-      // Check if student is suspended/withdrawn
-      if (studentFound.isWithdrawn || studentFound.isSuspended) {
-        throw new Error(
-          "You are suspended/withdrawn, you can't take this exam"
-        );
-      }
-
-      // Build report object
-      let correctAnswers = 0;
-      let wrongAnswers = 0;
-      let status = ""; // failed/passed
-      let grade = 0;
-      let remarks = "";
-      let score = 0;
-      let answeredQuestions = [];
-
-      // Check answers
-      for (let i = 0; i < questions.length; i++) {
-        // Find the question
-        const question = questions[i];
-        // Check if the answer is correct
-        if (question.correctAnswer === studentAnswers[i]) {
-          correctAnswers++;
-          score++;
-          question.isCorrect = true;
-        } else {
-          wrongAnswers++;
-        }
-      }
-
-      // Calculate report values
-      const totalQuestions = questions.length;
-      grade = (correctAnswers / totalQuestions) * 100;
-      answeredQuestions = questions.map((question) => {
-        return {
-          question: question.question,
-          correctanswer: question.correctAnswer,
-          isCorrect: question.isCorrect,
-        };
-      });
-
-      // Calculate status
-      if (grade >= 50) {
-        status = "passed";
-      } else {
-        status = "failed";
-      }
-
-      // Remarks
-      if (grade >= 80) {
-        remarks = "Excellent";
-      } else if (grade >= 70) {
-        remarks = "Very Good";
-      } else if (grade >= 60) {
-        remarks = "Good";
-      } else if (grade >= 50) {
-        remarks = "Fair";
-      } else {
-        remarks = "Poor";
-      }
-
-      // Generate ExamResult document
-      const examResult = await ExamResult.create({
-        student: studentFound?._id,
-        exam: examFound?._id,
-        grade,
-        score,
-        status,
-        remarks,
-        position: 0, // Provide a value for the position field if needed
-        subject: examFound?.subject,
-        classLevel: examFound?.classLevel,
-        academicTerm: examFound?.academicTerm,
-        academicYear: examFound?.academicYear,
-        isPublished: false,
-        answeredQuestions: answeredQuestions,
-      });
-
-      // Push the results into the student's examResults array
-      studentFound.examResults.push(examResult._id);
-      await studentFound.save();
-
-      // Promoting
-      if (
-        examFound.academicTerm.name === "3rd term" &&
-        status === "passed" &&
-        studentFound?.currentClassLevel === "Level 100"
-      ) {
-        studentFound.classLevels.push("Level 200");
-        studentFound.currentClassLevel = "Level 200";
-        await studentFound.save();
-      } else if (
-        examFound.academicTerm.name === "3rd term" &&
-        status === "passed" &&
-        studentFound?.currentClassLevel === "Level 200"
-      ) {
-        studentFound.classLevels.push("Level 300");
-        studentFound.currentClassLevel = "Level 300";
-        await studentFound.save();
-      } else if (
-        examFound.academicTerm.name === "3rd term" &&
-        status === "passed" &&
-        studentFound?.currentClassLevel === "Level 300"
-      ) {
-        studentFound.classLevels.push("Level 400");
-        studentFound.currentClassLevel = "Level 400";
-        await studentFound.save();
-      } else if (
-        examFound.academicTerm.name === "3rd term" &&
-        status === "passed" &&
-        studentFound?.currentClassLevel === "Level 400"
-      ) {
-        studentFound.isGraduated = true;
-        studentFound.yearGraduated = new Date();
-        await studentFound.save();
-      }
-
-      // Clear the exam end time from the student's session
-      delete req.session.examEndTime;
-      req.session.save();
-
-      res.status(200).json({
-        status: "success",
-        data: "You have submitted your exam. Check later for the results",
-      });
+    // Check if the student answered all questions
+    if (studentAnswers.length !== questions.length) {
+      throw new Error("You have not answered all the questions");
     }
+
+    // Check if the student has already taken the exam
+    const existingResult = await ExamResult.findOne({
+      student: studentId,
+      exam: examId,
+    });
+    if (existingResult) {
+      throw new Error("You have already taken this exam");
+    }
+
+    // Check if the student is suspended/withdrawn
+    if (student.isWithdrawn || student.isSuspended) {
+      throw new Error("You are suspended/withdrawn and cannot take this exam");
+    }
+
+    // Calculate exam result
+    let correctAnswers = 0;
+    let score = 0;
+    const answeredQuestions = [];
+
+    questions.forEach((question, index) => {
+      const studentAnswer = studentAnswers[index];
+      const isCorrect = question.correctAnswer === studentAnswer;
+
+      if (isCorrect) {
+        correctAnswers++;
+        score++;
+      }
+
+      answeredQuestions.push({
+        question: question.question,
+        correctAnswer: question.correctAnswer,
+        isCorrect,
+      });
+    });
+
+    const totalQuestions = questions.length;
+    const grade = (correctAnswers / totalQuestions) * 100;
+    const status = grade >= 50 ? "passed" : "failed";
+    const remarks =
+      grade >= 80 ? "Distinction" : grade >= 70 ? "Merit" : "Pass";
+
+    // Create exam result document
+    const examResult = await ExamResult.create({
+      student: studentId,
+      exam: examId,
+      grade,
+      score,
+      status,
+      remarks,
+      position: 0, // Provide a value for the position field if needed
+      subject: exam.subject,
+      classLevel: exam.classLevel,
+      academicTerm: exam.academicTerm,
+      academicYear: exam.academicYear,
+      isPublished: false,
+      answeredQuestions,
+    });
+
+    // Update student's exam results and class level
+    student.examResults.push(examResult._id);
+    if (
+      exam.academicTerm.name === "3rd term" &&
+      status === "passed" &&
+      ["Level 100", "Level 200", "Level 300"].includes(
+        student.currentClassLevel
+      )
+    ) {
+      const nextClassLevel = `Level ${
+        parseInt(student.currentClassLevel.split(" ")[1]) + 100
+      }`;
+      student.classLevels.push(nextClassLevel);
+      student.currentClassLevel = nextClassLevel;
+    } else if (
+      exam.academicTerm.name === "3rd term" &&
+      status === "passed" &&
+      student.currentClassLevel === "Level 400"
+    ) {
+      student.isGraduated = true;
+      student.yearGraduated = new Date();
+    }
+    await student.save();
+
+    res.status(200).json({
+      status: "success",
+      data: "You have submitted your exam. Check later for the results",
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
