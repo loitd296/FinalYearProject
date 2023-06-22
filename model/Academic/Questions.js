@@ -33,6 +33,11 @@ const questionSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    category: {
+      type: Schema.Types.ObjectId,
+      ref: "Categories",
+      required: true,
+    },
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "Teacher",

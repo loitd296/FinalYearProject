@@ -246,7 +246,7 @@
 
   // Chart configuration
   var chartConfig = {
-    type: 'bar',
+    type: 'polarArea',
     data: chartData,
     options: {
       scales: {
@@ -261,44 +261,6 @@
   var topStudentsChart = new Chart(document.getElementById('topStudentsChart'), chartConfig);
 
    
-   // Convert exam performance data to arrays
-  var examNames = [];
-  var averageScores = [];
-
-  // Populate the arrays manually
-  {{#each examPerformanceData}}
-    examNames.push("{{this.examName}}");  
-    averageScores.push({{this.averageScore}});
-  {{/each}}
-
-  // Convert exam performance data to chart dataset
-  var examPerformanceChartData = {
-    labels: "{{examNames}}",
-    datasets: [{
-      label: 'Average Score',
-      data: "{{averageScores}}",
-      backgroundColor: 'rgba(54, 162, 235, 0.2)',
-      borderColor: 'rgba(54, 162, 235, 1)',
-      borderWidth: 1
-    }]
-  };
-
-  // Chart configuration for exam performance
-  var examPerformanceChartConfig = {
-    type: 'line',
-    data: examPerformanceChartData,
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  };
-
-  // Get exam performance chart canvas element and initialize the chart
-  var examPerformanceChart = new Chart(document.getElementById('examPerformanceChart'), examPerformanceChartConfig);
-  
 </script>
 
 

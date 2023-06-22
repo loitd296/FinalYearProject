@@ -332,11 +332,6 @@ exports.submitExam = async (req, res) => {
     const questions = exam.questions;
     const studentAnswers = req.body.answers;
 
-    // Check if the student answered all questions
-    if (studentAnswers.length !== questions.length) {
-      throw new Error("You have not answered all the questions");
-    }
-
     // Check if the student has already taken the exam
     const existingResult = await ExamResult.findOne({
       student: studentId,
@@ -378,6 +373,10 @@ exports.submitExam = async (req, res) => {
     const remarks =
       grade >= 80 ? "Distinction" : grade >= 70 ? "Merit" : "Pass";
 
+    // Check if the user answered all questions or the time limit has expired
+    const hasAnsweredAllQuestions = studentAnswers.length === questions.length;
+    const isTimeExpired = exam.timeLimit < new Date();
+
     // Create exam result document
     const examResult = await ExamResult.create({
       student: studentId,
@@ -395,29 +394,31 @@ exports.submitExam = async (req, res) => {
       answeredQuestions,
     });
 
-    // Update student's exam results and class level
-    student.examResults.push(examResult._id);
-    if (
-      exam.academicTerm.name === "3rd term" &&
-      status === "passed" &&
-      ["Level 100", "Level 200", "Level 300"].includes(
-        student.currentClassLevel
-      )
-    ) {
-      const nextClassLevel = `Level ${
-        parseInt(student.currentClassLevel.split(" ")[1]) + 100
-      }`;
-      student.classLevels.push(nextClassLevel);
-      student.currentClassLevel = nextClassLevel;
-    } else if (
-      exam.academicTerm.name === "3rd term" &&
-      status === "passed" &&
-      student.currentClassLevel === "Level 400"
-    ) {
-      student.isGraduated = true;
-      student.yearGraduated = new Date();
+    // Update student's exam results and class level if all questions are answered or time has expired
+    if (hasAnsweredAllQuestions || isTimeExpired) {
+      student.examResults.push(examResult._id);
+      if (
+        exam.academicTerm.name === "3rd term" &&
+        status === "passed" &&
+        ["Level 100", "Level 200", "Level 300"].includes(
+          student.currentClassLevel
+        )
+      ) {
+        const nextClassLevel = `Level ${
+          parseInt(student.currentClassLevel.split(" ")[1]) + 100
+        }`;
+        student.classLevels.push(nextClassLevel);
+        student.currentClassLevel = nextClassLevel;
+      } else if (
+        exam.academicTerm.name === "3rd term" &&
+        status === "passed" &&
+        student.currentClassLevel === "Level 400"
+      ) {
+        student.isGraduated = true;
+        student.yearGraduated = new Date();
+      }
+      await student.save();
     }
-    await student.save();
 
     res.status(200).json({
       status: "success",
