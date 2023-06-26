@@ -13,7 +13,16 @@
 </style>
 
 
+<div class="content">
 <div class="container">
+    <form action="/exam/{{exam._id}}/attach-question" method="GET">
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="Search Questions" name="search" value="{{search}}">
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="submit">Search</button>
+      </div>
+    </div>
+  </form>
   <form action="/exam/{{exam._id}}/attach-question" method="POST">
     <div class="row">
       {{#each categories}}
@@ -59,5 +68,5 @@
     <button type="submit" class="btn btn-primary">Attach Question</button>
   </form>
 </div>
-
+</div>
 {{> footer}}

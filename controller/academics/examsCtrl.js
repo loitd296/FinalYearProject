@@ -292,12 +292,15 @@ exports.renderAddQuestionForm = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const perPage = 6;
     const skip = (page - 1) * perPage;
+    const searchQuery = req.query.search || "";
 
     // Get exam and categories
     const [exam, categories, totalCategories] = await Promise.all([
       Exam.findById(req.params.id),
-      Category.find().skip(skip).limit(perPage),
-      Category.countDocuments(),
+      Category.find({ name: { $regex: searchQuery, $options: "i" } })
+        .skip(skip)
+        .limit(perPage),
+      Category.countDocuments({ name: { $regex: searchQuery, $options: "i" } }),
     ]);
 
     // Fetch questions only for the paginated categories
@@ -321,7 +324,6 @@ exports.renderAddQuestionForm = async (req, res) => {
     const nextPage = page < totalPages ? page + 1 : null;
 
     // Generating pagination numbers
-    // Generating pagination numbers
     let paginationNumbers = [];
     for (let i = 1; i <= totalPages; i++) {
       if (i == 1 || i == totalPages || (i >= page - 2 && i <= page + 2)) {
@@ -340,6 +342,7 @@ exports.renderAddQuestionForm = async (req, res) => {
       previousPage,
       nextPage,
       paginationNumbers,
+      searchQuery,
     });
   } catch (error) {
     console.error(error);
