@@ -1,0 +1,95 @@
+{{> header_admin}}
+
+<div class="content">
+    <div class="row">
+        <div class="col-md-offset-1 col-md-12">
+            <div class="panel">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col col-sm-3 col-xs-12">
+                            <h4 class="title">Category <span>List</span></h4>
+                        </div>
+                        <div class="col-sm-9 col-xs-12 text-right">
+                            <form action="/category/search" method="GET" class="form-inline float-right">
+                                <div class="input-group">
+                                    <input type="text" name="search" class="form-control form-control-sm flex-fill"
+                                        placeholder="Search">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-primary btn-sm">Search</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-sm-9 col-xs-12 text-right">
+                            <div class="btn_group text-right">
+                                <button class="btn btn-default" title="Create">
+                                    <a href="/category/createCategory" class="btn btn-primary"><i
+                                            class="fas fa-plus"></i></a>
+                                </button>
+                                <button class="btn btn-default" title="Pdf"><i class="fa fa-file-pdf"></i></button>
+                                <button class="btn btn-default" title="Excel"><i class="fas fa-file-excel"></i></button>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="panel-body table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                {{#each categories}}
+                            <tr>
+                                <td>{{this.name}}</td>
+                                
+                                <td>
+                                    <ul class="action-list">
+                                        <li><a href="/category/{{this._id}}/update" data-tip="edit"><i
+                                                    class="fa fa-edit"></i></a></li>
+                                        <li><a href="/category/{{this._id}}/delete" data-tip="delete"><i
+                                                    class="fa fa-trash"></i></a></li>
+                                        <li><a href="/category/{{this._id}}" data-tip="view"><i
+                                                    class="fas fa-eye"></i></a></li>
+
+                                    </ul>
+                                </td>
+                                <!-- Other table data -->
+                            </tr>
+                            {{/each}}
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+               <div class="panel-footer">
+                    <div class="row">
+                        <div class="col col-sm-6 col-xs-6">showing <b>{{currentPageEntries}}</b> out of
+                            <b>{{totalEntries}}</b> entries</div>
+                        <div class="col-sm-6 col-xs-6">
+                            <ul class="pagination hidden-xs pull-right">
+                                {{#if hasPreviousPage}}
+                                <li><a href="/category/index?page={{previousPage}}&search={{search}}">&lt;</a></li>
+                                {{/if}}
+                                {{#each pages}}
+                                <li{{#if current}} class="active" {{/if}}><a
+                                        href="/category/index?page={{this}}&search={{search}}">{{this}}</a></li>
+                                {{/each}}       
+                                {{#if hasNextPage}}
+                                <li><a href="/category/index?page={{nextPage}}&search={{search}}">&gt;</a></li>
+
+                                {{/if}}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

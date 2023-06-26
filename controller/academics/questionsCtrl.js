@@ -1,6 +1,7 @@
 const AysncHandler = require("express-async-handler");
 const Exam = require("../../model/Academic/Exam");
 const Question = require("../../model/Academic/Questions");
+const Category = require("../../model/Academic/Categories");
 
 //@desc  Create Question
 //@route POST /api/v1/questions/:examID
@@ -24,8 +25,9 @@ exports.renderCreateQuestion = async (req, res) => {
     if (!exam) {
       throw new Error("Exam not found");
     }
+    const categories = await Category.find();
 
-    res.render("question/createQuestion", { exam });
+    res.render("question/createQuestion", { exam, categories });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -33,8 +35,16 @@ exports.renderCreateQuestion = async (req, res) => {
 
 // Create a question for the selected exam
 exports.createQuestion = AysncHandler(async (req, res) => {
-  const { question, optionA, optionB, optionC, optionD, correctAnswer } =
-    req.body;
+  const {
+    question,
+    optionA,
+    optionB,
+    optionC,
+    optionD,
+    correctAnswer,
+    category,
+    difficulty,
+  } = req.body;
   const examID = req.params.examID;
 
   try {
@@ -55,6 +65,8 @@ exports.createQuestion = AysncHandler(async (req, res) => {
       optionC,
       optionD,
       correctAnswer,
+      difficulty,
+      category,
       exam: examID,
       createdBy: req.userAuth._id,
     });
@@ -66,6 +78,7 @@ exports.createQuestion = AysncHandler(async (req, res) => {
       status: "success",
       message: "Question created",
       data: createdQuestion,
+      category: categories,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -110,8 +123,16 @@ exports.getQuestion = AysncHandler(async (req, res) => {
 //@acess  Private Teacher only
 
 exports.updateQuestion = AysncHandler(async (req, res) => {
-  const { question, optionA, optionB, optionC, optionD, correctAnswer } =
-    req.body;
+  const {
+    question,
+    optionA,
+    optionB,
+    optionC,
+    optionD,
+    correctAnswer,
+    category,
+    difficulty,
+  } = req.body;
   //check name exists
   const questionFound = await Question.findOne({ question });
   if (questionFound) {
@@ -126,6 +147,8 @@ exports.updateQuestion = AysncHandler(async (req, res) => {
       optionC,
       optionD,
       correctAnswer,
+      category,
+      difficulty,
       createdBy: req.userAuth._id,
     },
     {

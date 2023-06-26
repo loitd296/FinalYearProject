@@ -21,6 +21,7 @@ const examRouter = require("../routes/academics/examRoutes");
 const studentRouter = require("../routes/student/student");
 const questionRouter = require("../routes/academics/questionRoutes");
 const examResultRouter = require("../routes/academics/examResultRoute");
+const categoryRouter = require("../routes/academics/category");
 
 const {
   globalErrHandler,
@@ -103,6 +104,7 @@ app.use("/exam", examRouter);
 app.use("/student", studentRouter);
 app.use("/question", questionRouter);
 app.use("/exam-result", examResultRouter);
+app.use("/category", categoryRouter);
 
 // Error middlewares
 app.use(globalErrHandler);

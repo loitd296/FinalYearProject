@@ -27,6 +27,19 @@
       <label for="correctAnswer">Correct Answer:</label>
       <input type="text" class="form-control" id="correctAnswer" name="correctAnswer" required>
     </div>
+     <div class="form-group">
+      <label for="category">Category:</label>
+      <select class="form-control" id="category" name="category" required>
+        {{#each categories}}
+          <option value="{{this._id}}">{{this.name}}</option>
+        {{/each}}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="difficulty">Difficulty:</label>
+      <input type="text" class="form-control" id="difficulty" name="difficulty" required>
+    </div>
+
     <button type="submit" class="btn btn-primary">Create Question</button>
   </form>
 </div>

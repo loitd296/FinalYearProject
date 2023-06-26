@@ -19,11 +19,9 @@ const questionSchema = new Schema(
     },
     optionC: {
       type: String,
-      required: true,
     },
     optionD: {
       type: String,
-      required: true,
     },
     correctAnswer: {
       type: String,
@@ -36,6 +34,10 @@ const questionSchema = new Schema(
     category: {
       type: Schema.Types.ObjectId,
       ref: "Categories",
+      required: true,
+    },
+    difficulty: {
+      type: String,
       required: true,
     },
     createdBy: {
