@@ -33,7 +33,7 @@ const questionSchema = new Schema(
     },
     category: {
       type: Schema.Types.ObjectId,
-      ref: "Categories",
+      ref: "Category",
       required: true,
     },
     difficulty: {

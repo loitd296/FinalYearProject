@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const YearGroup = require("../../model/Academic/YearGroup");
 const Admin = require("../../model/Staff/Admin");
 const AcademicYear = require("../../model/Academic/AcademicYear");
+const { calculatePageRange } = require("../../utils/paginationUtils");
 
 //@desc  Create year group
 //@route POST /api/v1/year-groups

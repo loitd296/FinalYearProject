@@ -1,6 +1,7 @@
 const AsyncHandler = require("express-async-handler");
 const ClassLevel = require("../../model/Academic/ClassLevel");
 const Admin = require("../../model/Staff/Admin");
+const { calculatePageRange } = require("../../utils/paginationUtils");
 
 //@desc  Create Class Level
 //@route POST /api/v1/class-levels

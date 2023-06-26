@@ -6,9 +6,9 @@ const AcademicYear = require("../../model/Academic/AcademicYear"); // Import the
 const Exam = require("../../model/Academic/Exam");
 const ExamResult = require("../../model/Academic/ExamResults");
 
-const generateToken = require("../../utils/generateToken");
 const { hashPassword, isPassMatched } = require("../../utils/helpers");
 const jwt = require("jsonwebtoken");
+const { calculatePageRange } = require("../../utils/paginationUtils");
 
 //@desc  Admin Register Student
 //@route POST /api/students/admin/register

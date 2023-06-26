@@ -1,6 +1,7 @@
 const AsyncHandler = require("express-async-handler");
 const Category = require("../../model/Academic/Categories");
 const Teacher = require("../../model/Staff/Teacher");
+const { calculatePageRange } = require("../../utils/paginationUtils");
 
 //@desc Create Academic Term Year
 //@route POST /api/v1/academic-terms
@@ -31,7 +32,7 @@ exports.createCategory = AsyncHandler(async (req, res) => {
 exports.getCategories = AsyncHandler(async (req, res) => {
   try {
     const { search, page } = req.query;
-    const limit = 5; // Number of categories to show per page
+    const limit = 10; // Number of categories to show per page
     const currentPage = parseInt(page) || 1;
 
     // Build the query based on the search term
@@ -45,6 +46,14 @@ exports.getCategories = AsyncHandler(async (req, res) => {
 
     // Calculate the total number of pages based on the limit
     const totalPages = Math.ceil(totalCategories / limit);
+
+    // Calculate the range of page numbers to display
+    const range = 5;
+    const { startPage, endPage } = calculatePageRange(
+      currentPage,
+      totalPages,
+      range
+    );
 
     // Get the categories for the current page
     const categories = await Category.find(query)
@@ -63,7 +72,10 @@ exports.getCategories = AsyncHandler(async (req, res) => {
       previousPage: currentPage - 1,
       hasNextPage: currentPage < totalPages,
       nextPage: currentPage + 1,
-      pages: Array.from({ length: totalPages }, (_, i) => i + 1),
+      pages: Array.from(
+        { length: endPage - startPage + 1 },
+        (_, i) => startPage + i
+      ),
     });
   } catch (err) {
     console.error("Error retrieving categories:", err);

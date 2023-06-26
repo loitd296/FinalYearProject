@@ -2,6 +2,7 @@ const AysncHandler = require("express-async-handler");
 const Exam = require("../../model/Academic/Exam");
 const Question = require("../../model/Academic/Questions");
 const Category = require("../../model/Academic/Categories");
+const { calculatePageRange } = require("../../utils/paginationUtils");
 
 //@desc  Create Question
 //@route POST /api/v1/questions/:examID
@@ -88,12 +89,71 @@ exports.createQuestion = AysncHandler(async (req, res) => {
 //@desc  get all questions
 //@route GET /api/v1/questions
 //@acess  Private - Teacher only
-
 exports.getQuestions = AysncHandler(async (req, res) => {
-  const questions = await Question.find();
-  res.render("question/index", {
-    questions: questions,
-  });
+  try {
+    const { search, page } = req.query;
+    const limit = 10; // Number of categories to show per page
+    const currentPage = parseInt(page) || 1;
+
+    // Build the query based on the search term
+    const query = {};
+    if (search) {
+      query.name = { $regex: search, $options: "i" };
+    }
+
+    // Count the total number of categories matching the search filter
+    const totalQuestions = await Question.countDocuments(query);
+
+    // Calculate the total number of pages based on the limit
+    const totalPages = Math.ceil(totalQuestions / limit);
+
+    // Calculate the range of page numbers to display
+    const range = 5;
+    const { startPage, endPage } = calculatePageRange(
+      currentPage,
+      totalPages,
+      range
+    );
+
+    // Get the categories for the current page
+    const questions = await Question.find(query)
+      .skip((currentPage - 1) * limit)
+      .limit(limit);
+
+    res.render("question/index", {
+      title: "Question List",
+      questions,
+      search,
+      currentPage,
+      totalPages,
+      currentPageEntries: questions.length,
+      totalEntries: totalQuestions,
+      hasPreviousPage: currentPage > 1,
+      previousPage: currentPage - 1,
+      hasNextPage: currentPage < totalPages,
+      nextPage: currentPage + 1,
+      pages: Array.from(
+        { length: endPage - startPage + 1 },
+        (_, i) => startPage + i
+      ),
+    });
+  } catch (err) {
+    console.error("Error retrieving categories:", err);
+    res.render("question/index", {
+      title: "Questions List",
+      categories: [],
+      search: "",
+      currentPage: 1,
+      totalPages: 1,
+      currentPageEntries: 0,
+      totalEntries: 0,
+      hasPreviousPage: false,
+      previousPage: 0,
+      hasNextPage: false,
+      nextPage: 0,
+      pages: [],
+    });
+  }
 });
 
 exports.searchQuestions = AysncHandler(async (req, res) => {

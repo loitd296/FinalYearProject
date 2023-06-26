@@ -7,6 +7,7 @@ const AcademicYear = require("../../model/Academic/AcademicYear");
 const ClassLevel = require("../../model/Academic/ClassLevel");
 const AcademicTerm = require("../../model/Academic/AcademicTerm");
 const Question = require("../../model/Academic/Questions");
+const Category = require("../../model/Academic/Categories");
 //@desc  Create Exam
 //@route POST /api/v1/exams
 //@acess Private  Teachers only
@@ -286,12 +287,60 @@ exports.addQuestionToExam = async (req, res) => {
   }
 };
 
-// Render the add question form for an exam
 exports.renderAddQuestionForm = async (req, res) => {
   try {
-    const exam = await Exam.findById(req.params.id);
-    const questions = await Question.find();
-    res.render("exam/attach-question", { exam, questions });
+    const page = parseInt(req.query.page) || 1;
+    const perPage = 6;
+    const skip = (page - 1) * perPage;
+
+    // Get exam and categories
+    const [exam, categories, totalCategories] = await Promise.all([
+      Exam.findById(req.params.id),
+      Category.find().skip(skip).limit(perPage),
+      Category.countDocuments(),
+    ]);
+
+    // Fetch questions only for the paginated categories
+    const questions = await Question.find({
+      category: { $in: categories.map((category) => category._id) },
+    }).select("_id question category");
+
+    // Group questions by category
+    const categorizedQuestions = categories.map((category) => ({
+      category,
+      questions: questions.filter(
+        (question) => question.category.toString() === category._id.toString()
+      ),
+    }));
+
+    // Calculate total number of pages
+    const totalPages = Math.ceil(totalCategories / perPage);
+
+    // Pagination helpers
+    const previousPage = page > 1 ? page - 1 : null;
+    const nextPage = page < totalPages ? page + 1 : null;
+
+    // Generating pagination numbers
+    // Generating pagination numbers
+    let paginationNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+      if (i == 1 || i == totalPages || (i >= page - 2 && i <= page + 2)) {
+        paginationNumbers.push({
+          number: i,
+          isActive: i === page,
+        });
+      }
+    }
+
+    res.render("exam/attach-question", {
+      exam,
+      categories: categorizedQuestions,
+      currentPage: page,
+      totalPages,
+      previousPage,
+      nextPage,
+      paginationNumbers,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");

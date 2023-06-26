@@ -77,24 +77,21 @@
                 </div>
                 <div class="panel-footer">
                     <div class="row">
-                        <div class="col col-sm-6 col-xs-6">showing <b>5</b> out of <b>25</b> entries</div>
+                        <div class="col col-sm-6 col-xs-6">showing <b>{{currentPageEntries}}</b> out of
+                            <b>{{totalEntries}}</b> entries</div>
                         <div class="col-sm-6 col-xs-6">
                             <ul class="pagination hidden-xs pull-right">
-                                <li><a href="#">
-                                        << /a>
-                                </li>
-                                <li class="active"><a href="#">1</a></li>
-                                <li><a href="#">2</a></li>
-                                <li><a href="#">3</a></li>
-                                <li><a href="#">4</a></li>
-                                <li><a href="#">5</a></li>
-                                <li><a href="#">></a></li>
-                            </ul>
-                            <ul class="pagination visible-xs pull-right">
-                                <li><a href="#">
-                                        << /a>
-                                </li>
-                                <li><a href="#">></a></li>
+                                {{#if hasPreviousPage}}
+                                <li><a href="/question/index?page={{previousPage}}&search={{search}}">&lt;</a></li>
+                                {{/if}}
+                                {{#each pages}}
+                                <li{{#if current}} class="active" {{/if}}><a
+                                        href="/question/index?page={{this}}&search={{search}}">{{this}}</a></li>
+                                {{/each}}       
+                                {{#if hasNextPage}}
+                                <li><a href="/question/index?page={{nextPage}}&search={{search}}">&gt;</a></li>
+
+                                {{/if}}
                             </ul>
                         </div>
                     </div>

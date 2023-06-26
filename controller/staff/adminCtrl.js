@@ -12,6 +12,7 @@ const generateToken = require("../../utils/generateToken");
 const verifyToken = require("../../utils/verifyToken");
 const { hashPassword, isPassMatched } = require("../../utils/helpers");
 const jwt = require("jsonwebtoken");
+const { calculatePageRange } = require("../../utils/paginationUtils");
 
 // adminCtrl.js
 //@desc admin register

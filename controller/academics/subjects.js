@@ -3,6 +3,7 @@ const Program = require("../../model/Academic/Program");
 const AcademicTerm = require("../../model/Academic/AcademicTerm");
 const Subject = require("../../model/Academic/Subject");
 const Admin = require("../../model/Staff/Admin");
+const { calculatePageRange } = require("../../utils/paginationUtils");
 
 exports.renderCreateSubject = async (req, res) => {
   try {

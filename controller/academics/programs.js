@@ -3,6 +3,7 @@ const ClassLevel = require("../../model/Academic/ClassLevel");
 const Program = require("../../model/Academic/Program");
 const Subject = require("../../model/Academic/Subject");
 const Admin = require("../../model/Staff/Admin");
+const { calculatePageRange } = require("../../utils/paginationUtils");
 
 //@desc  Create Program
 //@route POST /api/v1/programs

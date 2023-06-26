@@ -5,12 +5,10 @@ const ClassLevel = require("../../model/Academic/ClassLevel"); // Import the Cla
 const AcademicYear = require("../../model/Academic/AcademicYear"); // Import the AcademicYear model
 const Subject = require("../../model/Academic/Subject"); // Import the Subject model
 
-const generateToken = require("../../utils/generateToken");
 const { hashPassword, isPassMatched } = require("../../utils/helpers");
 const jwt = require("jsonwebtoken");
-const isAdmin = require("../../middlewares/isAdmin");
-const isTeacher = require("../../middlewares/isTeacher");
-const cookieParser = require("cookie-parser");
+
+const { calculatePageRange } = require("../../utils/paginationUtils");
 
 //@desc  Admin Register Teacher
 //@route POST /api/teachers/admin/register

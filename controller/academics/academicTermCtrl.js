@@ -1,6 +1,7 @@
 const AsyncHandler = require("express-async-handler");
 const AcademicTerm = require("../../model/Academic/AcademicTerm");
 const Admin = require("../../model/Staff/Admin");
+const { calculatePageRange } = require("../../utils/paginationUtils");
 
 //@desc Create Academic Term Year
 //@route POST /api/v1/academic-terms
@@ -31,12 +32,70 @@ exports.createAcademicTerm = AsyncHandler(async (req, res) => {
 //@route GET /api/v1/academic-terms
 //@acess  Private
 exports.getAcademicTerms = AsyncHandler(async (req, res) => {
-  const academicTerms = await AcademicTerm.find();
+  try {
+    const { search, page } = req.query;
+    const limit = 10; // Number of categories to show per page
+    const currentPage = parseInt(page) || 1;
 
-  res.render("academic-term/index", {
-    title: "Academic Years",
-    academicTerms: academicTerms,
-  });
+    // Build the query based on the search term
+    const query = {};
+    if (search) {
+      query.name = { $regex: search, $options: "i" };
+    }
+
+    // Count the total number of categories matching the search filter
+    const totalAcademicTerms = await AcademicTerm.countDocuments(query);
+
+    // Calculate the total number of pages based on the limit
+    const totalPages = Math.ceil(totalAcademicTerms / limit);
+
+    // Calculate the range of page numbers to display
+    const range = 5;
+    const { startPage, endPage } = calculatePageRange(
+      currentPage,
+      totalPages,
+      range
+    );
+
+    // Get the categories for the current page
+    const academicTerms = await AcademicTerm.find(query)
+      .skip((currentPage - 1) * limit)
+      .limit(limit);
+
+    res.render("academic-term/index", {
+      title: "Category List",
+      academicTerms,
+      search,
+      currentPage,
+      totalPages,
+      currentPageEntries: academicTerms.length,
+      totalEntries: totalAcademicTerms,
+      hasPreviousPage: currentPage > 1,
+      previousPage: currentPage - 1,
+      hasNextPage: currentPage < totalPages,
+      nextPage: currentPage + 1,
+      pages: Array.from(
+        { length: endPage - startPage + 1 },
+        (_, i) => startPage + i
+      ),
+    });
+  } catch (err) {
+    console.error("Error retrieving categories:", err);
+    res.render("academic-term/index", {
+      title: "Academic Terms List",
+      categories: [],
+      search: "",
+      currentPage: 1,
+      totalPages: 1,
+      currentPageEntries: 0,
+      totalEntries: 0,
+      hasPreviousPage: false,
+      previousPage: 0,
+      hasNextPage: false,
+      nextPage: 0,
+      pages: [],
+    });
+  }
 });
 
 //@desc  get single Academic term

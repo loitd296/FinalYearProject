@@ -1,10 +1,63 @@
-{{! Assuming you have access to exam and questions variables }}
-<form action="/exam/{{exam._id}}/attach-question" method="POST">
-  <label for="questionId">Select a question:</label>
-  <select name="questionId" id="questionId">
-    {{#each questions}}
-      <option value="{{this._id}}">{{this.question}}</option>
-    {{/each}}
-  </select>
-  <button type="submit">Attach Question</button>
-</form>
+{{> header}}
+  <style>
+    .pagination {
+        justify-content: center; /* Center the pagination */
+    }
+    .pagination .page-item.active .page-link {
+        background-color: #007bff; /* Change to desired color for active page number */
+        border-color: #007bff; /* Change to desired border color for active page number */
+    }
+    .pagination .page-link {
+        color: #007bff; /* Change to desired color for page numbers */
+    }
+</style>
+
+
+<div class="container">
+  <form action="/exam/{{exam._id}}/attach-question" method="POST">
+    <div class="row">
+      {{#each categories}}
+      <div class="col-md-4">
+        <div class="card mb-3">
+          <div class="card-header">{{this.category.name}}</div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="questionId">Select a question:</label>
+              <select name="questionId" id="questionId" class="form-control">
+                {{#each this.questions}}
+                <option value="{{this._id}}">{{this.question}}</option>
+                {{/each}}
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+    <div class="pagination">
+      {{#if totalPages}}
+      <ul class="pagination">
+        {{#if previousPage}}
+        <li class="page-item">
+          <a class="page-link" href="?page={{previousPage}}">Previous</a>
+        </li>
+        {{/if}}
+        {{#each paginationNumbers}}
+        <li class="page-item {{#if this.isActive}}active{{/if}}">
+          <a class="page-link" href="?page={{this.number}}">{{this.number}}</a>
+        </li>
+        {{/each}}
+
+        {{#if nextPage}}
+        <li class="page-item">
+          <a class="page-link" href="?page={{nextPage}}">Next</a>
+        </li>
+        {{/if}}
+      </ul>
+      {{/if}}
+    </div>
+    <button type="submit" class="btn btn-primary">Attach Question</button>
+  </form>
+</div>
+
+{{> footer}}
