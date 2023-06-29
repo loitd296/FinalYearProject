@@ -1,72 +1,129 @@
 {{> header}}
-  <style>
-    .pagination {
-        justify-content: center; /* Center the pagination */
-    }
-    .pagination .page-item.active .page-link {
-        background-color: #007bff; /* Change to desired color for active page number */
-        border-color: #007bff; /* Change to desired border color for active page number */
-    }
-    .pagination .page-link {
-        color: #007bff; /* Change to desired color for page numbers */
-    }
+<style>
+  .pagination {
+    justify-content: center;
+    /* Center the pagination */
+  }
+
+  .pagination .page-item.active .page-link {
+    background-color: #007bff;
+    /* Change to desired color for active page number */
+    border-color: #007bff;
+    /* Change to desired border color for active page number */
+  }
+
+  .pagination .page-link {
+    color: #007bff;
+    /* Change to desired color for page numbers */
+  }
 </style>
 
-
 <div class="content">
-<div class="container">
-    <form action="/exam/{{exam._id}}/attach-question" method="GET">
-    <div class="input-group">
-      <input type="text" class="form-control" placeholder="Search Questions" name="search" value="{{search}}">
-      <div class="input-group-append">
-        <button class="btn btn-outline-secondary" type="submit">Search</button>
+  <div class="container">
+    <form action="/exam/{{exam._id}}/attach-question" method="GET" class="mb-3">
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Search Questions" name="search" value="{{searchQuery}}">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="submit">Search</button>
+        </div>
       </div>
-    </div>
-  </form>
-  <form action="/exam/{{exam._id}}/attach-question" method="POST">
-    <div class="row">
-      {{#each categories}}
-      <div class="col-md-4">
-        <div class="card mb-3">
-          <div class="card-header">{{this.category.name}}</div>
-          <div class="card-body">
-            <div class="form-group">
-              <label for="questionId">Select a question:</label>
-              <select name="questionId" id="questionId" class="form-control">
+    </form>
+    <form action="/exam/{{exam._id}}/attach-question" method="POST">
+      <div class="row">
+        {{#each categories}}
+        <div class="col-md-4">
+          <div class="card mb-3">
+            <div class="card-header">{{this.category.name}}</div>
+            <div class="card-body" id="category-{{this.category._id}}">
+              <div class="form-group">
                 {{#each this.questions}}
-                <option value="{{this._id}}">{{this.question}}</option>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="questionIds" value="{{this._id}}">
+                  <label class="form-check-label" for="question_{{this._id}}">
+                    {{this.question}}
+                  </label>
+                </div>
                 {{/each}}
-              </select>
+              </div>
+              {{#if this.hasMore}}
+              <div class="text-center mt-3">
+                <button type="button" class="btn btn-outline-primary show-more-btn"
+                  data-category-id="{{this.category._id}}" data-page="2">Show More</button>
+              </div>
+              {{/if}}
             </div>
           </div>
         </div>
-      </div>
-      {{/each}}
-    </div>
-    <div class="pagination">
-      {{#if totalPages}}
-      <ul class="pagination">
-        {{#if previousPage}}
-        <li class="page-item">
-          <a class="page-link" href="?page={{previousPage}}">Previous</a>
-        </li>
-        {{/if}}
-        {{#each paginationNumbers}}
-        <li class="page-item {{#if this.isActive}}active{{/if}}">
-          <a class="page-link" href="?page={{this.number}}">{{this.number}}</a>
-        </li>
         {{/each}}
-
-        {{#if nextPage}}
-        <li class="page-item">
-          <a class="page-link" href="?page={{nextPage}}">Next</a>
-        </li>
+      </div>
+      <div class="pagination">
+        {{#if totalPages}}
+        <ul class="pagination">
+          {{#if previousPage}}
+          <li class="page-item">
+            <a class="page-link" href="?page={{previousPage}}&search={{searchQuery}}">Previous</a>
+          </li>
+          {{/if}}
+          {{#each paginationNumbers}}
+          <li class="page-item {{#if this.isActive}}active{{/if}}">
+            <a class="page-link" href="?page={{this.number}}&search={{searchQuery}}">{{this.number}}</a>
+          </li>
+          {{/each}}
+          {{#if nextPage}}
+          <li class="page-item">
+            <a class="page-link" href="?page={{nextPage}}&search={{searchQuery}}">Next</a>
+          </li>
+          {{/if}}
+        </ul>
         {{/if}}
-      </ul>
-      {{/if}}
-    </div>
-    <button type="submit" class="btn btn-primary">Attach Question</button>
-  </form>
-</div>
+      </div>
+      <button type="submit" class="btn btn-primary">Attach Question</button>
+    </form>
+    <div>{{data}}</div>
+  </div>
 </div>
 {{> footer}}
+<script>
+const showMoreButtons = document.querySelectorAll('.show-more-btn');
+showMoreButtons.forEach((button) => {
+  button.addEventListener('click', async () => {
+    const categoryId = button.getAttribute('data-category-id');
+    const questionsContainer = document.querySelector(`#category-${categoryId} .form-group`);
+
+    const page = parseInt(button.getAttribute('data-page')) || 1;
+
+    try {
+const response = await fetch(`/exam/{{exam._id}}/attach-question/more?categoryId=${categoryId}&page=${page}`);
+      
+      // Console log to inspect the status and full response
+      console.log("Response Status: ", response.status);
+      console.log("Full Response: ", response);
+
+      const data = await response.json();
+
+      console.log("JSON Response: ", data);  // Console log to inspect the JSON response
+
+      data.questions.forEach((question) => {
+        const questionHtml = `
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="questionIds" value="${question._id}">
+            <label class="form-check-label" for="question_${question._id}">
+              ${question.question}
+            </label>
+          </div>
+        `;
+        questionsContainer.insertAdjacentHTML('beforeend', questionHtml);
+      });
+
+      if (!data.hasMore) {
+        button.style.display = 'none';
+      } else {
+        button.setAttribute('data-page', page + 1);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  });
+});
+
+</script>

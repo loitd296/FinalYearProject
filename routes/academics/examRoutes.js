@@ -10,6 +10,7 @@ const {
   addQuestionToExam,
   renderAddQuestionForm,
   attachQuestionToExam,
+  getMoreQuestions,
 } = require("../../controller/academics/examsCtrl");
 const isTeacher = require("../../middlewares/isTeacher");
 const isTeacherLogin = require("../../middlewares/isTeacherLogin");
@@ -58,6 +59,13 @@ examRouter.post(
   isTeacherLogin,
   isTeacher,
   attachQuestionToExam
+);
+// Please ensure this route is above the ":id/attach-question" GET route
+examRouter.get(
+  "/:id/attach-question/more",
+  isTeacherLogin,
+  isTeacher,
+  getMoreQuestions
 );
 
 module.exports = examRouter;

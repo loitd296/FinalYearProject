@@ -41,6 +41,12 @@ exports.adminRegisterCtrl = async (req, res) => {
 //@access Private
 exports.adminLoginCtrl = AsyncHandler(async (req, res) => {
   const { email, password } = req.body;
+
+  // Check if user is already logged in
+  if (req.user) {
+    return res.redirect("/admin/dashboard");
+  }
+
   // Find user
   const user = await Admin.findOne({ email });
   if (!user) {
@@ -48,6 +54,7 @@ exports.adminLoginCtrl = AsyncHandler(async (req, res) => {
       message: "Invalid login credentials",
     });
   }
+
   // Verify password
   const isMatched = await isPassMatched(password, user.password);
   if (isMatched) {

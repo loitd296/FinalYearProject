@@ -1,5 +1,4 @@
 const express = require("express");
-const app = require("../../app/app");
 const {
   adminRegisterCtrl,
   adminLoginCtrl,
@@ -17,7 +16,6 @@ const {
   deleteAdmin,
   renderDashboard,
 } = require("../../controller/staff/adminCtrl");
-const { globalErrHandler } = require("../../middlewares/globalErrorHandler");
 const isAdmin = require("../../middlewares/isAdmin");
 const isLogin = require("../../middlewares/isLogin");
 
@@ -34,7 +32,10 @@ adminRouter.get("/register", (req, res) => {
 adminRouter.post("/login", adminLoginCtrl);
 // Login route
 adminRouter.get("/login", (req, res) => {
-  res.render("admin/admin-login", { title: "Admin Login" });
+  res.render("admin/admin-login", {
+    title: "Admin Login",
+    loggedIn: res.locals.loggedIn,
+  });
 });
 
 //get all admin

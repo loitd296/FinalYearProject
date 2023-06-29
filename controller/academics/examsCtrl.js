@@ -303,18 +303,26 @@ exports.renderAddQuestionForm = async (req, res) => {
       Category.countDocuments({ name: { $regex: searchQuery, $options: "i" } }),
     ]);
 
-    // Fetch questions only for the paginated categories
-    const questions = await Question.find({
-      category: { $in: categories.map((category) => category._id) },
-    }).select("_id question category");
+    // Fetch questions for each category with pagination
+    const categorizedQuestions = await Promise.all(
+      categories.map(async (category) => {
+        const [questions, totalQuestions] = await Promise.all([
+          Question.find({ category: category._id })
+            .select("_id question category")
+            .skip(skip)
+            .limit(perPage),
+          Question.countDocuments({ category: category._id }),
+        ]);
 
-    // Group questions by category
-    const categorizedQuestions = categories.map((category) => ({
-      category,
-      questions: questions.filter(
-        (question) => question.category.toString() === category._id.toString()
-      ),
-    }));
+        return {
+          category,
+          questions,
+          totalQuestions,
+          currentPage: page,
+          hasMore: totalQuestions > perPage * page,
+        };
+      })
+    );
 
     // Calculate total number of pages
     const totalPages = Math.ceil(totalCategories / perPage);
@@ -350,21 +358,55 @@ exports.renderAddQuestionForm = async (req, res) => {
   }
 };
 
-// Attach a question to an exam
+exports.getMoreQuestions = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const perPage = 6;
+    const skip = (page - 1) * perPage;
+    const categoryId = req.query.categoryId;
+
+    const [questions, totalQuestions] = await Promise.all([
+      Question.find({ category: categoryId })
+        .select("_id question category")
+        .skip(skip)
+        .limit(perPage),
+      Question.countDocuments({ category: categoryId }),
+    ]);
+
+    res.json({
+      questions,
+      hasMore: totalQuestions > perPage * page,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
 exports.attachQuestionToExam = async (req, res) => {
   try {
-    const examId = req.params.examId;
-    const questionId = req.body.questionId;
+    const examId = req.params.id;
+    const questionIds = req.body.questionIds;
 
-    // Find the exam and question
-    const exam = await Exam.findById(req.params.id);
-    const question = await Question.findById(questionId);
+    // Find the exam
+    const exam = await Exam.findById(examId);
 
-    // Attach the question to the exam
-    exam.questions.push(question);
+    // Check if exam exists
+    if (!exam) {
+      return res.status(404).send("Exam not found");
+    }
+
+    // Find and attach the questions to the exam
+    const questions = await Question.find({ _id: { $in: questionIds } });
+
+    if (!questions) {
+      return res.status(404).send("Questions not found");
+    }
+
+    exam.questions.push(...questions);
     await exam.save();
 
-    res.redirect(`/exam/attach-question`);
+    res.redirect(`/exam/${examId}/attach-question`);
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");

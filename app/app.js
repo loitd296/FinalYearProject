@@ -47,6 +47,7 @@ mongoose
 app.set("views", path.join(__dirname, "../views"));
 
 // Create an instance of the express-handlebars engine
+// Create an instance of the express-handlebars engine
 const hbs = exphbs.create({
   extname: "hbs",
   defaultLayout: "main",
@@ -55,6 +56,11 @@ const hbs = exphbs.create({
   runtimeOptions: {
     allowProtoPropertiesByDefault: true,
     allowProtoMethodsByDefault: true,
+  },
+  helpers: {
+    inc: function (value) {
+      return parseInt(value) + 1;
+    },
   },
 });
 
