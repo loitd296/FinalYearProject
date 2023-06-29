@@ -220,7 +220,4 @@ exports.updateQuestion = AysncHandler(async (req, res) => {
     title: "Update Question",
     questions: questions,
   });
-  if (question && optionA && optionB && optionC && optionD && correctAnswer) {
-    res.redirect("/question/index");
-  }
 });
