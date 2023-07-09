@@ -11,6 +11,8 @@ const {
   renderAddQuestionForm,
   attachQuestionToExam,
   getMoreQuestions,
+  createExamForm,
+  createExamAuto,
 } = require("../../controller/academics/examsCtrl");
 const isTeacher = require("../../middlewares/isTeacher");
 const isTeacherLogin = require("../../middlewares/isTeacherLogin");
@@ -20,6 +22,9 @@ const examRouter = express.Router();
 examRouter.get("/createExam", isTeacherLogin, isTeacher, rendercreateExam);
 
 examRouter.post("/createExam", isTeacherLogin, isTeacher, createExam);
+
+examRouter.get("/create-exam", createExamForm);
+examRouter.post("/create-exam", createExamAuto);
 
 examRouter.get("/index", isTeacherLogin, isTeacher, getExams);
 

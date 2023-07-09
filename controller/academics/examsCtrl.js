@@ -1,4 +1,6 @@
-const AysncHandler = require("express-async-handler");
+const AsyncHandler = require("express-async-handler");
+const mongoose = require("mongoose");
+
 const Exam = require("../../model/Academic/Exam");
 const Teacher = require("../../model/Staff/Teacher");
 const Subject = require("../../model/Academic/Subject");
@@ -33,7 +35,7 @@ exports.rendercreateExam = async (req, res) => {
   }
 };
 
-exports.createExam = AysncHandler(async (req, res) => {
+exports.createExam = AsyncHandler(async (req, res) => {
   const {
     name,
     description,
@@ -100,7 +102,7 @@ exports.createExam = AysncHandler(async (req, res) => {
 //@route GET /api/v1/exams
 //@acess  Private
 
-exports.getExams = AysncHandler(async (req, res) => {
+exports.getExams = AsyncHandler(async (req, res) => {
   const exams = await Exam.find()
     .populate("academicYear", "name")
     .populate("academicTerm", "name")
@@ -115,7 +117,7 @@ exports.getExams = AysncHandler(async (req, res) => {
 //@route GET /api/v1/exams/:id
 //@acess  Private Teahers only
 
-exports.getExam = AysncHandler(async (req, res) => {
+exports.getExam = AsyncHandler(async (req, res) => {
   const exam = await Exam.findById(req.params.id)
     .populate("academicYear", "name")
     .populate("academicTerm", "name")
@@ -129,7 +131,7 @@ exports.getExam = AysncHandler(async (req, res) => {
   });
 });
 
-exports.searchExams = AysncHandler(async (req, res) => {
+exports.searchExams = AsyncHandler(async (req, res) => {
   try {
     const searchQuery = req.query.search;
     const exams = await Exam.find({
@@ -190,7 +192,7 @@ exports.renderUpdateExam = async (req, res) => {
   }
 };
 
-exports.updateExam = AysncHandler(async (req, res) => {
+exports.updateExam = AsyncHandler(async (req, res) => {
   const {
     name,
     description,
@@ -412,3 +414,97 @@ exports.attachQuestionToExam = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
+exports.createExamForm = async (req, res) => {
+  const categories = await Category.find({});
+  const subjects = await Subject.find();
+  const programs = await Program.find();
+  const academicTerms = await AcademicTerm.find();
+  const academicYears = await AcademicYear.find();
+  const classLevels = await ClassLevel.find();
+  res.render("exam/create-exam", {
+    categories: categories,
+    subjects,
+    programs,
+    academicYears,
+    academicTerms,
+    classLevels,
+  });
+};
+
+exports.createExamAuto = AsyncHandler(async (req, res) => {
+  let categories = Array.isArray(req.body.categories)
+    ? req.body.categories
+    : [req.body.categories];
+  categories = categories.map(
+    (category) => new mongoose.Types.ObjectId(category)
+  );
+
+  const numQuestions = parseInt(req.body.numQuestions);
+  const examDetails = req.body;
+  const teacherId = req.userAuth?.id; // Just get the id, don't try to find it yet
+  console.log(teacherId);
+
+  try {
+    // Now we find the teacher
+    const teacher = await Teacher.findOne({});
+    console.log(teacher);
+    // Check if the teacher was found
+    if (!teacher) {
+      return res.status(404).json({ error: "Teacher not found" });
+    }
+
+    let exam = await createExamWithCategories(
+      categories,
+      numQuestions,
+      examDetails,
+      teacher._id // Pass teacher._id directly
+    );
+
+    res.status(201).json({
+      status: "success",
+      message: "Exam created",
+      data: exam,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
+});
+
+async function createExamWithCategories(
+  categories,
+  numQuestions,
+  examDetails,
+  teacherId
+) {
+  const questions = await Question.aggregate([
+    { $match: { category: { $in: categories } } },
+    { $sample: { size: numQuestions } },
+  ]);
+
+  if (questions.length !== numQuestions) {
+    throw new Error("Not enough questions to create exam");
+  }
+
+  // Prepare exam details
+  const examData = {
+    ...examDetails,
+    createdBy: teacherId,
+    questions: questions.map((question) => question._id),
+  };
+
+  // Create new exam
+  const exam = new Exam(examData);
+
+  // Save the exam
+  await exam.save();
+
+  // Update the teacher's exams created
+  const teacher = await Teacher.findById(teacherId);
+  console.log(teacher);
+  teacher.examsCreated.push(exam._id);
+  await teacher.save();
+
+  return exam;
+}

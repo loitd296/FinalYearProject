@@ -1,18 +1,14 @@
 {{> header}}
 
 <div class="container">
+
   <h1>Create Exam</h1>
+  <form action="/exam/create-exam" method="POST">
+    <label for="name">Exam Name</label>
+    <input type="text" id="name" name="name" required />
 
-  <form action="/exam/createExam" method="POST">
-    <div class="form-group">
-      <label for="name">Name:</label>
-      <input type="text" class="form-control" id="name" name="name" required>
-    </div>
-
-    <div class="form-group">
-      <label for="description">Description:</label>
-      <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-    </div>
+    <label for="description">Description</label>
+    <textarea id="description" name="description" required></textarea>
 
     <div class="form-group">
       <label for="subject">Subject:</label>
@@ -34,14 +30,30 @@
 
     <div class="form-group">
       <label for="academicTerm">Academic Term:</label>
-      <select class="form-control" id="academicTerm" name="academicTerm" required>
+      <select
+        class="form-control"
+        id="academicTerm"
+        name="academicTerm"
+        required
+      >
         {{#each academicTerms}}
           <option value="{{this._id}}">{{this.name}}</option>
         {{/each}}
       </select>
     </div>
 
+    <label for="examTime">Exam Time</label>
+    <input type="text" id="examTime" name="examTime" required />
+
     <div class="form-group">
+      <label for="classLevel">Class Level:</label>
+      <select class="form-control" id="classLevel" name="classLevel" required>
+        {{#each classLevels}}
+          <option value="{{this._id}}">{{this.name}}</option>
+        {{/each}}
+      </select>
+    </div>
+        <div class="form-group">
       <label for="duration">Duration:</label>
       <input type="text" class="form-control" id="duration" name="duration" required>
     </div>
@@ -52,36 +64,30 @@
     </div>
 
     <div class="form-group">
-      <label for="examTime">Exam Time:</label>
-      <input type="time" class="form-control" id="examTime" name="examTime" required>
-    </div>
-
-    <div class="form-group">
-      <label for="examType">Exam Type:</label>
-      <input type="text" class="form-control" id="examType" name="examType" required>
-    </div>
-
-
-    <div class="form-group">
       <label for="academicYear">Academic Year:</label>
-      <select class="form-control" id="academicYear" name="academicYear" required>
+      <select
+        class="form-control"
+        id="academicYear"
+        name="academicYear"
+        required
+      >
         {{#each academicYears}}
           <option value="{{this._id}}">{{this.name}}</option>
         {{/each}}
       </select>
     </div>
+    <select id="categories" name="categories" multiple>
+      {{#each categories}}
+        <option value="{{this._id}}">{{this.name}}</option>
+      {{/each}}
+    </select>
 
-    <div class="form-group">
-      <label for="classLevel">Class Level:</label>
-      <select class="form-control" id="classLevel" name="classLevel" required>
-        {{#each classLevels}}
-          <option value="{{this._id}}">{{this.name}}</option>
-        {{/each}}
-      </select>
-    </div>
+    <label for="numQuestions">Number of Questions</label>
+    <input type="number" id="numQuestions" name="numQuestions" />
 
-    <button type="submit" class="btn btn-primary">Create Exam</button>
+    <!-- Add similar input fields for each of the examDetails fields -->
+
+    <input type="submit" value="Create Exam" />
   </form>
 </div>
 {{> footer}}
-
