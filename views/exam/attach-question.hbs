@@ -52,6 +52,7 @@
                 <button type="button" class="btn btn-outline-primary show-more-btn"
                   data-category-id="{{this.category._id}}" data-page="2">Show More</button>
               </div>
+              
               {{/if}}
             </div>
           </div>
@@ -95,15 +96,8 @@ showMoreButtons.forEach((button) => {
     const page = parseInt(button.getAttribute('data-page')) || 1;
 
     try {
-const response = await fetch(`/exam/{{exam._id}}/attach-question/more?categoryId=${categoryId}&page=${page}`);
-      
-      // Console log to inspect the status and full response
-      console.log("Response Status: ", response.status);
-      console.log("Full Response: ", response);
-
+      const response = await fetch(`/exam/{{exam._id}}/attach-question/more?categoryId=${categoryId}&page=${page}`);
       const data = await response.json();
-
-      console.log("JSON Response: ", data);  // Console log to inspect the JSON response
 
       data.questions.forEach((question) => {
         const questionHtml = `
@@ -112,6 +106,7 @@ const response = await fetch(`/exam/{{exam._id}}/attach-question/more?categoryId
             <label class="form-check-label" for="question_${question._id}">
               ${question.question}
             </label>
+            <a href="/question/${question._id}/update" class="btn btn-sm btn-primary">Edit</a>
           </div>
         `;
         questionsContainer.insertAdjacentHTML('beforeend', questionHtml);
@@ -127,5 +122,6 @@ const response = await fetch(`/exam/{{exam._id}}/attach-question/more?categoryId
     }
   });
 });
+
 
 </script>
