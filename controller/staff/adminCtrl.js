@@ -51,7 +51,7 @@ exports.adminLoginCtrl = AsyncHandler(async (req, res) => {
   const user = await Admin.findOne({ email });
   if (!user) {
     return res.render("admin/admin-login", {
-      message: "Invalid login credentials",
+      message: "Invalid log in credentials",
     });
   }
 
