@@ -110,7 +110,7 @@ exports.getExams = AsyncHandler(async (req, res) => {
     .populate("examType", "name")
     .populate("subject", "name")
     .populate("program", "name");
-  res.render("exam/index", { exams: exams });
+  res.render("exam/index", { exams: exams, loggedIn: res.locals.loggedIn });
 });
 
 //@desc  get single exam
@@ -128,6 +128,7 @@ exports.getExam = AsyncHandler(async (req, res) => {
   res.render("exam/exam", {
     title: "exam",
     exam: exam,
+    loggedIn: res.locals.loggedIn,
   });
 });
 

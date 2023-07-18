@@ -25,7 +25,11 @@ teachersRouter.post("/admin/register", isLogin, isAdmin, adminRegisterTeacher);
 
 teachersRouter.post("/login", loginTeacher);
 teachersRouter.get("/login", (req, res) => {
-  res.render("teacher/teacher-login", { title: "Admin Login" });
+  res.render("teacher/teacher-login", {
+    title: "Admin Login",
+    loggedIn: res.locals.loggedIn,
+    teacher: req.userAuth,
+  });
 });
 
 teachersRouter.get("/index", isLogin, isAdmin, getAllTeachersAdmin);

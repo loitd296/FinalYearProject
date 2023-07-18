@@ -22,6 +22,7 @@ const studentRouter = require("../routes/student/student");
 const questionRouter = require("../routes/academics/questionRoutes");
 const examResultRouter = require("../routes/academics/examResultRoute");
 const categoryRouter = require("../routes/academics/category");
+const isTeacher = require("../middlewares/isTeacher");
 
 const {
   globalErrHandler,
@@ -60,6 +61,9 @@ const hbs = exphbs.create({
   helpers: {
     inc: function (value) {
       return parseInt(value) + 1;
+    },
+    eq: function (v1, v2) {
+      return v1 === v2;
     },
   },
 });
@@ -111,6 +115,17 @@ app.use("/student", studentRouter);
 app.use("/question", questionRouter);
 app.use("/exam-result", examResultRouter);
 app.use("/category", categoryRouter);
+
+//
+// This is just an example. Your actual middleware might look different.
+app.use((req, res, next) => {
+  const token = req.cookies.token;
+  if (token) {
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    req.userAuth = decoded;
+  }
+  next();
+});
 
 // Error middlewares
 app.use(globalErrHandler);

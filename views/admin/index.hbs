@@ -224,7 +224,7 @@
 <script>
   // Convert data to arrays
   var studentNames = [];
-  var studentTotalGrades = [];
+  var studentTotalGr  ades = [];
 
   // Populate the arrays manually
   {{#each studentGrades}}
@@ -238,7 +238,7 @@
     datasets: [{
       label: 'Total Grades',
       data: studentTotalGrades,
-      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      backgroundColor: 'rgba(75, 192, 192, 0.6)',
       borderColor: 'rgba(75, 192, 192, 1)',
       borderWidth: 1
     }]
@@ -246,11 +246,24 @@
 
   // Chart configuration
   var chartConfig = {
-    type: 'polarArea',
+    type: 'bar',
     data: chartData,
     options: {
+      responsive: true,
       scales: {
+        x: {
+          display: true,
+          title: {
+            display: true,
+            text: 'Students'
+          }
+        },
         y: {
+          display: true,
+          title: {
+            display: true,
+            text: 'Total Grades'
+          },
           beginAtZero: true
         }
       }
@@ -259,8 +272,6 @@
 
   // Get chart canvas element and initialize the chart
   var topStudentsChart = new Chart(document.getElementById('topStudentsChart'), chartConfig);
-
-   
 </script>
 
 

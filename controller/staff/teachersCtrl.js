@@ -53,7 +53,7 @@ exports.loginTeacher = AysncHandler(async (req, res) => {
   if (isMatched) {
     // Generate JWT token
     const token = jwt.sign(
-      { _id: teacher._id.toString() },
+      { _id: teacher._id.toString(), role: "teacher" },
       process.env.SECRET_KEY
     );
 
