@@ -1,0 +1,21 @@
+{{> header}}
+
+<div class="content">
+  <h1>{{ title }}</h1>
+  <p>Are you sure you want to delete this Exam?</p>
+
+  <form action="/exam/{{ examId }}/delete" method="POST" id="deleteForm">
+    <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i> Delete</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById("deleteForm").addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevent the form from submitting immediately
+
+    if (confirm("Are you sure you want to delete this Exam?")) {
+      this.submit(); // Submit the form
+    }
+  });
+</script>
+{{> footer}}

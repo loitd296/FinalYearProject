@@ -248,6 +248,11 @@ exports.updateExam = AsyncHandler(async (req, res) => {
   });
 });
 
+exports.deleteExam = AsyncHandler(async (req, res) => {
+  await Exam.findByIdAndDelete(req.params.id);
+  res.redirect("/exam/index"); // Redirect to the list or any other desired page
+});
+
 // Controller function for rendering the add question page
 exports.renderAddQuestionPage = async (req, res) => {
   try {

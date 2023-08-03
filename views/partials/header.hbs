@@ -87,8 +87,15 @@
         <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
           <div class="navbar-nav font-weight-bold mx-auto py-0">
             <!-- ...Nav items... -->
-                        <a href="/student/take-exam" class="nav-item nav-link">Join Exam</a>
-
+            {{#if loggedIn}}
+            {{#if (eq teacher 'teacher')}}
+            <a href="/exam/index" class="nav-item nav-link">Exam</a>
+            <a href="/question/index" class="nav-item nav-link">Question</a>
+            {{else}}
+            <a href="/student/take-exam" class="nav-item nav-link">Join Exam</a>
+            {{/if}}
+            {{else}}
+            {{/if}}
           </div>
           <!-- Login/Logout Section -->
           <div class="navbar-nav font-weight-bold py-0 ml-auto">
