@@ -22,6 +22,7 @@ exports.rendercreateExam = async (req, res) => {
     const academicYears = await AcademicYear.find();
     const classLevels = await ClassLevel.find();
     const subjects = await Subject.find();
+    const teacher = await Teacher.findById(req.userAuth._id);
 
     res.render("exam/createExam", {
       programs,
@@ -29,6 +30,7 @@ exports.rendercreateExam = async (req, res) => {
       academicYears,
       classLevels,
       subjects,
+      teacher: teacher.role,
     });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch data" });
@@ -95,6 +97,7 @@ exports.createExam = AsyncHandler(async (req, res) => {
     status: "success",
     message: "Exam created",
     data: examCreated,
+    teacher: teacher.role,
   });
 });
 
@@ -110,7 +113,13 @@ exports.getExams = AsyncHandler(async (req, res) => {
     .populate("examType", "name")
     .populate("subject", "name")
     .populate("program", "name");
-  res.render("exam/index", { exams: exams, loggedIn: res.locals.loggedIn });
+  const teacher = await Teacher.findById(req.userAuth._id);
+
+  res.render("exam/index", {
+    exams: exams,
+    loggedIn: res.locals.loggedIn,
+    teacher: teacher.role,
+  });
 });
 
 //@desc  get single exam
@@ -125,10 +134,13 @@ exports.getExam = AsyncHandler(async (req, res) => {
     .populate("examType", "name")
     .populate("subject", "name")
     .populate("program", "name");
+  const teacher = await Teacher.findById(req.userAuth._id);
+
   res.render("exam/exam", {
     title: "exam",
     exam: exam,
     loggedIn: res.locals.loggedIn,
+    teacher: teacher.role,
   });
 });
 
@@ -144,9 +156,6 @@ exports.searchExams = AsyncHandler(async (req, res) => {
       .populate("examType", "name")
       .populate("subject", "name")
       .populate("program", "name");
-
-    console.log("Search Query:", searchQuery);
-    console.log("Search Results:", exams);
 
     res.render("exam/index", {
       title: "exam",
@@ -187,6 +196,7 @@ exports.renderUpdateExam = async (req, res) => {
       academicTerms,
       academicYears,
       classLevels,
+      teacher: teacher.role,
     });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch data" });
@@ -245,6 +255,7 @@ exports.updateExam = AsyncHandler(async (req, res) => {
   res.render("exam/updateExam", {
     title: "Update Exam",
     exam: examUpdated,
+    teacher: teacher.role,
   });
 });
 
@@ -258,7 +269,8 @@ exports.renderAddQuestionPage = async (req, res) => {
   try {
     const { examId } = req.params;
     const exam = await Exam.findById(examId);
-    res.render("exam/add-question", { exam });
+    const teacher = await Teacher.findById(req.userAuth._id);
+    res.render("exam/add-question", { exam, teacher: teacher.role });
   } catch (error) {
     console.error("Error rendering add question page:", error);
     res.status(500).send("Internal Server Error");
@@ -349,6 +361,7 @@ exports.renderAddQuestionForm = async (req, res) => {
         });
       }
     }
+    const teacher = await Teacher.findById(req.userAuth._id);
 
     res.render("exam/attach-question", {
       exam,
@@ -359,6 +372,7 @@ exports.renderAddQuestionForm = async (req, res) => {
       nextPage,
       paginationNumbers,
       searchQuery,
+      teacher: teacher.role,
     });
   } catch (error) {
     console.error(error);
@@ -428,6 +442,8 @@ exports.createExamForm = async (req, res) => {
   const academicTerms = await AcademicTerm.find();
   const academicYears = await AcademicYear.find();
   const classLevels = await ClassLevel.find();
+  const teacher = await Teacher.findById(req.userAuth._id);
+
   res.render("exam/create-exam", {
     categories: categories,
     subjects,
@@ -435,6 +451,7 @@ exports.createExamForm = async (req, res) => {
     academicYears,
     academicTerms,
     classLevels,
+    teacher: teacher.role,
   });
 };
 

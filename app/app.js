@@ -6,8 +6,10 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
-const Chart = require("chart.js");
+const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 
+// Import routers
 const userRouter = require("../routes/academics/userRouter");
 const adminRouter = require("../routes/staff/adminRouter");
 const academicYearRouter = require("../routes/academics/academicYear");
@@ -22,20 +24,21 @@ const studentRouter = require("../routes/student/student");
 const questionRouter = require("../routes/academics/questionRoutes");
 const examResultRouter = require("../routes/academics/examResultRoute");
 const categoryRouter = require("../routes/academics/category");
-const isTeacher = require("../middlewares/isTeacher");
 
+// Import middlewares
+const isTeacher = require("../middlewares/isTeacher");
 const {
   globalErrHandler,
   notFoundErr,
 } = require("../middlewares/globalErrorHandler");
-const mongoose = require("mongoose");
-const ExamResult = require("../model/Academic/ExamResults");
 
-const app = express();
+// Constants
+const mongoUrl = process.env.MONGO_URL;
+const secretKey = process.env.SECRET_KEY;
 
-// Set up mongoose connection
+// Connect to MongoDB
 mongoose
-  .connect(process.env.MONGO_URL, {
+  .connect(mongoUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
@@ -44,11 +47,9 @@ mongoose
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("Error connecting to MongoDB:", err));
 
-// Set the views directory
-app.set("views", path.join(__dirname, "../views"));
+const app = express();
 
-// Create an instance of the express-handlebars engine
-// Create an instance of the express-handlebars engine
+// Set up views directory and handlebars engine
 const hbs = exphbs.create({
   extname: "hbs",
   defaultLayout: "main",
@@ -59,12 +60,8 @@ const hbs = exphbs.create({
     allowProtoMethodsByDefault: true,
   },
   helpers: {
-    inc: function (value) {
-      return parseInt(value) + 1;
-    },
-    eq: function (v1, v2) {
-      return v1 === v2;
-    },
+    inc: (value) => parseInt(value) + 1,
+    eq: (v1, v2) => v1 === v2,
   },
 });
 
@@ -75,33 +72,40 @@ app.use(express.static("public"));
 app.engine("hbs", hbs.engine);
 app.set("view engine", "hbs");
 
-// Use body-parser middleware
+// Use middleware
+app.use(morgan("dev"));
+app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// Use cookie-parser middleware
 app.use(cookieParser());
 
 // Configure the session middleware
 app.use(
   session({
-    secret: process.env.SECRET_KEY,
+    secret: secretKey,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URL,
+      mongoUrl,
       collectionName: "sessions",
     }),
   })
 );
+app.get("/", (req, res) => {
+  res.redirect("/teacher/login"); // Redirect to the login page
+});
 
-// Middlewares
-app.use(morgan("dev"));
-app.use(express.json());
-app.get("/favicon.ico", (req, res) => res.status(204));
-app.use(cookieParser());
-// User Routes
+// Auth middleware - example using JWT
+app.use((req, res, next) => {
+  const token = req.cookies.token;
+  if (token) {
+    const decoded = jwt.verify(token, secretKey);
+    req.userAuth = decoded;
+  }
+  next();
+});
+
+// Register routers
 app.use("/", userRouter);
-
-// Admin Routes
 app.use("/admin", adminRouter);
 app.use("/academic-years", academicYearRouter);
 app.use("/academic-term", academicTermRouter);
@@ -115,17 +119,6 @@ app.use("/student", studentRouter);
 app.use("/question", questionRouter);
 app.use("/exam-result", examResultRouter);
 app.use("/category", categoryRouter);
-
-//
-// This is just an example. Your actual middleware might look different.
-app.use((req, res, next) => {
-  const token = req.cookies.token;
-  if (token) {
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
-    req.userAuth = decoded;
-  }
-  next();
-});
 
 // Error middlewares
 app.use(globalErrHandler);
