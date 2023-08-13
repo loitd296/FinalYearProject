@@ -10,6 +10,7 @@ const ClassLevel = require("../../model/Academic/ClassLevel");
 const AcademicTerm = require("../../model/Academic/AcademicTerm");
 const Question = require("../../model/Academic/Questions");
 const Category = require("../../model/Academic/Categories");
+const { calculatePageRange } = require("../../utils/paginationUtils");
 //@desc  Create Exam
 //@route POST /api/v1/exams
 //@acess Private  Teachers only
@@ -106,17 +107,55 @@ exports.createExam = AsyncHandler(async (req, res) => {
 //@acess  Private
 
 exports.getExams = AsyncHandler(async (req, res) => {
-  const exams = await Exam.find()
+  const { search, page } = req.query;
+  const limit = 10; // Number of categories to show per page
+  const currentPage = parseInt(page) || 1;
+
+  // Build the query based on the search term
+  const query = {};
+  if (search) {
+    query.name = { $regex: search, $options: "i" };
+  }
+
+  // Count the total number of categories matching the search filter
+  const totalExam = await Exam.countDocuments(query);
+
+  // Calculate the total number of pages based on the limit
+  const totalPages = Math.ceil(totalExam / limit);
+
+  // Calculate the range of page numbers to display
+  const range = 5;
+  const { startPage, endPage } = calculatePageRange(
+    currentPage,
+    totalPages,
+    range
+  );
+  const exams = await Exam.find(query)
     .populate("academicYear", "name")
     .populate("academicTerm", "name")
     .populate("classLevel", "name")
     .populate("examType", "name")
     .populate("subject", "name")
-    .populate("program", "name");
+    .populate("program", "name")
+    .skip((currentPage - 1) * limit)
+    .limit(limit);
   const teacher = await Teacher.findById(req.userAuth._id);
 
   res.render("exam/index", {
     exams: exams,
+    search,
+    currentPage,
+    totalPages,
+    currentPageEntries: exams.length,
+    totalEntries: totalExam,
+    hasPreviousPage: currentPage > 1,
+    previousPage: currentPage - 1,
+    hasNextPage: currentPage < totalPages,
+    nextPage: currentPage + 1,
+    pages: Array.from(
+      { length: endPage - startPage + 1 },
+      (_, i) => startPage + i
+    ),
     loggedIn: res.locals.loggedIn,
     teacher: teacher.role,
   });

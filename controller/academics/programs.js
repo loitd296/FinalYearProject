@@ -32,10 +32,50 @@ exports.createProgram = AsyncHandler(async (req, res) => {
 //@acess  Private
 
 exports.getPrograms = AsyncHandler(async (req, res) => {
-  const programs = await Program.find();
+  const { search, page } = req.query;
+  const limit = 10; // Number of categories to show per page
+  const currentPage = parseInt(page) || 1;
+
+  // Build the query based on the search term
+  const query = {};
+  if (search) {
+    query.name = { $regex: search, $options: "i" };
+  }
+
+  // Count the total number of categories matching the search filter
+  const totalPrograms = await Program.countDocuments(query);
+
+  // Calculate the total number of pages based on the limit
+  const totalPages = Math.ceil(totalPrograms / limit);
+
+  // Calculate the range of page numbers to display
+  const range = 5;
+  const { startPage, endPage } = calculatePageRange(
+    currentPage,
+    totalPages,
+    range
+  );
+
+  // Get the categories for the current page
+  const programs = await Program.find(query)
+    .skip((currentPage - 1) * limit)
+    .limit(limit);
   res.render("program/index", {
     title: "Program",
     Programs: programs,
+    search,
+    currentPage,
+    totalPages,
+    currentPageEntries: programs.length,
+    totalEntries: totalPrograms,
+    hasPreviousPage: currentPage > 1,
+    previousPage: currentPage - 1,
+    hasNextPage: currentPage < totalPages,
+    nextPage: currentPage + 1,
+    pages: Array.from(
+      { length: endPage - startPage + 1 },
+      (_, i) => startPage + i
+    ),
   });
 });
 

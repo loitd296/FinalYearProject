@@ -3,6 +3,7 @@ const Exam = require("../../model/Academic/Exam");
 const Question = require("../../model/Academic/Questions");
 const Category = require("../../model/Academic/Categories");
 const { calculatePageRange } = require("../../utils/paginationUtils");
+const Teacher = require("../../model/Staff/Teacher");
 
 //@desc  Create Question
 //@route POST /api/v1/questions/:examID
@@ -120,11 +121,15 @@ exports.getQuestions = AysncHandler(async (req, res) => {
       .skip((currentPage - 1) * limit)
       .limit(limit);
 
+    const teacher = await Teacher.findById(req.userAuth._id);
+
     res.render("question/index", {
       title: "Question List",
       questions,
       search,
       currentPage,
+      loggedIn: res.locals.loggedIn,
+      teacher: teacher.role,
       totalPages,
       currentPageEntries: questions.length,
       totalEntries: totalQuestions,

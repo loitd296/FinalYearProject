@@ -58,10 +58,49 @@ exports.searchYearGroups = asyncHandler(async (req, res) => {
 //@acess  Private
 
 exports.getYearGroups = asyncHandler(async (req, res) => {
-  const yearGroup = await YearGroup.find().populate("academicYear", "name");
+  const { search, page } = req.query;
+  const limit = 10; // Number of categories to show per page
+  const currentPage = parseInt(page) || 1;
+
+  // Build the query based on the search term
+  const query = {};
+  if (search) {
+    query.name = { $regex: search, $options: "i" };
+  }
+
+  // Count the total number of categories matching the search filter
+  const totalYearGroups = await YearGroup.countDocuments(query);
+
+  // Calculate the total number of pages based on the limit
+  const totalPages = Math.ceil(totalYearGroups / limit);
+
+  // Calculate the range of page numbers to display
+  const range = 5;
+  const { startPage, endPage } = calculatePageRange(
+    currentPage,
+    totalPages,
+    range
+  );
+  const yearGroup = await YearGroup.find(query)
+    .populate("academicYear", "name")
+    .skip((currentPage - 1) * limit)
+    .limit(limit);
   res.render("year-group/index", {
     title: "Subject",
     yearGroup: yearGroup,
+    search,
+    currentPage,
+    totalPages,
+    currentPageEntries: yearGroup.length,
+    totalEntries: totalYearGroups,
+    hasPreviousPage: currentPage > 1,
+    previousPage: currentPage - 1,
+    hasNextPage: currentPage < totalPages,
+    nextPage: currentPage + 1,
+    pages: Array.from(
+      { length: endPage - startPage + 1 },
+      (_, i) => startPage + i
+    ),
   });
 });
 

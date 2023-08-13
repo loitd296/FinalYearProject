@@ -62,13 +62,53 @@ exports.searchSubject = asyncHandler(async (req, res) => {
 //@acess  Private
 
 exports.getSubjects = asyncHandler(async (req, res) => {
-  const subjects = await Subject.find()
+  const { search, page } = req.query;
+  const limit = 10; // Number of categories to show per page
+  const currentPage = parseInt(page) || 1;
+
+  // Build the query based on the search term
+  const query = {};
+  if (search) {
+    query.name = { $regex: search, $options: "i" };
+  }
+
+  // Count the total number of categories matching the search filter
+  const totalSubjects = await Subject.countDocuments(query);
+
+  // Calculate the total number of pages based on the limit
+  const totalPages = Math.ceil(totalSubjects / limit);
+
+  // Calculate the range of page numbers to display
+  const range = 5;
+  const { startPage, endPage } = calculatePageRange(
+    currentPage,
+    totalPages,
+    range
+  );
+
+  // Get the categories for the current page
+  const subjects = await Subject.find(query)
     .populate("program", "name") // Populate the 'program' field with the 'name' property
-    .populate("academicTerm", "name"); // Populate the 'academicTerm' field with the 'name' property
+    .populate("academicTerm", "name") // Populate the 'academicTerm' field with the 'name' property
+    .skip((currentPage - 1) * limit)
+    .limit(limit);
 
   res.render("subject/index", {
     title: "Subject",
     subjects: subjects,
+    search,
+    currentPage,
+    totalPages,
+    currentPageEntries: subjects.length,
+    totalEntries: totalSubjects,
+    hasPreviousPage: currentPage > 1,
+    previousPage: currentPage - 1,
+    hasNextPage: currentPage < totalPages,
+    nextPage: currentPage + 1,
+    pages: Array.from(
+      { length: endPage - startPage + 1 },
+      (_, i) => startPage + i
+    ),
   });
 });
 

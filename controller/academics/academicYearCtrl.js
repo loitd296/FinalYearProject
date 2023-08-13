@@ -38,14 +38,51 @@ exports.createAcademicYear = async (req, res) => {
 //@route GET /api/v1/academic-years
 //@acess  Private
 exports.getAcademicYears = async (req, res) => {
-  const academicYears = await AcademicYear.find().select(
-    "name fromYear toYear createdBy createdAt"
+  const { search, page } = req.query;
+  const limit = 10; // Number of categories to show per page
+  const currentPage = parseInt(page) || 1;
+
+  // Build the query based on the search term
+  const query = {};
+  if (search) {
+    query.name = { $regex: search, $options: "i" };
+  }
+
+  // Count the total number of categories matching the search filter
+  const totalAcademicYears = await AcademicYear.countDocuments(query);
+
+  // Calculate the total number of pages based on the limit
+  const totalPages = Math.ceil(totalAcademicYears / limit);
+
+  // Calculate the range of page numbers to display
+  const range = 5;
+  const { startPage, endPage } = calculatePageRange(
+    currentPage,
+    totalPages,
+    range
   );
-  console.log(academicYears);
+
+  // Get the categories for the current page
+  const academicYears = await AcademicYear.find(query)
+    .skip((currentPage - 1) * limit)
+    .limit(limit);
 
   res.render("academic-years/index", {
     title: "Academic Years",
     academicYears: academicYears,
+    search,
+    currentPage,
+    totalPages,
+    currentPageEntries: academicYears.length,
+    totalEntries: totalAcademicYears,
+    hasPreviousPage: currentPage > 1,
+    previousPage: currentPage - 1,
+    hasNextPage: currentPage < totalPages,
+    nextPage: currentPage + 1,
+    pages: Array.from(
+      { length: endPage - startPage + 1 },
+      (_, i) => startPage + i
+    ),
   });
 };
 //@desc  get single Academic Year
