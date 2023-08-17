@@ -15,6 +15,7 @@ const {
   adminUnpublishExam,
   deleteAdmin,
   renderDashboard,
+  renderChart,
 } = require("../../controller/staff/adminCtrl");
 const isAdmin = require("../../middlewares/isAdmin");
 const isLogin = require("../../middlewares/isLogin");

@@ -59,6 +59,7 @@ exports.getCategories = AsyncHandler(async (req, res) => {
     const categories = await Category.find(query)
       .skip((currentPage - 1) * limit)
       .limit(limit);
+    const teacher = await Teacher.findById(req.userAuth._id);
 
     res.render("category/index", {
       title: "Category List",
@@ -76,6 +77,8 @@ exports.getCategories = AsyncHandler(async (req, res) => {
         { length: endPage - startPage + 1 },
         (_, i) => startPage + i
       ),
+      loggedIn: res.locals.loggedIn,
+      teacher: teacher.role,
     });
   } catch (err) {
     console.error("Error retrieving categories:", err);
@@ -101,10 +104,12 @@ exports.getCategories = AsyncHandler(async (req, res) => {
 //@acess  Private
 exports.getCategory = AsyncHandler(async (req, res) => {
   const category = await Category.findById(req.params.id);
+  const teacher = await Teacher.findById(req.userAuth._id);
 
   res.render("category/category", {
     title: "Academic Term",
     category: category,
+    teacher: teacher.role,
   });
 });
 
@@ -147,13 +152,12 @@ exports.updateCategory = async (req, res) => {
       { new: true }
     );
 
-    // Render the template and pass the academicTerm data to it
-    // Change the template name to "updateAcademicTerms" instead of "academic-term/updateAcademicTerms"
-    //push academic into admin
+    const teacher = await Teacher.findById(req.userAuth._id);
 
     res.render("category/updateCategory", {
       title: "Update Academic Term",
       category: category,
+      teacher: teacher.role,
     });
     if (name) {
       res.redirect("/category/index");

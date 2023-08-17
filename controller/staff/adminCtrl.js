@@ -357,7 +357,15 @@ exports.renderDashboard = async (req, res) => {
     const examNames = examPerformanceData.map((exam) => exam.examName);
     const averageScores = examPerformanceData.map((exam) => exam.averageScore);
 
-    console.log(examNames, averageScores);
+    // Fetch data for the chart
+    const academicYears = await AcademicYear.find({}, "name"); // Fetch academic year names
+    const studentCounts = await Promise.all(
+      academicYears.map(async (year) => {
+        const count = await Student.countDocuments({ academicYear: year._id });
+        return count;
+      })
+    );
+    console.log(studentCounts);
 
     res.render("admin/index", {
       adminCount,
@@ -369,6 +377,8 @@ exports.renderDashboard = async (req, res) => {
       studentTotalGrades,
       examNames,
       averageScores,
+      academicYearNames: academicYears.map((year) => year.name),
+      studentCounts,
       title: "Admin Dashboard",
       loggedIn: res.locals.loggedIn,
     });

@@ -18,6 +18,7 @@ academicYearRouter.post(
   isAdmin,
   createAcademicYear
 );
+
 academicYearRouter.get("/createAcademicYear", (req, res) => {
   res.render("academic-years/createAcademicYear", { title: "Create" });
 });

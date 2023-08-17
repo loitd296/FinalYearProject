@@ -98,8 +98,16 @@ app.get("/", (req, res) => {
 app.use((req, res, next) => {
   const token = req.cookies.token;
   if (token) {
-    const decoded = jwt.verify(token, secretKey);
-    req.userAuth = decoded;
+    try {
+      const decoded = jwt.verify(token, secretKey);
+      req.userAuth = decoded;
+    } catch (err) {
+      console.error("Token Verification Error:", err);
+      if (err.name === "TokenExpiredError") {
+        return res.redirect("/teacher/login");
+      }
+      return next(err);
+    }
   }
   next();
 });

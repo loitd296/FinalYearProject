@@ -16,7 +16,7 @@
             </div>
             <div class="col-7 col-md-8">
               <div class="numbers">
-                <p class="card-category">Admin</p>
+                <p class="card-category">Admin {{academicYearNames}}</p>
                 <p class="card-title">{{adminCount}}</p>
 
               </div>
@@ -129,15 +129,15 @@
     </div>
   </div>
 
-  <!-- Chart -->
+<!-- Chart -->
 <div class="row">
   <div class="col-md-12">
     <div class="card">
       <div class="card-header">
-        <h5 class="card-title">Exam Performance</h5>
+        <h5 class="card-title">Student Counts By AcademicYear</h5>
       </div>
       <div class="card-body">
-        <canvas id="examPerformanceChart" width="400" height="200"></canvas>
+        <canvas id="StudentCountsByAcademicYear" width="400" height="200"></canvas>
       </div>
     </div>
   </div>
@@ -224,7 +224,7 @@
 <script>
   // Convert data to arrays
   var studentNames = [];
-  var studentTotalGr  ades = [];
+  var studentTotalGrades = [];
 
   // Populate the arrays manually
   {{#each studentGrades}}
@@ -272,7 +272,64 @@
 
   // Get chart canvas element and initialize the chart
   var topStudentsChart = new Chart(document.getElementById('topStudentsChart'), chartConfig);
+
+
+  
 </script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Convert data to arrays
+    var academicYearNames = {{academicYearNames}}; // Unescaped JSON
+    var studentCounts = {{studentCounts}}; // Unescaped JSON
+
+    // Convert data to chart dataset
+    var chartData = {
+      labels: academicYearNames,
+      datasets: [{
+        label: 'Number of Students',
+        data: studentCounts,
+        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+      }]
+    };
+
+    // Chart configuration for StudentCountsByAcademicYear
+    var chartConfigStudentCounts = {
+      type: 'bar',
+      data: chartData,
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Academic Year'
+            }
+          },
+          y: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Number of Students'
+            },
+            beginAtZero: true
+          }
+        }
+      }
+    };
+
+    // Get chart canvas element and initialize the chart
+    var ctx = document.getElementById('StudentCountsByAcademicYear').getContext('2d');
+    var StudentCountsByAcademicYear = new Chart(ctx, chartConfigStudentCounts);
+  });
+</script>
+
+
+
+
 
 
 

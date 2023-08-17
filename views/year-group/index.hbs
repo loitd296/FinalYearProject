@@ -15,17 +15,16 @@
                                     <input type="text" name="search" class="form-control form-control-sm flex-fill"
                                         placeholder="Search">
                                     <div class="input-group-append">
-                                        <button type="submit" class="btn btn-primary btn-sm">Search</button>
+                                        <button type="submit" class="btn btn-primary btn-sm"
+                                            style="margin-left: 10px;">Search</button>
                                     </div>
                                 </div>
                             </form>
                         </div>
-                        <div class="col-sm-9 col-xs-12 text-right">
+                        <div class="col-sm-12 col-xs-12 text-right">
                             <div class="btn_group text-right">
-                                <button class="btn btn-default" title="Create">
-                                    <a href="/year-group/createYearGroup" class="btn btn-primary"><i
-                                            class="fas fa-plus"></i></a>
-                                </button>
+                                <a href="/year-group/createYearGroup" class="btn btn-default"
+                                    style="margin-left: 10px;"><i class="fas fa-plus"></i></a>
                                 <button class="btn btn-default" title="Pdf"><i class="fa fa-file-pdf"></i></button>
                                 <button class="btn btn-default" title="Excel"><i class="fas fa-file-excel"></i></button>
                             </div>
@@ -68,10 +67,11 @@
                         </tbody>
                     </table>
                 </div>
-               <div class="panel-footer">
+                <div class="panel-footer">
                     <div class="row">
                         <div class="col col-sm-6 col-xs-6">showing <b>{{currentPageEntries}}</b> out of
-                            <b>{{totalEntries}}</b> entries</div>
+                            <b>{{totalEntries}}</b> entries
+                        </div>
                         <div class="col-sm-6 col-xs-6">
                             <ul class="pagination hidden-xs pull-right">
                                 {{#if hasPreviousPage}}
@@ -80,11 +80,11 @@
                                 {{#each pages}}
                                 <li{{#if current}} class="active" {{/if}}><a
                                         href="/year-group/index?page={{this}}&search={{search}}">{{this}}</a></li>
-                                {{/each}}       
-                                {{#if hasNextPage}}
-                                <li><a href="/year-group/index?page={{nextPage}}&search={{search}}">&gt;</a></li>
+                                    {{/each}}
+                                    {{#if hasNextPage}}
+                                    <li><a href="/year-group/index?page={{nextPage}}&search={{search}}">&gt;</a></li>
 
-                                {{/if}}
+                                    {{/if}}
                             </ul>
                         </div>
                     </div>

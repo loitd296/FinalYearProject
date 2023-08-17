@@ -178,8 +178,11 @@ exports.searchQuestions = AysncHandler(async (req, res) => {
 //@acess  Private
 exports.getQuestion = AysncHandler(async (req, res) => {
   const question = await Question.findById(req.params.id);
+  const teacher = await Teacher.findById(req.userAuth._id);
+
   res.render("question/question", {
     data: question,
+    teacher: teacher.role,
   });
 });
 
@@ -220,9 +223,18 @@ exports.updateQuestion = AysncHandler(async (req, res) => {
       new: true,
     }
   );
+  const teacher = await Teacher.findById(req.userAuth._id);
 
   res.render("question/updateQuestion", {
     title: "Update Question",
     questions: questions,
+    teacher: teacher.role,
   });
+});
+
+exports.deleteQuestion = AysncHandler(async function (req, res) {
+  const teacher = await Teacher.findById(req.userAuth._id);
+
+  await Question.findByIdAndDelete(req.params.id);
+  res.redirect("/question/index"); // Redirect to the class levels list or any other desired page
 });

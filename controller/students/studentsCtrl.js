@@ -30,11 +30,7 @@ exports.adminRegisterStudent = AsyncHandler(async (req, res) => {
     password: hashedPassword,
   });
   //send student data
-  res.status(201).json({
-    status: "success",
-    message: "Student registered successfully",
-    data: studentRegistered,
-  });
+  res.redirect("/student/index");
 });
 
 //@desc    login  student
