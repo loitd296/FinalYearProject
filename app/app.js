@@ -31,6 +31,7 @@ const {
   globalErrHandler,
   notFoundErr,
 } = require("../middlewares/globalErrorHandler");
+const notAllowLoginPage = require("../middlewares/notAllowLoginPage");
 
 // Constants
 const mongoUrl = process.env.MONGO_URL;
@@ -128,6 +129,8 @@ app.use("/question", questionRouter);
 app.use("/exam-result", examResultRouter);
 app.use("/category", categoryRouter);
 
+// Use the notAllowLoginPage middleware after registering the routers
+app.use(notAllowLoginPage);
 // Error middlewares
 app.use(globalErrHandler);
 app.use(notFoundErr);

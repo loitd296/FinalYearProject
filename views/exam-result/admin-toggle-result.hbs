@@ -1,0 +1,8 @@
+{{>header}}
+<h1>Admin Toggle Exam Result</h1>
+  <form action="/exam-results/{{ examResult._id }}/admin-toggle-publish" method="POST">
+    <label for="publish">Publish Result:</label>
+    <input type="checkbox" id="publish" name="publish" {{#if examResult.isPublished}}checked{{/if}}>
+    <button type="submit">Toggle Publish</button>
+  </form>
+

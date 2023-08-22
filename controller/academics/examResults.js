@@ -28,6 +28,7 @@ exports.checkExamResults = AysncHandler(async (req, res) => {
     .populate("academicTerm")
     .populate("academicYear");
   //check if exam is published
+  console.log(examResult);
   if (examResult?.isPublished === false) {
     throw new Error("Exam result is not available, check out later");
   }

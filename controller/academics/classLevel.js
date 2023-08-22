@@ -100,7 +100,7 @@ exports.searchClassLevels = AsyncHandler(async (req, res, next) => {
     });
     res.render("class-level/index", {
       title: "Class Levels",
-      classes: classes,
+      classLevels: classes,
     });
   } catch (error) {
     console.error("Error in searchClassLevels:", error);

@@ -165,7 +165,7 @@ exports.adminUpdateStudent = AsyncHandler(async (req, res) => {
   const { classLevel, academicYear, program, name, email, prefectName } =
     req.body;
 
-  //find the student by id
+  // Find the student by id
   const studentFound = await Student.findById(req.params.id);
   if (!studentFound) {
     throw new Error("Student not found");
@@ -176,63 +176,28 @@ exports.adminUpdateStudent = AsyncHandler(async (req, res) => {
   const classLevels = await ClassLevel.find();
   const academicYears = await AcademicYear.find();
 
+  // Update student data if provided
   if (name) {
     studentFound.name = name;
-    await studentFound.save();
-    res.status(200).json({
-      status: "success",
-      data: studentFound,
-      message: "Student updated successfully",
-    });
   }
   if (email) {
     studentFound.email = email;
-    await studentFound.save();
-    res.status(200).json({
-      status: "success",
-      data: studentFound,
-      message: "Student updated successfully",
-    });
   }
   if (prefectName) {
     studentFound.prefectName = prefectName;
-    await studentFound.save();
-    res.status(200).json({
-      status: "success",
-      data: studentFound,
-      message: "Student updated successfully",
-    });
   }
-
   if (program) {
     studentFound.program = program;
-    await studentFound.save();
-    res.status(200).json({
-      status: "success",
-      data: studentFound,
-      message: "Student updated successfully",
-    });
   }
-  //assign Class level
   if (classLevel) {
-    studentFound.classLevel = classLevel;
-    await studentFound.save();
-    res.status(200).json({
-      status: "success",
-      data: studentFound,
-      message: "Student updated successfully",
-    });
+    studentFound.classLevels = classLevel;
   }
-  //assign Academic year
   if (academicYear) {
     studentFound.academicYear = academicYear;
-    await studentFound.save();
-    res.status(200).json({
-      status: "success",
-      data: studentFound,
-      message: "Student updated successfully",
-    });
   }
+
+  // Save the updated student data
+  await studentFound.save();
   //send response
   res.render("student/admin-update-student", {
     programs,

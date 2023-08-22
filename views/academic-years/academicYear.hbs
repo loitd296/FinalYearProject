@@ -1,55 +1,35 @@
+
 {{> header_admin}}
 
-<style>
-    .content {
-        background-color: #f7fafc;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    h1 {
-        color: rgba(0, 0, 0, 0.836);
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 20px;
-    }
-
-    p {
-        font-size: 16px;
-        margin-bottom: 10px;
-    }
-
-    .action-buttons {
-        display: flex;
-        justify-content: space-evenly;
-    }
-</style>
 <div class="content">
   <div class="container mt-4">
-    <h1>Academic Year</h1>
+    <h2>Academic Term Details</h2>
     <table class="table table-striped">
-      <thead class="thead-dark">
-        <tr>
-          <th>Name</th>
-          <th>From Year</th>
-          <th>To Year</th>
-          <th>Created By</th>
-          <th>Created At</th>
-        </tr>
-      </thead>
       <tbody>
         <tr>
+          <th>Name</th>
           <td>{{academicYear.name}}</td>
+        </tr>
+        <tr>
+          <th>From Year</th>
           <td>{{academicYear.fromYear}}</td>
+        </tr>
+        <tr>
+          <th>To Year</th>
           <td>{{academicYear.toYear}}</td>
+        </tr>
+        <tr>
+          <th>Created By</th>
           <td>{{academicYear.createdBy}}</td>
+        </tr>
+        <tr>
+          <th>Created At</th>
           <td>{{academicYear.createdAt}}</td>
         </tr>
-      </tbody>
       <a href="/academic-years/index" class="btn btn-primary"> Back</i></a>
 
+        <!-- Additional rows if needed -->
+      </tbody>
     </table>
   </div>
 </div>

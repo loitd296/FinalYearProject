@@ -6,24 +6,24 @@
     <form action="/student/{{studentFound._id}}/update" method="POST">
         <div class="form-group">
             <label for="name">Name:</label>
-            <input type="text" id="name" name="name" value="{{student.name}}" class="form-control" />
+            <input type="text" id="name" name="name" value="{{studentFound.name}}" class="form-control" />
         </div>
 
         <div class="form-group">
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email" value="{{student.email}}" class="form-control" />
+            <input type="email" id="email" name="email" value="{{studentFound.email}}" class="form-control" />
         </div>
 
         <div class="form-group">
             <label for="prefectName">Prefect Name:</label>
-            <input type="text" id="prefectName" name="prefectName" value="{{student.prefectName}}" class="form-control" />
+            <input type="text" id="prefectName" name="prefectName" value="{{studentFound.prefectName}}" class="form-control" />
         </div>
 
         <div class="form-group">
             <label for="program">Program:</label>
             <select id="program" name="program" class="form-control">
                 {{#each programs}}
-                <option value="{{this._id}}" {{#if (equals this._id student.program)}}selected{{/if}}>{{this.name}}</option>
+                <option value="{{this._id}}" {{#if (equals this._id studentFound.program)}}selected{{/if}}>{{this.name}}</option>
                 {{/each}}
             </select>
         </div>
@@ -32,7 +32,7 @@
             <label for="classLevel">Class Level:</label>
             <select id="classLevel" name="classLevel" class="form-control">
                 {{#each classLevels}}
-                <option value="{{this._id}}" {{#if (equals this._id student.classLevel)}}selected{{/if}}>{{this.name}}</option>
+                <option value="{{this._id}}" {{#if (equals this._id studentFound.classLevels)}}selected{{/if}}>{{this.name}}</option>
                 {{/each}}
             </select>
         </div>
@@ -41,7 +41,7 @@
             <label for="academicYear">Academic Year:</label>
             <select id="academicYear" name="academicYear" class="form-control">
                 {{#each academicYears}}
-                <option value="{{this._id}}" {{#if (equals this._id student.academicYear)}}selected{{/if}}>{{this.name}}</option>
+                <option value="{{this._id}}" {{#if (equals this._id studentFound.academicYear)}}selected{{/if}}>{{this.name}}</option>
                 {{/each}}
             </select>
         </div>

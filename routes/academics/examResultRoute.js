@@ -8,6 +8,7 @@ const isAdmin = require("../../middlewares/isAdmin");
 const isLogin = require("../../middlewares/isLogin");
 const isStudent = require("../../middlewares/isStudent");
 const isStudentLogin = require("../../middlewares/isStudentLogin");
+const ExamResult = require("../../model/Academic/ExamResults");
 
 const examResultRouter = express.Router();
 
@@ -25,6 +26,21 @@ examResultRouter.get(
   isStudent,
   checkExamResults
 );
+examResultRouter.get(
+  "/:id/admin-toggle-publish",
+  isLogin,
+  isAdmin,
+  async (req, res) => {
+    const examResult = await ExamResult.findById(req.params.id);
+    if (!examResult) {
+      throw new Error("Exam result not found");
+    }
+
+    res.render("exam-result/admin-toggle-result", { examResult });
+  }
+);
+
+// Use the adminToggleExamResult controller function for updating
 examResultRouter.put(
   "/:id/admin-toggle-publish",
   isLogin,
