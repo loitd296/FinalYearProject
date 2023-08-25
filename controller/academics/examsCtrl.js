@@ -52,6 +52,7 @@ exports.createExam = AsyncHandler(async (req, res) => {
     createdBy,
     academicYear,
     classLevel,
+    accessKey,
   } = req.body;
   // Find teacher
   const teacherFound = await Teacher.findById(req.userAuth?._id);
@@ -78,13 +79,13 @@ exports.createExam = AsyncHandler(async (req, res) => {
     program: programExists._id,
     academicTerm,
     duration,
-
     academicYear,
     classLevel,
     createdBy,
     examDate,
     examTime,
     examType,
+    accessKey,
     createdBy: req.userAuth?._id,
   });
 
@@ -98,7 +99,7 @@ exports.createExam = AsyncHandler(async (req, res) => {
     status: "success",
     message: "Exam created",
     data: examCreated,
-    teacher: teacher.role,
+    teacher: teacherFound.role,
   });
 });
 
@@ -564,7 +565,6 @@ async function createExamWithCategories(
 
   // Update the teacher's exams created
   const teacher = await Teacher.findById(teacherId);
-  console.log(teacher);
   teacher.examsCreated.push(exam._id);
   await teacher.save();
 

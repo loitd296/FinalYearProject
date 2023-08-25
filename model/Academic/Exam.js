@@ -90,6 +90,10 @@ const examSchema = new Schema(
       ref: "AcademicYear",
       required: true,
     },
+    accessKey: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );

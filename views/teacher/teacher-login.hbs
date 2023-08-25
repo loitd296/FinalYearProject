@@ -5,17 +5,19 @@
     <div class="col-lg-6">
       <div class="content text-center">
         <h1>Teacher Login</h1>
-        <form action="/teacher/login" method="POST">
+        <form action="/teacher/login" method="POST" onsubmit="return validateForm()">
           <div class="form-group row">
             <label for="email" class="col-sm-2 col-form-label">Email:</label>
             <div class="col-sm-10">
               <input type="email" name="email" class="form-control" required />
+              <div class="error-message" id="email-error"></div>
             </div>
           </div>
           <div class="form-group row">
             <label for="password" class="col-sm-2 col-form-label">Password:</label>
             <div class="col-sm-10">
               <input type="password" name="password" class="form-control" required />
+              <div class="error-message" id="password-error"></div>
             </div>
           </div>
           <div class="form-group row">
@@ -39,3 +41,28 @@
 </div>
 
 {{> footer}}
+<script>
+function validateForm() {
+  var email = document.querySelector('input[name="email"]').value;
+  var password = document.querySelector('input[name="password"]').value;
+  var isValid = true;
+
+  var emailError = document.querySelector('#email-error');
+  var passwordError = document.querySelector('#password-error');
+
+  emailError.textContent = "";
+  passwordError.textContent = "";
+
+  if (email === "") {
+    emailError.textContent = "Please enter your email.";
+    isValid = false;
+  }
+
+  if (password === "") {
+    passwordError.textContent = "Please enter your password.";
+    isValid = false;
+  }
+
+  return isValid;
+}
+</script>

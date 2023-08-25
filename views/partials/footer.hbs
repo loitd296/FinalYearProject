@@ -60,6 +60,30 @@
 <a href="#" class="btn btn-primary p-3 back-to-top"><i class="fa fa-angle-double-up"></i></a>
 
 
+<script>
+function validateForm() {
+  var email = document.querySelector('input[name="email"]').value;
+  var password = document.querySelector('input[name="password"]').value;
+  var isValid = true;
+
+  if (email === "") {
+    document.querySelector('#email-error').textContent = "Please enter your email.";
+    isValid = false;
+  } else {
+    document.querySelector('#email-error').textContent = "";
+  }
+
+  if (password === "") {
+    document.querySelector('#password-error').textContent = "Please enter your password.";
+    isValid = false;
+  } else {
+    document.querySelector('#password-error').textContent = "";
+  }
+
+  return isValid;
+}
+</script>
+
 <!-- JavaScript Libraries -->
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
@@ -74,7 +98,6 @@
 
 <!-- Template Javascript -->
 <script src="/js/main.js"></script>
-
 
 </body>
 </html>

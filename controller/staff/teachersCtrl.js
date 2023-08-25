@@ -46,7 +46,7 @@ exports.loginTeacher = AysncHandler(async (req, res) => {
   //find the  user
   const teacher = await Teacher.findOne({ email });
   if (!teacher) {
-    return res.json({ message: "Invalid login crendentials" });
+    return res.redirect("/teacher/login");
   }
   //verify the password
   const isMatched = await isPassMatched(password, teacher.password);
@@ -117,58 +117,44 @@ exports.getTeacherProfile = AysncHandler(async (req, res) => {
 //@route    UPDATE /api/v1/teachers/:teacherID/update
 //@access   Private Teacher only
 
-exports.teacherUpdateProfile = AysncHandler(async (req, res) => {
+exports.teacherUpdateProfile = async (req, res) => {
   const { email, name, password } = req.body;
+  const userId = req.userAuth._id;
 
-  // Check if email is taken
-  const emailExist = await Teacher.findOne({ email });
-  if (emailExist) {
-    throw new Error("This email is taken/exist");
-  }
-
-  // Hash password if provided
-  if (password) {
-    // Update profile with password
-    const teacher = await Teacher.findByIdAndUpdate(
-      req.userAuth._id,
-      {
-        email,
-        password: await hashPassword(password),
-        name,
-      },
-      {
-        new: true,
-        runValidators: true,
+  try {
+    // Check if the email is being changed and if it's already taken
+    if (email !== req.userAuth.email) {
+      const emailExists = await Teacher.exists({ email });
+      if (emailExists) {
+        throw new Error("This email is already taken.");
       }
-    );
+    }
+
+    // Prepare update data
+    const updateData = { email, name };
+    if (password) {
+      updateData.password = await hashPassword(password);
+    }
+
+    // Update the profile
+    const updatedTeacher = await Teacher.findByIdAndUpdate(userId, updateData, {
+      new: true,
+      runValidators: true,
+    });
+
+    // Render the updated profile
     res.render("teacher/teacher-profile", {
-      data: teacher,
+      data: updatedTeacher,
       myMiddlewareProperty: res.locals.isTeacher,
       loggedIn: res.locals.loggedIn,
-      teacher: teacher.userAuth,
+      teacher: updatedTeacher.role,
     });
-  } else {
-    // Update profile without password
-    const teacher = await Teacher.findByIdAndUpdate(
-      req.userAuth._id,
-      {
-        email,
-        name,
-      },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-
-    res.render("teacher/teacher-profile", {
-      data: teacher,
-      loggedIn: res.locals.loggedIn,
-      myMiddlewareProperty: res.locals.isTeacher,
-      teacher: teacher.role,
-    });
+  } catch (error) {
+    // Handle errors and provide appropriate response
+    console.error(error);
+    res.status(400).send(error.message);
   }
-});
+};
 
 //@desc     Admin updating Teacher profile
 //@route    UPDATE /api/v1/teachers/:teacherID/admin
@@ -196,44 +182,28 @@ exports.adminUpdateTeacher = AysncHandler(async (req, res) => {
   if (program) {
     teacherFound.program = program;
     await teacherFound.save();
-    res.status(200).json({
-      status: "success",
-      data: teacherFound,
-      message: "Teacher updated successfully",
-    });
+    res.redirect("/teacher/index");
   }
 
   //assign Class level
   if (classLevel) {
     teacherFound.classLevel = classLevel;
     await teacherFound.save();
-    res.status(200).json({
-      status: "success",
-      data: teacherFound,
-      message: "Teacher updated successfully",
-    });
+    res.redirect("/teacher/index");
   }
 
   //assign Academic year
   if (academicYear) {
     teacherFound.academicYear = academicYear;
     await teacherFound.save();
-    res.status(200).json({
-      status: "success",
-      data: teacherFound,
-      message: "Teacher updated successfully",
-    });
+    res.redirect("/teacher/index");
   }
 
   //assign subject
   if (subject) {
     teacherFound.subject = subject;
     await teacherFound.save();
-    res.status(200).json({
-      status: "success",
-      data: teacherFound,
-      message: "Teacher updated successfully",
-    });
+    res.redirect("/teacher/index");
   }
   res.render("teacher/admin-update-teacher", {
     programs,
