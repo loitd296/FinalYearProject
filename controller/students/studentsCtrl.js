@@ -217,16 +217,25 @@ exports.adminUpdateStudent = AsyncHandler(async (req, res) => {
 
 exports.renderSelectExam = async (req, res) => {
   try {
-    const exams = await Exam.find()
+    const { program, classLevels } = await Student.findById(req.userAuth._id)
+      .populate("program")
+      .exec();
+
+    const exams = await Exam.find({
+      program: program._id,
+      classLevel: classLevels,
+    })
       .populate("academicYear", "name")
       .populate("academicTerm", "name")
       .populate("classLevel", "name")
       .populate("subject", "name")
       .populate("program", "name");
+
     res.render("student/selectExam", {
       exams,
     });
   } catch (error) {
+    console.error("Error retrieving exams:", error);
     res.status(500).json({ error: "Failed to retrieve exams" });
   }
 };
