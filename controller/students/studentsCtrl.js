@@ -257,6 +257,7 @@ exports.writeExam = async (req, res) => {
       throw new Error("Exam not found");
     }
 
+    console.log(examFound.accessKey);
     const examDuration = examFound.duration;
     const [hours, minutes] = examDuration.split(":");
     const examEndTime = new Date();
@@ -273,6 +274,7 @@ exports.writeExam = async (req, res) => {
       exam: examFound,
       student: studentFound,
       examEndTime: examEndTime.toISOString(),
+      accessKey: examFound.accessKey,
     });
   } catch (error) {
     res.status(500).json({ error: "Failed to retrieve exam" });

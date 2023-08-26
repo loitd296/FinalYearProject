@@ -1,66 +1,51 @@
 {{> header}}
-  <style>
-    .content {
-  border: 2px solid #ccc;
-  padding: 20px;
-}
-  </style>
+<style>
+  .content {
+    border: 2px solid #ccc;
+    padding: 20px;
+  }
+</style>
 
-
-  <div class="content">
-    <div class="card-group ">
-      <div class="row row-cols-1 row-cols-md-5">
-        {{#each exams}}
-        <div class="col mb-4 stack">
-          <div class="card-take-exam bg-primary text-white">
-            <div class="card-body">
-              <h5 class="card-title">{{this.name}}</h5> <br>
-              <p class="card-text">
-                <i class="fas fa-book"></i> <strong class="variable-name">Subject:</strong> <span class="variable-value">{{this.subject.name}}</span><br>
-                <hr>
-                <i class="fas fa-calendar-alt"></i> <strong class="variable-name">Academic Year:</strong> <span class="variable-value">{{this.academicYear.name}}</span><br>
-                <hr>
-                <i class="fas fa-calendar"></i> <strong class="variable-name">Academic Term:</strong> <span class="variable-value">{{this.academicTerm.name}}</span><br>
-                <hr>
-                <i class="fas fa-users"></i> <strong class="variable-name">Class Level:</strong> <span class="variable-value">{{this.classLevel.name}}</span><br>
-                <hr>
-                <i class="fas fa-file-alt"></i> <strong class="variable-name">Exam Type:</strong> <span class="variable-value">{{this.examType}}</span><br>
-                <hr>
-                <i class="fas fa-graduation-cap"></i> <strong class="variable-name">Program:</strong> <span class="variable-value">{{this.program.name}}</span><br>
-              </p>
-              <div class="text-center">
-                <button class="btn btn-light" onclick="takeExam('{{this._id}}')">Take Exam</button>
-              </div>
+<div class="content">
+  <div class="card-group">
+    <div class="row row-cols-1 row-cols-md-5">
+      {{#each exams}}
+      <div class="col mb-4 stack">
+        <div class="card-take-exam bg-primary text-white">
+          <div class="card-body">
+            <h5 class="card-title">{{this.name}}</h5> <br>
+            <p class="card-text">
+              <!-- Other exam details... -->
+            </p>
+            <div class="form-group">
+              <label for="accessKey">Access Key:</label>
+              <input type="text" class="form-control" id="accessKey_{{this._id}}" placeholder="Enter access key">
+            </div>
+            <div class="text-center">
+              <button class="btn btn-light" onclick="validateAccessKey('{{this._id}}', '{{this.accessKey}}')">Take Exam</button>
             </div>
           </div>
         </div>
-        {{/each}}
       </div>
+      {{/each}}
     </div>
   </div>
-
-
-
+</div>
 
 {{> footer}}
 
 <script>
-  // Add event listener for button click
-  function takeExam(examId) {
-    // Redirect to the selected exam page with the exam ID
+  function validateAccessKey(examId, accessKey) {
+    const accessKeyInput = document.getElementById('accessKey_' + examId);
+    const enteredAccessKey = accessKeyInput.value;
+
+    if (enteredAccessKey === accessKey) {
     window.location.href = '/student/write/' + examId;
+    alert('Correct.');
+
+    } else {  
+      alert('Incorrect access key. Please try again.');
+      accessKeyInput.value = '';
+    }
   }
-
-
-  // Get the content element
-  const contentElement = document.querySelector('.content');
-
-  // Calculate the height of the content element
-  const contentHeight = contentElement.offsetHeight;
-
-  // Set the height of the content element plus some additional padding
-  const frameHeight = contentHeight + 40; // Adjust the padding as needed
-
-  // Apply the frame height to the content element
-  contentElement.style.height = `${frameHeight}px`;
 </script>
