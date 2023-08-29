@@ -15,7 +15,17 @@
           <div class="card-body">
             <h5 class="card-title">{{this.name}}</h5> <br>
             <p class="card-text">
-              <!-- Other exam details... -->
+              <i class="fas fa-book"></i> <strong class="variable-name">Subject:</strong> <span class="variable-value">{{this.subject.name}}</span><br>
+                <hr>
+                <i class="fas fa-calendar-alt"></i> <strong class="variable-name">Academic Year:</strong> <span class="variable-value">{{this.academicYear.name}}</span><br>
+                <hr>
+                <i class="fas fa-calendar"></i> <strong class="variable-name">Academic Term:</strong> <span class="variable-value">{{this.academicTerm.name}}</span><br>
+                <hr>
+                <i class="fas fa-users"></i> <strong class="variable-name">Class Level:</strong> <span class="variable-value">{{this.classLevel.name}}</span><br>
+                <hr>
+                <i class="fas fa-file-alt"></i> <strong class="variable-name">Exam Type:</strong> <span class="variable-value">{{this.examType}}</span><br>
+                <hr>
+                <i class="fas fa-graduation-cap"></i> <strong class="variable-name">Program:</strong> <span class="variable-value">{{this.program.name}}</span><br>
             </p>
             <div class="form-group">
               <label for="accessKey">Access Key:</label>

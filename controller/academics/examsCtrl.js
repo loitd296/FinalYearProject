@@ -295,8 +295,70 @@ exports.updateExam = AsyncHandler(async (req, res) => {
   res.render("exam/updateExam", {
     title: "Update Exam",
     exam: examUpdated,
-    teacher: teacher.role,
   });
+});
+
+exports.updateQuestionExam = AsyncHandler(async (req, res) => {
+  try {
+    // Fetch the exam along with its questions
+    const exam = await Exam.findById(req.params.id).populate("questions");
+
+    const questionId = exam.questions
+      .filter((questionId) => questionId !== null) // Remove any null values
+      .map((question) => question._id);
+    console.log(questionId);
+
+    if (!exam) {
+      return res.status(404).send("Exam not found");
+    }
+
+    if (req.method === "POST") {
+      const { question, optionA, optionB, optionC, optionD } = req.body;
+
+      // Find the question to update within the exam's questions array
+      const questionToUpdate = exam.questions.find(
+        (q) => q._id.toString() === questionId
+      );
+
+      // Update the question's details
+      questionToUpdate.question = question;
+      questionToUpdate.optionA = optionA;
+      questionToUpdate.optionB = optionB;
+      questionToUpdate.optionC = optionC;
+      questionToUpdate.optionD = optionD;
+
+      // Save the updated exam
+      await exam.save();
+
+      return res.redirect(`/exams/${examId}/edit-question/${questionId}`);
+    }
+
+    // Render the edit question form
+    const questionToUpdate = exam.questions.find(
+      (q) => q._id.toString() === questionId
+    );
+
+    res.render("exam/exam-edit-question", { exam, question: questionToUpdate });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Controller function to delete a question
+exports.deleteQuestionExam = AsyncHandler(async (req, res) => {
+  try {
+    const { examId, questionId } = req.params;
+    const exam = await Exam.findById(examId).populate("questions");
+
+    exam.questions.pull(questionId);
+    await exam.save();
+
+    res.redirect(`/exams/${examId}/edit-question`);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 exports.deleteExam = AsyncHandler(async (req, res) => {
@@ -506,12 +568,10 @@ exports.createExamAuto = AsyncHandler(async (req, res) => {
   const numQuestions = parseInt(req.body.numQuestions);
   const examDetails = req.body;
   const teacherId = req.userAuth?.id; // Just get the id, don't try to find it yet
-  console.log(teacherId);
 
   try {
     // Now we find the teacher
     const teacher = await Teacher.findOne({});
-    console.log(teacher);
     // Check if the teacher was found
     if (!teacher) {
       return res.status(404).json({ error: "Teacher not found" });
@@ -524,11 +584,7 @@ exports.createExamAuto = AsyncHandler(async (req, res) => {
       teacher._id // Pass teacher._id directly
     );
 
-    res.status(201).json({
-      status: "success",
-      message: "Exam created",
-      data: exam,
-    });
+    res.redirect("/exam/index");
   } catch (error) {
     console.error(error);
     res.status(500).send("Server Error");

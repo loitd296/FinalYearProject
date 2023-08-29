@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <title>Edit Exam</title>
+  </head>
+  <body>
+    <h1>Edit Exam: {{exam.name}}</h1>
+    <p>Description: {{exam.description}}</p>
+    <p>Pass Mark: {{exam.passMark}}</p>
+    <!-- Display other exam details -->
+
+    <h2>Questions:</h2>
+    <ul>
+      {{#each exam.questions}}
+        <li>
+          <p>Question: {{this.question}}</p>
+          <p>Options:</p>
+          <ul>
+            <li>{{this.optionA}}</li>
+            <li>{{this.optionB}}</li>
+            <li>{{this.optionC}}</li>
+            <li>{{this.optionD}}</li>
+          </ul>
+
+          <!-- Edit form for the question -->
+          <form
+            action="/exams/{{exam._id}}/edit-question/{{this._id}}"
+            method="POST"
+          >
+            <label>Edit Question:</label>
+            <input type="text" name="question" value="{{this.question}}" />
+            <!-- Add input fields for options A, B, C, and D -->
+            <button type="submit">Update</button>
+          </form>
+
+          <!-- Delete form for the question -->
+          <form
+            action="/exams/{{exam._id}}/delete-question/{{this._id}}"
+            method="POST"
+          >
+            <button type="submit">Delete</button>
+          </form>
+        </li>
+      {{/each}}
+    </ul>
+  </body>
+</html>

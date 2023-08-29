@@ -14,6 +14,8 @@ const {
   createExamForm,
   createExamAuto,
   deleteExam,
+  updateQuestionExam,
+  deleteQuestionExam,
 } = require("../../controller/academics/examsCtrl");
 const isTeacher = require("../../middlewares/isTeacher");
 const isTeacherLogin = require("../../middlewares/isTeacherLogin");
@@ -35,6 +37,39 @@ examRouter.get("/:id", isTeacherLogin, isTeacher, getExam);
 
 examRouter.get("/:id/update", isTeacherLogin, isTeacher, rendercreateExam);
 examRouter.post("/:id/update", isTeacherLogin, isTeacher, updateExam);
+
+// ...
+
+// GET route to render the edit question form
+examRouter.get(
+  "/:id/edit-question",
+  isTeacherLogin,
+  isTeacher,
+  updateQuestionExam
+);
+
+examRouter.get(
+  "/:examId/edit-question/:questionId",
+  isTeacherLogin,
+  isTeacher,
+  updateQuestionExam
+);
+// POST route to handle updating a question
+examRouter.post(
+  "/:examId/edit-question/:questionId",
+  isTeacherLogin,
+  isTeacher,
+  updateQuestionExam
+);
+
+// ...
+
+examRouter.post(
+  "/:examId/delete-question/:questionId",
+  isTeacherLogin,
+  isTeacher,
+  deleteQuestionExam
+);
 
 examRouter.get("/:id/delete", isTeacherLogin, isTeacher, async (req, res) => {
   res.render("exam/deleteExam", {
