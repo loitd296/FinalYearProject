@@ -1,46 +1,66 @@
-<html>
-  <head>
-    <title>Edit Exam</title>
-  </head>
-  <body>
-    <h1>Edit Exam: {{exam.name}}</h1>
-    <p>Description: {{exam.description}}</p>
-    <p>Pass Mark: {{exam.passMark}}</p>
-    <!-- Display other exam details -->
+{{> header}}
+<div class="container">
+  <h1>Edit Exam: {{exam.name}}</h1>
+  <p>Description: {{exam.description}}</p>
+  <p>Pass Mark: {{exam.passMark}}</p>
+  <!-- Display other exam details -->
+  
+  <h2>Questions:</h2>
+  <h2>{{exam.accessKey}}</h2>
+  
+  <ul class="list-group">
+    {{#each exam.questions}}
+    <li class="list-group-item">
 
-    <h2>Questions:</h2>
-    <ul>
-      {{#each exam.questions}}
-        <li>
-          <p>Question: {{this.question}}</p>
-          <p>Options:</p>
-          <ul>
-            <li>{{this.optionA}}</li>
-            <li>{{this.optionB}}</li>
-            <li>{{this.optionC}}</li>
-            <li>{{this.optionD}}</li>
-          </ul>
-
-          <!-- Edit form for the question -->
-          <form
-            action="/exams/{{exam._id}}/edit-question/{{this._id}}"
-            method="POST"
-          >
-            <label>Edit Question:</label>
-            <input type="text" name="question" value="{{this.question}}" />
-            <!-- Add input fields for options A, B, C, and D -->
-            <button type="submit">Update</button>
-          </form>
-
-          <!-- Delete form for the question -->
-          <form
-            action="/exams/{{exam._id}}/delete-question/{{this._id}}"
-            method="POST"
-          >
-            <button type="submit">Delete</button>
-          </form>
-        </li>
-      {{/each}}
-    </ul>
-  </body>
-</html>
+  
+      <!-- Edit form for the question -->
+      <form action="/exam/{{../exam._id}}/edit-question/{{this._id}}" method="POST">
+        <input type="hidden" name="questionId" value="{{this._id}}">
+        <div class="mb-2">
+          <input type="hidden" class="form-control" id="accessKey" name="accessKey" value="{{../exam.accessKey}}" placeholder="Access Key" />
+        </div>
+        <div class="mb-2">
+          <label for="question">Question:</label>
+          <textarea class="form-control" id="question" name="question" placeholder="Question">{{this.question}}</textarea>
+        </div>
+        <div class="mb-2">
+          <label for="optionA">Option A:</label>
+          <input type="text" class="form-control" id="optionA" name="optionA" value="{{this.optionA}}" placeholder="Option A" />
+        </div>
+        <div class="mb-2">
+          <label for="optionB">Option B:</label>
+          <input type="text" class="form-control" id="optionB" name="optionB" value="{{this.optionB}}" placeholder="Option B" />
+        </div>
+        <div class="mb-2">
+          <label for="optionC">Option C:</label>
+          <input type="text" class="form-control" id="optionC" name="optionC" value="{{this.optionC}}" placeholder="Option C" />
+        </div>
+        <div class="mb-2">
+          <label for="optionD">Option D:</label>
+          <input type="text" class="form-control" id="optionD" name="optionD" value="{{this.optionD}}" placeholder="Option D" />
+        </div>
+        <div class="mb-2">
+          <label for="correctAnswer">Correct Answer:</label>
+          <input type="text" class="form-control" id="correctAnswer" name="correctAnswer" value="{{this.correctAnswer}}" placeholder="Correct Answer" />
+        </div>
+        <div class="mb-2">
+          <label for="difficulty">Difficulty:</label>
+          <input type="text" class="form-control" id="difficulty" name="difficulty" value="{{this.difficulty}}" placeholder="Difficulty" />
+        </div>
+        <div class="mb-2">
+          <label for="category">Category:</label>
+          <input type="text" class="form-control" id="category" name="category" value="{{this.category}}" placeholder="Category" />
+        </div>
+        <!-- Add input fields for options A, B, C, and D -->
+        <button type="submit" class="btn btn-primary">Update</button>
+      </form>
+  
+      <!-- Delete form for the question -->
+      <form action="/exam/{{../exam._id}}/delete-question/{{this._id}}" method="POST" class="mt-3">
+        <button type="submit" class="btn btn-danger">Delete</button>
+      </form>
+    </li>
+    {{/each}}
+  </ul>
+</div>
+{{> footer}}

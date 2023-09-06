@@ -298,63 +298,72 @@ exports.updateExam = AsyncHandler(async (req, res) => {
   });
 });
 
-exports.updateQuestionExam = AsyncHandler(async (req, res) => {
+exports.updateQuestionExam = async (req, res) => {
   try {
-    // Fetch the exam along with its questions
-    const exam = await Exam.findById(req.params.id).populate("questions");
+    const examId = req.params.id;
 
-    const questionId = exam.questions
-      .filter((questionId) => questionId !== null) // Remove any null values
-      .map((question) => question._id);
-    console.log(questionId);
+    // Fetch the exam along with its questions
+    const exam = await Exam.findById(examId).populate("questions");
 
     if (!exam) {
       return res.status(404).send("Exam not found");
     }
 
     if (req.method === "POST") {
-      const { question, optionA, optionB, optionC, optionD } = req.body;
+      const questionId = req.params.questionId;
+      const questionData = req.body;
 
-      // Find the question to update within the exam's questions array
+      // Find the question by ID within the exam's questions
       const questionToUpdate = exam.questions.find(
         (q) => q._id.toString() === questionId
       );
 
-      // Update the question's details
-      questionToUpdate.question = question;
-      questionToUpdate.optionA = optionA;
-      questionToUpdate.optionB = optionB;
-      questionToUpdate.optionC = optionC;
-      questionToUpdate.optionD = optionD;
+      if (!questionToUpdate) {
+        return res.status(404).send("Question not found");
+      }
+      // Debug: Print questionData to check if it's received correctly
 
-      // Save the updated exam
+      // Update the question's properties with data from the request
+      questionToUpdate.question = questionData.question;
+      questionToUpdate.optionA = questionData.optionA;
+      questionToUpdate.optionB = questionData.optionB;
+      questionToUpdate.optionC = questionData.optionC;
+      questionToUpdate.optionD = questionData.optionD;
+      questionToUpdate.correctAnswer = questionData.correctAnswer;
+      questionToUpdate.difficulty = questionData.difficulty;
+      questionToUpdate.category = questionData.category;
+
+      // Save the updated question within the exam's questions array
+      await questionToUpdate.save();
       await exam.save();
 
-      return res.redirect(`/exams/${examId}/edit-question/${questionId}`);
+      // Redirect back to the exam edit page
+      return res.redirect(`/exam/${examId}/edit-question`);
     }
 
-    // Render the edit question form
-    const questionToUpdate = exam.questions.find(
-      (q) => q._id.toString() === questionId
-    );
-
-    res.render("exam/exam-edit-question", { exam, question: questionToUpdate });
+    // Render the edit questions form with all questions
+    res.render("exam/exam-edit-question", {
+      exam,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
   }
-});
+};
 
 // Controller function to delete a question
 exports.deleteQuestionExam = AsyncHandler(async (req, res) => {
   try {
-    const { examId, questionId } = req.params;
+    const { questionId } = req.params;
+    const examId = req.params.id;
+
     const exam = await Exam.findById(examId).populate("questions");
+    console.log("Received examId:", questionId);
 
     exam.questions.pull(questionId);
     await exam.save();
 
-    res.redirect(`/exams/${examId}/edit-question`);
+    res.redirect(`/exam/${examId}/edit-question`);
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");

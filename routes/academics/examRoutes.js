@@ -49,14 +49,14 @@ examRouter.get(
 );
 
 examRouter.get(
-  "/:examId/edit-question/:questionId",
+  "/:id/edit-question/:questionId",
   isTeacherLogin,
   isTeacher,
   updateQuestionExam
 );
 // POST route to handle updating a question
 examRouter.post(
-  "/:examId/edit-question/:questionId",
+  "/:id/edit-question/:questionId",
   isTeacherLogin,
   isTeacher,
   updateQuestionExam
@@ -65,7 +65,7 @@ examRouter.post(
 // ...
 
 examRouter.post(
-  "/:examId/delete-question/:questionId",
+  "/:id/delete-question/:questionId",
   isTeacherLogin,
   isTeacher,
   deleteQuestionExam
