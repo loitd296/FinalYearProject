@@ -45,11 +45,15 @@ exports.checkExamResults = AysncHandler(async (req, res) => {
 //@acess  Private - Students only
 
 exports.getAllExamResults = AysncHandler(async (req, res) => {
-  const results = await ExamResult.find()
+  const studentId = await Student.findById(req.userAuth?._id);
+  console.log(studentId);
+
+  // Find all exam results for the specified student
+  const results = await ExamResult.find({ student: studentId })
     .populate("academicYear", "name")
     .populate("academicTerm", "name")
     .populate("classLevel", "name")
-    .populate("subject", "name")
+    .populate("exam", "name")
     .populate("student", "name");
 
   res.render("exam-result/index", {
@@ -63,24 +67,28 @@ exports.getAllExamResults = AysncHandler(async (req, res) => {
 //@route PUT /api/v1/exam-results/:id/admin-toggle-publish
 //@acess  Private - Admin only
 
-exports.adminToggleExamResult = AysncHandler(async (req, res) => {
-  //find the exam Results
-  const examResult = await ExamResult.findById(req.params.id);
-  if (!examResult) {
-    throw new Error("Exam result not foound");
-  }
-  const publishResult = await ExamResult.findByIdAndUpdate(
-    req.params.id,
-    {
-      isPublished: req.body.publish,
-    },
-    {
-      new: true,
+exports.adminToggleExamResult = async (req, res) => {
+  try {
+    const examResult = await ExamResult.findById(req.params.id);
+    if (!examResult) {
+      throw new Error("Exam result not found");
     }
-  );
-  res.status(200).json({
-    status: "success",
-    message: "Exam Results Updated",
-    data: publishResult,
-  });
-});
+
+    // Update the isPublished property of the exam result based on the request body
+    examResult.isPublished = req.body.publish;
+    await examResult.save();
+
+    res.status(200).json({
+      status: "success",
+      message: "Exam Result Updated",
+      data: examResult,
+    });
+  } catch (error) {
+    // Handle error
+    console.error(error);
+    res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
+  }
+};

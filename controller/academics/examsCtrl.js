@@ -203,7 +203,6 @@ exports.searchExams = AsyncHandler(async (req, res) => {
     });
   } catch (error) {
     // Handle any other errors that may occur during the search
-    console.error(error);
     res
       .status(500)
       .json({ status: "failed", message: "Failed to search exams" });
@@ -321,8 +320,6 @@ exports.updateQuestionExam = async (req, res) => {
       if (!questionToUpdate) {
         return res.status(404).send("Question not found");
       }
-      // Debug: Print questionData to check if it's received correctly
-
       // Update the question's properties with data from the request
       questionToUpdate.question = questionData.question;
       questionToUpdate.optionA = questionData.optionA;
@@ -340,10 +337,12 @@ exports.updateQuestionExam = async (req, res) => {
       // Redirect back to the exam edit page
       return res.redirect(`/exam/${examId}/edit-question`);
     }
+    const teacher = await Teacher.findById(req.userAuth._id);
 
     // Render the edit questions form with all questions
     res.render("exam/exam-edit-question", {
       exam,
+      teacher: teacher.role,
     });
   } catch (error) {
     console.error(error);

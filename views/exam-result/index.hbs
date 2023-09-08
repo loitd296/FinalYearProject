@@ -38,8 +38,8 @@
             <thead>
               <tr>
                 <th>Student Name</th>
-                <th>Remark</th>
-                <th>Subject</th>
+                <th>Result</th>
+                <th>Exam Name</th>
                 <th>Class Level</th>
                 <th>Academic Term</th>
                 <th>Academic Year</th>
@@ -49,8 +49,8 @@
                 {{#each data}}
               <tr>
                 <td>{{this.student.name}}</td>
-                <td>{{this.remarks}}</td>
-                <td>{{this.exam.subject.name}}</td>
+                <td>{{this.status}}</td>
+                <td>{{this.exam.name}}</td>
                 <td>{{this.classLevel.name}}</td>
                 <td>{{this.academicTerm.name}}</td>
                 <td>{{this.academicYear.name}}</td>

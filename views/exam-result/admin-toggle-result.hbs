@@ -1,8 +1,22 @@
 {{>header}}
 <h1>Admin Toggle Exam Result</h1>
-  <form action="/exam-results/{{ examResult._id }}/admin-toggle-publish" method="POST">
-    <label for="publish">Publish Result:</label>
-    <input type="checkbox" id="publish" name="publish" {{#if examResult.isPublished}}checked{{/if}}>
-    <button type="submit">Toggle Publish</button>
-  </form>
+<form action="/exam-results/{{ examResult._id }}/admin-toggle-publish" method="POST">
+  <label for="publish">Publish Result:</label>
+  <input type="checkbox" id="publish" name="publish" {{#if examResult.isPublished}}checked{{/if}}>
+  <button type="submit">Toggle Publish</button>
+</form>
 
+<h2>Exams</h2>
+<ul>
+  {{#each exams}}
+    <li>
+      <h3>{{ this.name }}</h3>
+      <p>{{ this.description }}</p>
+      <form action="/exam-results/publish/{{ this._id }}" method="POST">
+        <label for="publish">Publish Result:</label>
+        <input type="checkbox" id="publish" name="publish" {{#if this.isPublished}}checked{{/if}}>
+        <button type="submit">Toggle Publish</button>
+      </form>
+    </li>
+  {{/each}}
+</ul>

@@ -42,12 +42,12 @@ exports.loginStudent = AsyncHandler(async (req, res) => {
   // Find the user
   const student = await Student.findOne({ email });
   if (!student) {
-    return res.json({ message: "Invalid login credentials" });
+    return res.redirect("/student/login");
   }
   // Verify the password
   const isMatched = await isPassMatched(password, student?.password);
   if (!isMatched) {
-    return res.json({ message: "Invalid login credentials" });
+    return res.redirect("/student/login");
   } else {
     // Generate a token
     const payload = { _id: student._id.toString() };
@@ -392,10 +392,7 @@ exports.submitExam = async (req, res) => {
       await student.save();
     }
 
-    res.status(200).json({
-      status: "success",
-      data: "You have submitted your exam. Check later for the results",
-    });
+    res.redirect("/exam-result");
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
