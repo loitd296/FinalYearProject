@@ -19,14 +19,18 @@
           <label for="optionB{{@index}}">{{this.optionB}}</label>
           <input type="radio" id="optionB{{@index}}" name="answers[{{@index}}]" value="{{this.optionB}}">
         </li>
+        {{#if this.optionC}}
         <li>
           <label for="optionC{{@index}}">{{this.optionC}}</label>
           <input type="radio" id="optionC{{@index}}" name="answers[{{@index}}]" value="{{this.optionC}}">
         </li>
+        {{/if}}
+        {{#if this.optionD}}
         <li>
           <label for="optionD{{@index}}">{{this.optionD}}</label>
           <input type="radio" id="optionD{{@index}}" name="answers[{{@index}}]" value="{{this.optionD}}">
         </li>
+        {{/if}}
       </ul>
     </div>
     {{/each}}
@@ -35,6 +39,7 @@
 </div>
 
 {{> footer}}
+
 
 <script>
   var endTime = new Date('{{examEndTime}}');

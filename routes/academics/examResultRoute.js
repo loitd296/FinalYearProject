@@ -3,6 +3,9 @@ const {
   checkExamResults,
   getAllExamResults,
   adminToggleExamResult,
+  adminExamResults,
+  deleteExamResult,
+  publishExamResult,
 } = require("../../controller/academics/examResults");
 const isAdmin = require("../../middlewares/isAdmin");
 const isLogin = require("../../middlewares/isLogin");
@@ -17,7 +20,6 @@ examResultRouter.get("/", isStudentLogin, isStudent, getAllExamResults);
 
 examResultRouter.get("/:id/checking", isStudentLogin, isStudent, (req, res) => {
   const studentId = req.params.id; // Get the student ID from the route
-
   checkExamResults(req, res, studentId);
 });
 
@@ -27,51 +29,17 @@ examResultRouter.get(
   isStudent,
   checkExamResults
 );
-examResultRouter.get(
-  "/admin-toggle-publish",
-  isLogin,
-  isAdmin,
-  async (req, res) => {
-    try {
-      const exams = await Exam.find();
-      const examResults = await ExamResult.find();
-      res.render("exam-result/admin-toggle-result", { exams, examResults });
-    } catch (error) {
-      // Handle error
-      console.error(error);
-      res.status(500).send("Internal Server Error");
-    }
-  }
-);
 
-examResultRouter.post("/publish/:id", isLogin, isAdmin, async (req, res) => {
-  try {
-    const exam = await Exam.findById(req.params.id);
-    console.log(exam);
-    if (!exam) {
-      throw new Error("Exam not found");
-    }
+examResultRouter.get("/index_admin", isLogin, isAdmin, adminExamResults);
 
-    // Update the isPublished property of all associated exam results
-    await ExamResult.updateMany(
-      { exam: exam._id },
-      { isPublished: req.body.publish }
-    );
-
-    res.status(200).json({
-      status: "success",
-      message: "Exam Results Updated",
-    });
-  } catch (error) {
-    // Handle error
-    console.error(error);
-    res.status(500).json({
-      status: "error",
-      message: "Internal Server Error",
-    });
-  }
+examResultRouter.get("/:id/delete", isLogin, isAdmin, async (req, res) => {
+  res.render("exam-result/deleteExamResult", {
+    title: "Delete Exam Result",
+    examResultId: req.params.id,
+  });
 });
 
+examResultRouter.post("/:id/delete", isLogin, isAdmin, deleteExamResult);
 // Use the adminToggleExamResult controller function for updating
 examResultRouter.post(
   "/:id/admin-toggle-publish",
@@ -79,4 +47,8 @@ examResultRouter.post(
   isAdmin,
   adminToggleExamResult
 );
+
+// Add this route to your existing routes
+examResultRouter.post("/:id/publish", isLogin, isAdmin, publishExamResult);
+
 module.exports = examResultRouter;

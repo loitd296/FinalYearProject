@@ -1,0 +1,95 @@
+{{> header_admin}}
+
+<div class="content">
+    <div class="row">
+        <div class="col-md-offset-1 col-md-10">
+            <div class="panel">
+                <!-- ... (Existing code) ... -->
+                <div class="panel-body table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Result</th>
+                                <th>Exam Name</th>
+                                <th>Class Level</th>
+                                <th>Academic Term</th>
+                                <th>Academic Year</th>
+                                <th>Actions</th> <!-- Add a new column for actions -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each data}}
+                            <tr>
+                                <td>{{this.student.name}}</td>
+                                <td>{{this.status}}</td>
+                                <td>{{this.exam.name}}</td>
+                                <td>{{this.classLevel.name}}</td>
+                                <td>{{this.academicTerm.name}}</td>
+                                <td>{{this.academicYear.name}}</td>
+                                <td>
+                                    <ul class="action-list">
+                                        <!-- Edit and Delete links (Existing code) -->
+                                        <li><a href="/exam-result/{{this._id}}/delete" data-tip="delete"><i
+                                                    class="fa fa-trash"></i></a></li>
+                                        <li>
+                                            {{#if this.isPublished}}
+                                            <a href="#" data-tip="Unpublish" class="publish-button"
+                                                data-id="{{this._id}}" data-action="unpublish">
+                                                <i class="fas fa-check-circle text-success"></i>
+                                            </a>
+                                            {{else}}
+                                            <a href="#" data-tip="Publish" class="publish-button" data-id="{{this._id}}"
+                                                data-action="publish">
+                                                <i class="fas fa-check-circle text-muted"></i>
+                                            </a>
+
+
+                                            {{/if}}
+                                        </li> <!-- Add this <li> element -->
+                                    </ul>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- ... (Remaining code) ... -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // JavaScript code to handle the Publish button click event
+    document.querySelectorAll('.publish-button').forEach(button => {
+        button.addEventListener('click', function (e) {
+            e.preventDefault();
+            const examResultId = this.getAttribute('data-id');
+            const action = this.getAttribute('data-action'); // Get the action type (publish/unpublish)
+
+            // Send an AJAX request to update the isPublished property for the exam result
+            fetch(`/exam-result/${examResultId}/publish`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', // Specify JSON content type
+                },
+                body: JSON.stringify({ action }), // Send the action in the request body
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Reload the page or update the UI as needed
+                        location.reload(); // Reload the page to reflect the changes
+                    } else {
+                        // Handle error, if any
+                        console.error(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+    });
+
+</script>
