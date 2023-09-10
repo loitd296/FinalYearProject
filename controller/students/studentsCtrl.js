@@ -231,8 +231,26 @@ exports.renderSelectExam = async (req, res) => {
       .populate("subject", "name")
       .populate("program", "name");
 
+    // Function to limit character count for the exam name
+    const limitCharacterCount = (exams) => {
+      const charLimit = 12; // Change this to your desired limit
+      exams.forEach((exam) => {
+        if (exam.name.length > charLimit) {
+          exam.name = exam.name.slice(0, charLimit) + "...";
+        }
+      });
+
+      return exams;
+    };
+
+    // Filter out exams that have examDate in the future
+    const currentDate = new Date();
+    const limitedExams = limitCharacterCount(
+      exams.filter((exam) => new Date(exam.examDate) <= currentDate)
+    );
+
     res.render("student/selectExam", {
-      exams,
+      exams: limitedExams,
     });
   } catch (error) {
     console.error("Error retrieving exams:", error);
@@ -257,7 +275,6 @@ exports.writeExam = async (req, res) => {
       throw new Error("Exam not found");
     }
 
-    console.log(examFound.accessKey);
     const examDuration = examFound.duration;
     const [hours, minutes] = examDuration.split(":");
     const examEndTime = new Date();
@@ -280,6 +297,11 @@ exports.writeExam = async (req, res) => {
     res.status(500).json({ error: "Failed to retrieve exam" });
   }
 };
+
+function normalizeAnswer(answer) {
+  // Remove spaces, periods, and convert to lowercase
+  return answer.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+}
 
 exports.submitExam = async (req, res) => {
   try {
@@ -324,8 +346,14 @@ exports.submitExam = async (req, res) => {
     const answeredQuestions = [];
 
     questions.forEach((question, index) => {
-      const studentAnswer = studentAnswers[index];
-      const isCorrect = question.correctAnswer === studentAnswer;
+      const studentAnswer = normalizeAnswer(studentAnswers[index]);
+      const correctAnswer = normalizeAnswer(question.correctAnswer);
+      const isCorrect = studentAnswer === correctAnswer;
+
+      console.log(`Question ${index + 1}:`);
+      console.log(`Correct Answer: ${question.correctAnswer}`);
+      console.log(`Student Answer: ${studentAnswer}`);
+      console.log(`Is Correct: ${isCorrect}`);
 
       if (isCorrect) {
         correctAnswers++;
@@ -338,6 +366,8 @@ exports.submitExam = async (req, res) => {
         isCorrect,
       });
     });
+
+    console.log(`Score: ${score}`); // Debugging: Log the final score
 
     const totalQuestions = questions.length;
     const grade = (correctAnswers / totalQuestions) * 100;
@@ -353,7 +383,7 @@ exports.submitExam = async (req, res) => {
     const examResult = await ExamResult.create({
       student: studentId,
       exam: examId,
-      grade,
+      grade: grade,
       score,
       status,
       remarks,

@@ -95,12 +95,7 @@ exports.createExam = AsyncHandler(async (req, res) => {
   // Save exam and teacher
   await examCreated.save();
   await teacherFound.save();
-  res.status(201).json({
-    status: "success",
-    message: "Exam created",
-    data: examCreated,
-    teacher: teacherFound.role,
-  });
+  res.redirect("/exam/index");
 });
 
 //@desc  get all Exams

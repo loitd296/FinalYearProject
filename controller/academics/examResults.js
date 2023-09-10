@@ -46,10 +46,12 @@ exports.checkExamResults = AsyncHandler(async (req, res) => {
 
 exports.getAllExamResults = AsyncHandler(async (req, res) => {
   const studentId = await Student.findById(req.userAuth?._id);
-  console.log(studentId);
 
   // Find all exam results for the specified student
-  const results = await ExamResult.find({ student: studentId })
+  const results = await ExamResult.find({
+    student: studentId,
+    isPublished: true,
+  })
     .populate("academicYear", "name")
     .populate("academicTerm", "name")
     .populate("classLevel", "name")
