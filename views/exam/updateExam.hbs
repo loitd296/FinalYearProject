@@ -48,7 +48,7 @@
   <div class="container mt-4">
     <h1>Update Exam</h1>
 
-    <form action="/api/v1/exams/{{exam._id}}" method="POST">
+    <form action="/exam/{{exam._id}}/update" method="POST">
       <div class="form-group">
         <label for="name">Name</label>
         <input type="text" id="name" name="name" class="form-control" value="{{exam.name}}">
@@ -61,7 +61,7 @@
         <label for="subject">Subject</label>
         <select id="subject" name="subject" class="form-control">
           {{#each subjects}}
-          <option value="{{this._id}}" {{#ifCond this._id ../exam.subject._id}}selected{{/ifCond}}>{{this.name}}</option>
+            <option value="{{this._id}}" {{#if (eq this._id exam.subject._id)}}selected{{/if}}>{{this.name}}</option>
           {{/each}}
         </select>
       </div>
@@ -69,7 +69,7 @@
         <label for="program">Program</label>
         <select id="program" name="program" class="form-control">
           {{#each programs}}
-          <option value="{{this._id}}" {{#ifCond this._id ../exam.program._id}}selected{{/ifCond}}>{{this.name}}</option>
+            <option value="{{this._id}}" {{#if (eq this._id exam.program._id)}}selected{{/if}}>{{this.name}}</option>
           {{/each}}
         </select>
       </div>
@@ -77,7 +77,7 @@
         <label for="academicTerm">Academic Term</label>
         <select id="academicTerm" name="academicTerm" class="form-control">
           {{#each academicTerms}}
-          <option value="{{this._id}}" {{#ifCond this._id ../exam.academicTerm._id}}selected{{/ifCond}}>{{this.name}}</option>
+            <option value="{{this._id}}" {{#if (eq this._id exam.academicTerm._id)}}selected{{/if}}>{{this.name}}</option>
           {{/each}}
         </select>
       </div>
@@ -99,13 +99,13 @@
       </div>
       <div class="form-group">
         <label for="createdBy">Created By</label>
-        <input type="text" id="createdBy" name="createdBy" class="form-control" value="{{exam.createdBy}}">
+        <input type="hidden" id="createdBy" name="createdBy" class="form-control" value="{{exam.createdBy}}">
       </div>
       <div class="form-group">
         <label for="academicYear">Academic Year</label>
         <select id="academicYear" name="academicYear" class="form-control">
           {{#each academicYears}}
-          <option value="{{this._id}}" {{#ifCond this._id ../exam.academicYear._id}}selected{{/ifCond}}>{{this.name}}</option>
+            <option value="{{this._id}}" {{#if (eq this._id exam.academicYear._id)}}selected{{/if}}>{{this.name}}</option>
           {{/each}}
         </select>
       </div>
@@ -113,7 +113,7 @@
         <label for="classLevel">Class Level</label>
         <select id="classLevel" name="classLevel" class="form-control">
           {{#each classLevels}}
-          <option value="{{this._id}}" {{#ifCond this._id ../exam.classLevel._id}}selected{{/ifCond}}>{{this.name}}</option>
+            <option value="{{this._id}}" {{#if (eq this._id exam.classLevel._id)}}selected{{/if}}>{{this.name}}</option>
           {{/each}}
         </select>
       </div>

@@ -230,7 +230,6 @@ exports.renderUpdateExam = async (req, res) => {
       academicTerms,
       academicYears,
       classLevels,
-      teacher: teacher.role,
     });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch data" });
@@ -286,10 +285,7 @@ exports.updateExam = AsyncHandler(async (req, res) => {
   // Save the updated exam
   const examUpdated = await examFound.save();
 
-  res.render("exam/updateExam", {
-    title: "Update Exam",
-    exam: examUpdated,
-  });
+  res.redirect("/exam/index");
 });
 
 exports.updateQuestionExam = async (req, res) => {

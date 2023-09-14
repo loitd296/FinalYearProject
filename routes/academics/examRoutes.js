@@ -16,6 +16,7 @@ const {
   deleteExam,
   updateQuestionExam,
   deleteQuestionExam,
+  renderUpdateExam,
 } = require("../../controller/academics/examsCtrl");
 const isTeacher = require("../../middlewares/isTeacher");
 const isTeacherLogin = require("../../middlewares/isTeacherLogin");
@@ -35,7 +36,7 @@ examRouter.get("/search", isTeacherLogin, isTeacher, searchExams);
 
 examRouter.get("/:id", isTeacherLogin, isTeacher, getExam);
 
-examRouter.get("/:id/update", isTeacherLogin, isTeacher, rendercreateExam);
+examRouter.get("/:id/update", isTeacherLogin, isTeacher, renderUpdateExam);
 examRouter.post("/:id/update", isTeacherLogin, isTeacher, updateExam);
 
 // ...

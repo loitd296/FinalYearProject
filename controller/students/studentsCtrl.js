@@ -346,14 +346,8 @@ exports.submitExam = async (req, res) => {
     const answeredQuestions = [];
 
     questions.forEach((question, index) => {
-      const studentAnswer = normalizeAnswer(studentAnswers[index]);
-      const correctAnswer = normalizeAnswer(question.correctAnswer);
-      const isCorrect = studentAnswer === correctAnswer;
-
-      console.log(`Question ${index + 1}:`);
-      console.log(`Correct Answer: ${question.correctAnswer}`);
-      console.log(`Student Answer: ${studentAnswer}`);
-      console.log(`Is Correct: ${isCorrect}`);
+      const studentAnswer = studentAnswers[index];
+      const isCorrect = question.correctAnswer === studentAnswer;
 
       if (isCorrect) {
         correctAnswers++;
@@ -366,8 +360,6 @@ exports.submitExam = async (req, res) => {
         isCorrect,
       });
     });
-
-    console.log(`Score: ${score}`); // Debugging: Log the final score
 
     const totalQuestions = questions.length;
     const grade = (correctAnswers / totalQuestions) * 100;
@@ -383,7 +375,7 @@ exports.submitExam = async (req, res) => {
     const examResult = await ExamResult.create({
       student: studentId,
       exam: examId,
-      grade: grade,
+      grade,
       score,
       status,
       remarks,
@@ -422,7 +414,10 @@ exports.submitExam = async (req, res) => {
       await student.save();
     }
 
-    res.redirect("/exam-result");
+    res.status(200).json({
+      status: "success",
+      data: "You have submitted your exam. Check later for the results",
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
