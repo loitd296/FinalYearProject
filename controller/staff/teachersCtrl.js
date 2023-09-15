@@ -1,4 +1,4 @@
-const AysncHandler = require("express-async-handler");
+const AsyncHandler = require("express-async-handler");
 const Teacher = require("../../model/Staff/Teacher");
 const Program = require("../../model/Academic/Program");
 const ClassLevel = require("../../model/Academic/ClassLevel"); // Import the ClassLevel model
@@ -14,7 +14,7 @@ const { calculatePageRange } = require("../../utils/paginationUtils");
 //@route POST /api/teachers/admin/register
 //@acess  Private
 
-exports.adminRegisterTeacher = AysncHandler(async (req, res) => {
+exports.adminRegisterTeacher = AsyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
   //check if teacher already exists
   const teacher = await Teacher.findOne({ email });
@@ -41,7 +41,7 @@ exports.adminRegisterTeacher = AysncHandler(async (req, res) => {
 //@route   POST /api/v1/teachers/login
 //@access  Public
 
-exports.loginTeacher = AysncHandler(async (req, res) => {
+exports.loginTeacher = AsyncHandler(async (req, res) => {
   const { email, password } = req.body;
   //find the  user
   const teacher = await Teacher.findOne({ email });
@@ -71,19 +71,70 @@ exports.loginTeacher = AysncHandler(async (req, res) => {
 //@route   GET /api/v1/admin/teachers
 //@access  Private admin only
 
-exports.getAllTeachersAdmin = AysncHandler(async (req, res) => {
-  const teachers = await Teacher.find();
-  res.render("teacher/index", {
-    message: "Invalid login credentials",
-    teachers: teachers,
-  });
+exports.getAllTeachersAdmin = AsyncHandler(async (req, res) => {
+  try {
+    const { page } = req.query;
+    const limit = 10; // Number of teachers to show per page
+    const currentPage = parseInt(page) || 1;
+
+    // Count the total number of teachers
+    const totalTeachers = await Teacher.countDocuments({});
+
+    // Calculate the total number of pages based on the limit
+    const totalPages = Math.ceil(totalTeachers / limit);
+
+    // Calculate the range of page numbers to display
+    const range = 5;
+    const { startPage, endPage } = calculatePageRange(
+      currentPage,
+      totalPages,
+      range
+    );
+
+    // Get the teachers for the current page
+    const teachers = await Teacher.find()
+      .skip((currentPage - 1) * limit)
+      .limit(limit);
+
+    res.render("teacher/index", {
+      title: "Teacher List",
+      teachers,
+      currentPage,
+      totalPages,
+      currentPageEntries: teachers.length,
+      totalEntries: totalTeachers,
+      hasPreviousPage: currentPage > 1,
+      previousPage: currentPage - 1,
+      hasNextPage: currentPage < totalPages,
+      nextPage: currentPage + 1,
+      pages: Array.from(
+        { length: endPage - startPage + 1 },
+        (_, i) => startPage + i
+      ),
+    });
+  } catch (err) {
+    res.render("teacher/index", {
+      title: "Teacher List",
+      message: "Invalid login credentials",
+      teachers: [],
+      currentPage: 1,
+      totalPages: 1,
+      currentPageEntries: 0,
+      totalEntries: 0,
+      hasPreviousPage: false,
+      previousPage: 0,
+      hasNextPage: false,
+      nextPage: 0,
+      pages: [],
+    });
+  }
 });
 
 //@desc    Get Single Teacher
 //@route   GET /api/v1/teachers/:teacherID/admin
 //@access  Private admin only
 
-exports.getTeacherByAdmin = AysncHandler(async (req, res) => {
+exports.getTeacherByAdmin = AsyncHandler(async (req, res) => {
   //find the teacher
   const teacher = await Teacher.findById(req.params.id);
   if (!teacher) {
@@ -99,7 +150,7 @@ exports.getTeacherByAdmin = AysncHandler(async (req, res) => {
 //@route   GET /api/v1/teachers/profile
 //@access  Private Teacher only
 
-exports.getTeacherProfile = AysncHandler(async (req, res) => {
+exports.getTeacherProfile = AsyncHandler(async (req, res) => {
   const teacher = await Teacher.findById(req.userAuth?._id).select(
     "-password -createdAt -updatedAt"
   );
@@ -160,7 +211,7 @@ exports.teacherUpdateProfile = async (req, res) => {
 //@route    UPDATE /api/v1/teachers/:teacherID/admin
 //@access   Private Admin only
 
-exports.adminUpdateTeacher = AysncHandler(async (req, res) => {
+exports.adminUpdateTeacher = AsyncHandler(async (req, res) => {
   const { program, classLevel, academicYear, subject } = req.body;
   //if email is taken
 
@@ -220,7 +271,7 @@ exports.adminUpdateTeacher = AysncHandler(async (req, res) => {
   });
 });
 
-exports.deleteTeacher = AysncHandler(async (req, res) => {
+exports.deleteTeacher = AsyncHandler(async (req, res) => {
   const teacher = await Teacher.findById(req.params.id);
   if (!teacher) {
     throw new Error("Subject not found");

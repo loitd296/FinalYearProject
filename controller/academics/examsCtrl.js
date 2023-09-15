@@ -1,5 +1,7 @@
 const AsyncHandler = require("express-async-handler");
 const mongoose = require("mongoose");
+const { JSDOM } = require("jsdom");
+const { asBlob } = require("html-docx-js");
 
 const Exam = require("../../model/Academic/Exam");
 const Teacher = require("../../model/Staff/Teacher");
@@ -624,4 +626,58 @@ async function createExamWithCategories(
   await teacher.save();
 
   return exam;
+}
+exports.downloadWord = async (req, res) => {
+  try {
+    const exam = await Exam.findById(req.params.id).populate("questions");
+    const teacher = await Teacher.findById(req.userAuth?._id);
+
+    if (!exam) {
+      return res.status(404).send("Exam not found");
+    }
+
+    let htmlContent = `<h2>${exam.name}</h2>`;
+    htmlContent += `<p>Description: ${teacher.name}</p>`;
+    htmlContent += `<p>Description: ${exam.description}</p>`;
+    htmlContent += "<h3>Questions:</h3>";
+
+    exam.questions.forEach((question, index) => {
+      htmlContent += `<p>${index + 1}. ${question.question}</p>`;
+      htmlContent += `<p> ${question.optionA}</p>`;
+      htmlContent += `<p> ${question.optionB}</p>`;
+      htmlContent += `<p> ${question.optionC}</p>`;
+      htmlContent += `<p> ${question.optionD}</p>`;
+    });
+
+    if (!htmlContent.trim()) {
+      return res.status(500).send("Error: Empty HTML content");
+    }
+
+    const sanitizedFileName = sanitizeFileName(exam.name);
+
+    // Convert the HTML content to a Word document as a Blob
+    const docxBlob = asBlob(htmlContent);
+
+    // Convert the Blob to a Buffer
+    const docxBuffer = await new Response(docxBlob).arrayBuffer();
+
+    // Set the response headers for download
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=${sanitizedFileName}.docx`
+    );
+    res.contentType(
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    );
+
+    // Send the generated Word document as a Buffer
+    res.end(Buffer.from(docxBuffer));
+  } catch (err) {
+    console.error("Error retrieving exam:", err);
+    res.status(500).send("Error exporting to Word");
+  }
+};
+function sanitizeFileName(name) {
+  // Remove any characters that might cause issues in filenames
+  return name.replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, "_");
 }

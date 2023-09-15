@@ -55,6 +55,27 @@
                     </table>
                 </div>
                 <!-- ... (Remaining code) ... -->
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col col-sm-6 col-xs-6">showing <b>{{currentPageEntries}}</b> out of
+                            <b>{{totalEntries}}</b> entries</div>
+                        <div class="col-sm-6 col-xs-6">
+                            <ul class="pagination hidden-xs pull-right">
+                                {{#if hasPreviousPage}}
+                                <li><a href="/exam-result/index_admin?page={{previousPage}}&search={{search}}">&lt;</a></li>
+                                {{/if}}
+                                {{#each pages}}
+                                <li{{#if current}} class="active" {{/if}}><a
+                                        href="/exam-result/index_admin?page={{this}}&search={{search}}">{{this}}</a></li>
+                                {{/each}}       
+                                {{#if hasNextPage}}
+                                <li><a href="/exam-result/index_admin?page={{nextPage}}&search={{search}}">&gt;</a></li>
+
+                                {{/if}}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

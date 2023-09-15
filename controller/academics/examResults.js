@@ -70,19 +70,67 @@ exports.getAllExamResults = AsyncHandler(async (req, res) => {
 //@acess  Private - Students only
 
 exports.adminExamResults = AsyncHandler(async (req, res) => {
-  // Find all exam results for the specified student
-  const results = await ExamResult.find()
-    .populate("academicYear", "name")
-    .populate("academicTerm", "name")
-    .populate("classLevel", "name")
-    .populate("exam", "name")
-    .populate("student", "name");
+  try {
+    const { page } = req.query;
+    const limit = 10; // Number of exam results to show per page
+    const currentPage = parseInt(page) || 1;
 
-  res.render("exam-result/index_admin", {
-    status: "success",
-    message: "Exam Results fetched",
-    data: results,
-  });
+    // Count the total number of exam results
+    const totalExamResults = await ExamResult.countDocuments({});
+
+    // Calculate the total number of pages based on the limit
+    const totalPages = Math.ceil(totalExamResults / limit);
+
+    // Calculate the range of page numbers to display
+    const range = 5;
+    const { startPage, endPage } = calculatePageRange(
+      currentPage,
+      totalPages,
+      range
+    );
+
+    // Get the exam results for the current page with proper population
+    const examResults = await ExamResult.find()
+      .populate("academicYear", "name")
+      .populate("academicTerm", "name")
+      .populate("classLevel", "name")
+      .populate("exam", "name")
+      .populate("student", "name")
+      .skip((currentPage - 1) * limit)
+      .limit(limit);
+
+    res.render("exam-result/index_admin", {
+      title: "Exam Results List",
+      data: examResults,
+      currentPage,
+      totalPages,
+      currentPageEntries: examResults.length,
+      totalEntries: totalExamResults,
+      hasPreviousPage: currentPage > 1,
+      previousPage: currentPage - 1,
+      hasNextPage: currentPage < totalPages,
+      nextPage: currentPage + 1,
+      pages: Array.from(
+        { length: endPage - startPage + 1 },
+        (_, i) => startPage + i
+      ),
+    });
+  } catch (err) {
+    console.error("Error retrieving exam results:", err);
+    res.render("exam-result/index_admin", {
+      title: "Exam Results List",
+      data: [],
+      currentPage: 1,
+      totalPages: 1,
+      currentPageEntries: 0,
+      totalEntries: 0,
+      hasPreviousPage: false,
+      previousPage: 0,
+      hasNextPage: false,
+      nextPage: 0,
+      pages: [],
+    });
+  }
 });
 
 exports.deleteExamResult = AsyncHandler(async (req, res) => {
@@ -92,13 +140,8 @@ exports.deleteExamResult = AsyncHandler(async (req, res) => {
 
 exports.publishExamResult = async (req, res) => {
   try {
-    console.log("Entering publishExamResult");
-
     const examResultId = req.params.id;
     const action = req.body.action;
-
-    // Log the action to see what value it has
-    console.log("Action:", action);
 
     // Validate the action to ensure it's either "publish" or "unpublish"
     if (action !== "publish" && action !== "unpublish") {

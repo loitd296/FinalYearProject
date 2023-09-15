@@ -1,4 +1,5 @@
 const express = require("express");
+
 const {
   createExam,
   getExams,
@@ -17,9 +18,11 @@ const {
   updateQuestionExam,
   deleteQuestionExam,
   renderUpdateExam,
+  downloadWord,
 } = require("../../controller/academics/examsCtrl");
 const isTeacher = require("../../middlewares/isTeacher");
 const isTeacherLogin = require("../../middlewares/isTeacherLogin");
+const Exam = require("../../model/Academic/Exam");
 
 const examRouter = express.Router();
 
@@ -118,5 +121,8 @@ examRouter.get(
   isTeacher,
   getMoreQuestions
 );
+
+// GET route to export an exam to Word
+examRouter.get("/:id/export-word", isTeacherLogin, isTeacher, downloadWord);
 
 module.exports = examRouter;

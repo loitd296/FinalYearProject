@@ -81,11 +81,62 @@ exports.studentLogoutCtrl = (req, res) => {
 //@access  Private admin only
 
 exports.getAllStudentsByAdmin = AsyncHandler(async (req, res) => {
-  const students = await Student.find();
-  res.render("student/index", {
-    title: "Teachers",
-    students: students,
-  });
+  try {
+    const { page } = req.query;
+    const limit = 10; // Number of students to show per page
+    const currentPage = parseInt(page) || 1;
+
+    // Count the total number of students
+    const totalStudents = await Student.countDocuments({});
+
+    // Calculate the total number of pages based on the limit
+    const totalPages = Math.ceil(totalStudents / limit);
+
+    // Calculate the range of page numbers to display
+    const range = 5;
+    const { startPage, endPage } = calculatePageRange(
+      currentPage,
+      totalPages,
+      range
+    );
+
+    // Get the students for the current page
+    const students = await Student.find()
+      .skip((currentPage - 1) * limit)
+      .limit(limit);
+
+    res.render("student/index", {
+      title: "Student List",
+      students,
+      currentPage,
+      totalPages,
+      currentPageEntries: students.length,
+      totalEntries: totalStudents,
+      hasPreviousPage: currentPage > 1,
+      previousPage: currentPage - 1,
+      hasNextPage: currentPage < totalPages,
+      nextPage: currentPage + 1,
+      pages: Array.from(
+        { length: endPage - startPage + 1 },
+        (_, i) => startPage + i
+      ),
+    });
+  } catch (err) {
+    console.error("Error retrieving students:", err);
+    res.render("student/index", {
+      title: "Student List",
+      students: [],
+      currentPage: 1,
+      totalPages: 1,
+      currentPageEntries: 0,
+      totalEntries: 0,
+      hasPreviousPage: false,
+      previousPage: 0,
+      hasNextPage: false,
+      nextPage: 0,
+      pages: [],
+    });
+  }
 });
 
 //@desc    Get Single Student
