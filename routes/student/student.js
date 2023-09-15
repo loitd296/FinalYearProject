@@ -1,4 +1,6 @@
 const express = require("express");
+const dialogflow = require("dialogflow");
+
 const {
   adminRegisterStudent,
   loginStudent,
@@ -12,6 +14,7 @@ const {
   submitExam,
   studentLogoutCtrl,
 } = require("../../controller/students/studentsCtrl");
+const { chatbotInteraction } = require("../../controller/academics/chatbot"); // Import the chatbot controller
 
 const isAdmin = require("../../middlewares/isAdmin");
 const isLogin = require("../../middlewares/isLogin");
@@ -53,6 +56,33 @@ studentRouter.post("/submit/:examID", isStudentLogin, submitExam);
 
 studentRouter.get("/", isStudentLogin, isStudent, (req, res) => {
   res.render("student/student-home-page", {
+    title: "Student Dashboard",
+    loggedIn: res.locals.loggedIn,
+    myMiddlewareProperty: res.locals.isStudent,
+    student: student.role,
+  });
+});
+
+// In studentRouter.js
+studentRouter.get("/chat", (req, res) => {
+  res.render("chatbot/chatbot"); // Assuming 'chatbot.hbs' is your template
+});
+
+studentRouter.post("/api/chatbot", async (req, res) => {
+  const userMessage = req.body.message;
+  try {
+    const assistantReply = await chatbotInteraction(userMessage);
+    res.json({ reply: assistantReply });
+  } catch (error) {
+    console.error("Error in chatbotInteraction:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while processing your request." });
+  }
+});
+
+studentRouter.get("/chatbot", isStudentLogin, isStudent, (req, res) => {
+  res.render("chatbot/chatbot", {
     title: "Student Dashboard",
     loggedIn: res.locals.loggedIn,
     myMiddlewareProperty: res.locals.isStudent,

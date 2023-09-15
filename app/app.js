@@ -1,4 +1,5 @@
 const express = require("express");
+
 const morgan = require("morgan");
 const exphbs = require("express-handlebars");
 const path = require("path");
@@ -113,9 +114,9 @@ app.use(
     }),
   })
 );
-app.get("/", (req, res) => {
-  res.redirect("/teacher/login"); // Redirect to the login page
-});
+// app.get("/", (req, res) => {
+//   res.redirect("/teacher/login"); // Redirect to the login page
+// });
 
 // Auth middleware - example using JWT
 app.use((req, res, next) => {
@@ -156,5 +157,6 @@ app.use(notAllowLoginPage);
 // Error middlewares
 app.use(globalErrHandler);
 app.use(notFoundErr);
+// Apply rate limiting to the API route for chatbot interactions
 
 module.exports = app;
