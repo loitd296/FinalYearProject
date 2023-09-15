@@ -63,11 +63,6 @@ studentRouter.get("/", isStudentLogin, isStudent, (req, res) => {
   });
 });
 
-// In studentRouter.js
-studentRouter.get("/chat", (req, res) => {
-  res.render("chatbot/chatbot"); // Assuming 'chatbot.hbs' is your template
-});
-
 studentRouter.post("/api/chatbot", async (req, res) => {
   const userMessage = req.body.message;
   try {
