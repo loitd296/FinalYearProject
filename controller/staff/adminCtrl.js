@@ -279,6 +279,9 @@ exports.renderDashboard = async (req, res) => {
     const studentCount = await Student.countDocuments();
     const teacherCount = await Teacher.countDocuments();
     const programCount = await Program.countDocuments();
+    // Get pass and fail counts
+    const passCount = await ExamResult.countDocuments({ status: "passed" });
+    const failCount = await ExamResult.countDocuments({ status: "failed" });
 
     // Get the top 10 students with the highest grades
     const studentGrades = await ExamResult.aggregate([
@@ -365,7 +368,6 @@ exports.renderDashboard = async (req, res) => {
         return count;
       })
     );
-    console.log(studentCounts);
 
     res.render("admin/index", {
       adminCount,
@@ -377,6 +379,8 @@ exports.renderDashboard = async (req, res) => {
       studentTotalGrades,
       examNames,
       averageScores,
+      passCount, // Add pass count to the template data
+      failCount, // Add fail count to the template data
       academicYearNames: academicYears.map((year) => year.name),
       studentCounts,
       title: "Admin Dashboard",

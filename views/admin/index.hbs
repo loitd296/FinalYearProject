@@ -108,26 +108,33 @@
     </div>
   </div>
 
+<!-- Top 10 Students Chart and Pass/Fail Pie Chart in the same row -->
+<div class="row">
   <!-- Top 10 Students Chart -->
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-header">
-          <h5 class="card-title">Top 10 Students</h5>
-          <p class="card-category">Scores</p>
-        </div>
-        <div class="card-body">
-          <canvas id="topStudentsChart" width="400" height="200"></canvas>
-        </div>
-        <div class="card-footer">
-          <hr>
-          <div class="stats">
-            <i class="fa fa-history"></i> Updated 3 minutes ago
-          </div>
-        </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title">Top 10 Students</h5>
+        <p class="card-category">Scores</p>
+      </div>
+      <div class="card-body">
+        <canvas id="topStudentsChart" width="400" height="200"></canvas>
       </div>
     </div>
   </div>
+
+  <!-- Pass/Fail Pie Chart -->
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title">Pass/Fail Distribution</h5>
+      </div>
+      <div class="card-body">
+        <canvas id="passFailChart" width="400" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Chart -->
 <div class="row">
@@ -325,7 +332,36 @@
     var ctx = document.getElementById('StudentCountsByAcademicYear').getContext('2d');
     var StudentCountsByAcademicYear = new Chart(ctx, chartConfigStudentCounts);
   });
+
 </script>
+  <!-- Chart scripts -->
+  <script>
+    // Retrieve pass and fail counts
+    var passCount = {{passCount}};
+    var failCount = {{failCount}};
+
+    // Convert data to chart dataset
+    var chartData = {
+      labels: ['Pass', 'Fail'],
+      datasets: [{
+        data: [passCount, failCount],
+        backgroundColor: ['#4CAF50', '#FF5733']
+      }]
+    };
+
+    // Chart configuration for passFailChart
+    var chartConfigPassFail = {
+      type: 'pie',
+      data: chartData,
+      options: {
+        responsive: true
+      }
+    };
+
+    // Get chart canvas element and initialize the chart
+    var ctx = document.getElementById('passFailChart').getContext('2d');
+    var passFailChart = new Chart(ctx, chartConfigPassFail);
+  </script>
 
 
 
