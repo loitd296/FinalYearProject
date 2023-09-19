@@ -57,7 +57,7 @@ exports.createQuestion = AysncHandler(async (req, res) => {
 
     const questionExists = await Question.findOne({ question });
     if (questionExists) {
-      throw new Error("Question already exists");
+      return res.status(404).json({ error: "Question already exists" });
     }
 
     const createdQuestion = await Question.create({
@@ -204,7 +204,7 @@ exports.updateQuestion = AysncHandler(async (req, res) => {
   //check name exists
   const questionFound = await Question.findOne({ question });
   if (questionFound) {
-    throw new Error("Question already exists");
+    return res.status(400).json({ error: "Question already exists" });
   }
   const questions = await Question.findByIdAndUpdate(
     req.params.id,

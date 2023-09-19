@@ -24,7 +24,7 @@ exports.adminRegisterCtrl = async (req, res) => {
     // Check if email exists
     const adminFound = await Admin.findOne({ email });
     if (adminFound) {
-      return res.json("Admin Exists");
+      return res.status(404).json({ error: "Admin Exists" });
     }
     // Register
     const user = await Admin.create({ name, email, password });
@@ -96,7 +96,7 @@ exports.adminGetProfileCtrl = AsyncHandler(async (req, res) => {
     .select("-password -createdAt -updatedAt")
     .populate("academicYears");
   if (!admin) {
-    throw new Error("Admin not found");
+    return res.status(404).json({ error: "Admin not found" });
   } else {
     res.render("admin/admin-profile", {
       title: "Admin Profile",
@@ -115,7 +115,9 @@ exports.adminUpdateCtrl = AsyncHandler(async (req, res) => {
   // if email is taken by another admin
   const emailExist = await Admin.findOne({ email, _id: { $ne: adminId } });
   if (emailExist) {
-    throw new Error("This email is already taken by another admin.");
+    return res
+      .status(404)
+      .json({ error: "This email is already taken by another admin." });
   }
 
   // hash the password
@@ -143,7 +145,7 @@ exports.adminUpdateCtrl = AsyncHandler(async (req, res) => {
 exports.deleteAdmin = AsyncHandler(async (req, res) => {
   const admin = await Admin.findById(req.params.id);
   if (!admin) {
-    throw new Error("Subject not found");
+    return res.status(404).json({ error: "Subject not found" });
   }
 
   await Admin.deleteOne({ _id: req.params.id });

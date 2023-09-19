@@ -46,7 +46,6 @@ exports.searchYearGroups = asyncHandler(async (req, res) => {
   const yearGroups = await YearGroup.find({
     name: { $regex: searchQuery, $options: "i" },
   });
-  console.log(yearGroups);
   res.render("year-group/index", {
     title: "Year Group",
     yearGroup: yearGroups,
@@ -129,7 +128,7 @@ exports.updateYearGroup = asyncHandler(async (req, res) => {
   const yearGroupFound = await YearGroup.findOne({ name });
 
   if (yearGroupFound && yearGroupFound._id != req.params.id) {
-    throw new Error("Year Group already exists");
+    return res.status(404).json({ error: "Year Group already exists" });
   }
 
   const academicYears = await AcademicYear.find();
@@ -166,7 +165,7 @@ exports.updateYearGroup = asyncHandler(async (req, res) => {
 exports.deleteYearGroup = asyncHandler(async (req, res) => {
   const yearGroup = await YearGroup.findById(req.params.id);
   if (!yearGroup) {
-    throw new Error("Subject not found");
+    return res.status(404).json({ error: "Subject not found" });
   }
 
   await YearGroup.deleteOne({ _id: req.params.id });

@@ -13,7 +13,7 @@ exports.createProgram = AsyncHandler(async (req, res) => {
   //check if exists
   const programFound = await Program.findOne({ name });
   if (programFound) {
-    throw new Error("Program  already exists");
+    return res.status(404).json({ error: "Program  already exists" });
   }
   const programCreated = await Program.create({
     name,
@@ -84,7 +84,6 @@ exports.searchProgram = AsyncHandler(async (req, res) => {
   const program = await Program.find({
     name: { $regex: searchQuery, $options: "i" },
   });
-  console.log(program);
 
   res.render("program/index", {
     title: "Program",
@@ -111,7 +110,7 @@ exports.updateProgram = AsyncHandler(async (req, res) => {
   //check name exists
   const programFound = await ClassLevel.findOne({ name });
   if (programFound) {
-    throw new Error("Program already exists");
+    return res.status(404).json({ error: "Program already exists" });
   }
   const program = await Program.findByIdAndUpdate(
     req.params.id,
@@ -149,19 +148,19 @@ exports.addSubjectToProgram = AsyncHandler(async (req, res) => {
   //get the program
   const program = await Program.findById(req.params.id);
   if (!program) {
-    throw new Error("Program not found");
+    return res.status(404).json({ error: "Program already exists" });
   }
   //Find the subject
   const subjectFound = await Subject.findOne({ name });
   if (!subjectFound) {
-    throw new Error("Subject not found");
+    return res.status(404).json({ error: "Subject not found" });
   }
   //Check if subject exists
   const subjectExists = program.subjects?.find(
     (sub) => sub?.toString() === subjectFound?._id.toString()
   );
   if (subjectExists) {
-    throw new Error("Subject already exists");
+    return res.status(404).json({ error: "Subject already exists" });
   }
   //push the subj into program
   program.subjects.push(subjectFound?._id);
