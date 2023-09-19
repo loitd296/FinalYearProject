@@ -23,12 +23,12 @@ exports.createSubject = asyncHandler(async (req, res) => {
   // Find the program
   const programFound = await Program.findById(program);
   if (!programFound) {
-    throw new Error("Program not found");
+    return res.status(404).json({ error: "Program not found" });
   }
   // Check if subject already exists
   const subjectFound = await Subject.findOne({ name });
   if (subjectFound) {
-    throw new Error("Subject already exists");
+    return res.status(404).json({ error: "Subject already exists" });
   }
   // Create the subject
   const subjectCreated = await Subject.create({
@@ -142,7 +142,7 @@ exports.updateSubject = asyncHandler(async (req, res) => {
   // Find the subject to update
   const subject = await Subject.findById(req.params.id);
   if (!subject) {
-    throw new Error("Subject not found");
+    return res.status(404).json({ error: "Subject not found" });
   }
   const subjectUpdate = await Subject.findByIdAndUpdate(
     req.params.id,
@@ -177,7 +177,7 @@ exports.updateSubject = asyncHandler(async (req, res) => {
 exports.deleteSubject = asyncHandler(async (req, res) => {
   const subject = await Subject.findById(req.params.id);
   if (!subject) {
-    throw new Error("Subject not found");
+    return res.status(404).json({ error: "Subject not found" });
   }
 
   await Subject.deleteOne({ _id: req.params.id });

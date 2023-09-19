@@ -11,7 +11,7 @@ exports.checkExamResults = AsyncHandler(async (req, res) => {
   //find the student
   const studentFound = await Student.findById(req.userAuth?._id);
   if (!studentFound) {
-    throw new Error("No Student Found");
+    return res.status(400).json({ error: "No Student Found" });
   }
   //find the exam results
   const examResult = await ExamResult.findOne({
@@ -116,7 +116,6 @@ exports.adminExamResults = AsyncHandler(async (req, res) => {
       ),
     });
   } catch (err) {
-    console.error("Error retrieving exam results:", err);
     res.render("exam-result/index_admin", {
       title: "Exam Results List",
       data: [],
@@ -179,7 +178,6 @@ exports.publishExamResult = async (req, res) => {
       } successfully.`,
     });
   } catch (error) {
-    console.error(error.message);
     res.status(400).json({
       status: "error",
       message: error.message,
@@ -195,7 +193,7 @@ exports.adminToggleExamResult = async (req, res) => {
   try {
     const examResult = await ExamResult.findById(req.params.id);
     if (!examResult) {
-      throw new Error("Exam result not found");
+      return res.status(400).json({ error: "Exam result not found" });
     }
 
     // Update the isPublished property of the exam result based on the request body

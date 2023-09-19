@@ -11,7 +11,7 @@ exports.createCategory = AsyncHandler(async (req, res) => {
   //check if exists
   const category = await Category.findOne({ name });
   if (category) {
-    throw new Error("Category already exists");
+    return res.status(400).json({ error: "Category already exists" });
   }
   //create
   const categoryCreated = await Category.create({
@@ -81,7 +81,6 @@ exports.getCategories = AsyncHandler(async (req, res) => {
       teacher: teacher.role,
     });
   } catch (err) {
-    console.error("Error retrieving categories:", err);
     res.render("category/index", {
       title: "Category List",
       categories: [],
@@ -139,7 +138,7 @@ exports.updateCategory = async (req, res) => {
     // Check if the academic term with the same name already exists
     const existingCategory = await Category.findOne({ name });
     if (existingCategory) {
-      throw new Error("Category already exists");
+      return res.status(400).json({ error: "Category already exists" });
     }
 
     // Find and update the academic term by ID

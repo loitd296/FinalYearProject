@@ -11,7 +11,7 @@ exports.createAcademicTerm = AsyncHandler(async (req, res) => {
   //check if exists
   const academicTerm = await AcademicTerm.findOne({ name });
   if (academicTerm) {
-    throw new Error("Academic term already exists");
+    return res.status(400).json({ error: "Academic term already exists" });
   }
   //create
   const academicTermCreated = await AcademicTerm.create({
@@ -80,7 +80,6 @@ exports.getAcademicTerms = AsyncHandler(async (req, res) => {
       ),
     });
   } catch (err) {
-    console.error("Error retrieving categories:", err);
     res.render("academic-term/index", {
       title: "Academic Terms List",
       categories: [],
@@ -136,7 +135,7 @@ exports.updateAcademicTerms = async (req, res) => {
     // Check if the academic term with the same name already exists
     const existingAcademicTerm = await AcademicTerm.findOne({ name });
     if (existingAcademicTerm) {
-      throw new Error("Academic term already exists");
+      return res.status(400).json({ error: "Academic term already exists" });
     }
 
     // Find and update the academic term by ID

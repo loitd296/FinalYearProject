@@ -11,7 +11,7 @@ exports.createClassLevel = AsyncHandler(async (req, res) => {
   //check if exists
   const classFound = await ClassLevel.findOne({ name });
   if (classFound) {
-    throw new Error("Class  already exists");
+    return res.status(400).json({ error: "Class  already exists" });
   }
   //create
   const classCreated = await ClassLevel.create({
@@ -103,7 +103,6 @@ exports.searchClassLevels = AsyncHandler(async (req, res, next) => {
       classLevels: classes,
     });
   } catch (error) {
-    console.error("Error in searchClassLevels:", error);
     next(error);
   }
 });
@@ -117,7 +116,7 @@ exports.updateclassLevel = AsyncHandler(async (req, res) => {
   //check name exists
   const classFound = await ClassLevel.findOne({ name });
   if (classFound) {
-    throw new Error("Class already exists");
+    return res.status(400).json({ error: "Class  already exists" });
   }
   const classLevel = await ClassLevel.findByIdAndUpdate(
     req.params.id,

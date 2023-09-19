@@ -13,7 +13,7 @@ exports.createAcademicYear = async (req, res) => {
     //check if exists
     const academicYear = await AcademicYear.findOne({ name });
     if (academicYear) {
-      throw new Error("Academic year already exists");
+      return res.status(400).json({ error: "Academic year already exists" });
     }
     //create
     const academicYearCreated = await AcademicYear.create({
@@ -92,7 +92,7 @@ exports.getAcademicYear = async (req, res) => {
   try {
     const academicYear = await AcademicYear.findById(req.params.id);
     if (!academicYear) {
-      throw new Error("Academic year not found");
+      return res.status(400).json({ error: "Academic year already exists" });
     }
     res.render("academic-years/academicYear", {
       title: "Academic Year",
@@ -133,7 +133,7 @@ exports.updateAcademicYear = async (req, res) => {
     // Check if the academic term with the same name already exists
     const existingAcademicYear = await AcademicYear.findOne({ name });
     if (existingAcademicYear) {
-      throw new Error("Academic term already exists");
+      return res.status(400).json({ error: "Academic year already exists" });
     }
 
     // Find and update the academic year by ID

@@ -64,28 +64,6 @@ const hbs = exphbs.create({
   helpers: {
     inc: (value) => parseInt(value) + 1,
     eq: (v1, v2) => v1 === v2,
-    ifCond: function (v1, operator, v2, options) {
-      switch (operator) {
-        case "==":
-          return v1 == v2 ? options.fn(this) : options.inverse(this);
-        case "===":
-          return v1 === v2 ? options.fn(this) : options.inverse(this);
-        case "!=":
-          return v1 != v2 ? options.fn(this) : options.inverse(this);
-        case "!==":
-          return v1 !== v2 ? options.fn(this) : options.inverse(this);
-        case "<":
-          return v1 < v2 ? options.fn(this) : options.inverse(this);
-        case "<=":
-          return v1 <= v2 ? options.fn(this) : options.inverse(this);
-        case ">":
-          return v1 > v2 ? options.fn(this) : options.inverse(this);
-        case ">=":
-          return v1 >= v2 ? options.fn(this) : options.inverse(this);
-        default:
-          return options.inverse(this);
-      }
-    },
   },
 });
 

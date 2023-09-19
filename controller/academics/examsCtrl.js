@@ -65,12 +65,12 @@ exports.createExam = AsyncHandler(async (req, res) => {
   // Check if exam already exists
   const examExists = await Exam.findOne({ name });
   if (examExists) {
-    throw new Error("Exam already exists");
+    return res.status(400).json({ error: "Exam already exists" });
   }
   // Validate program object ID
   const programExists = await Program.findById(program);
   if (!programExists) {
-    throw new Error("Invalid program");
+    return res.status(400).json({ error: "Invalid program" });
   }
 
   // Create exam
@@ -266,7 +266,7 @@ exports.updateExam = AsyncHandler(async (req, res) => {
     _id: { $ne: examFound._id },
   });
   if (existingExam) {
-    throw new Error("Exam name already exists");
+    return res.status(400).json({ error: "Exam name already exists" });
   }
 
   // Update the exam
@@ -350,7 +350,6 @@ exports.deleteQuestionExam = AsyncHandler(async (req, res) => {
     const examId = req.params.id;
 
     const exam = await Exam.findById(examId).populate("questions");
-    console.log("Received examId:", questionId);
 
     exam.questions.pull(questionId);
     await exam.save();
@@ -405,7 +404,6 @@ exports.addQuestionToExam = async (req, res) => {
 
     res.redirect(`/exam/${examId}`);
   } catch (error) {
-    console.error("Error adding question to exam:", error);
     res.status(500).send("Internal Server Error");
   }
 };
@@ -604,7 +602,9 @@ async function createExamWithCategories(
   ]);
 
   if (questions.length !== numQuestions) {
-    throw new Error("Not enough questions to create exam");
+    return res
+      .status(400)
+      .json({ error: "Not enough questions to create exam" });
   }
 
   // Prepare exam details

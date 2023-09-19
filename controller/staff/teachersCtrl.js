@@ -138,7 +138,7 @@ exports.getTeacherByAdmin = AsyncHandler(async (req, res) => {
   //find the teacher
   const teacher = await Teacher.findById(req.params.id);
   if (!teacher) {
-    throw new Error("Teacher not found");
+    return res.status(404).json({ error: "Teacher not found" });
   }
   res.render("teacher/teacher", {
     title: "Teacher",
@@ -155,7 +155,7 @@ exports.getTeacherProfile = AsyncHandler(async (req, res) => {
     "-password -createdAt -updatedAt"
   );
   if (!teacher) {
-    throw new Error("Teacher not found");
+    return res.status(404).json({ error: "Teacher not found" });
   }
   res.status(200).json({
     status: "success",
@@ -218,11 +218,13 @@ exports.adminUpdateTeacher = AsyncHandler(async (req, res) => {
   const teacherFound = await Teacher.findById(req.params.id);
   console.log(teacherFound);
   if (!teacherFound) {
-    throw new Error("Teacher not found");
+    return res.status(404).json({ error: "Teacher not found" });
   }
   //Check if teacher is withdrawn
   if (teacherFound.isWitdrawn) {
-    throw new Error("Action denied, teacher is withdraw");
+    return res
+      .status(404)
+      .json({ error: "Action denied, teacher is withdraw" });
   }
   // Fetch programs, class levels, academic years, and subjects from the database
   const programs = await Program.find();
@@ -274,7 +276,7 @@ exports.adminUpdateTeacher = AsyncHandler(async (req, res) => {
 exports.deleteTeacher = AsyncHandler(async (req, res) => {
   const teacher = await Teacher.findById(req.params.id);
   if (!teacher) {
-    throw new Error("Subject not found");
+    return res.status(404).json({ error: "Teacher not found" });
   }
 
   await Teacher.deleteOne({ _id: req.params.id });

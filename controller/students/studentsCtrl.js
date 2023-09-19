@@ -21,7 +21,7 @@ exports.adminRegisterStudent = AsyncHandler(async (req, res) => {
   //check if teacher already exists
   const student = await Student.findOne({ email });
   if (student) {
-    throw new Error("Student already employed");
+    return res.status(404).json({ error: "Student already employed" });
   }
   //Hash password
   const hashedPassword = await hashPassword(password);
@@ -146,7 +146,7 @@ exports.getAllStudentsByAdmin = AsyncHandler(async (req, res) => {
 exports.getStudentByAdmin = AsyncHandler(async (req, res) => {
   const student = await Student.findById(req.params.id);
   if (!student) {
-    throw new Error("Student not found");
+    return res.status(404).json({ error: "Student not found" });
   }
   res.render("student/student", {
     status: "success",
@@ -164,7 +164,7 @@ exports.studentUpdateProfile = AsyncHandler(async (req, res) => {
   //if email is taken
   const emailExist = await Student.findOne({ email });
   if (emailExist) {
-    throw new Error("This email is taken/exist");
+    return res.status(404).json({ error: "This email is taken/exist" });
   }
 
   //hash password
@@ -221,7 +221,7 @@ exports.adminUpdateStudent = AsyncHandler(async (req, res) => {
   // Find the student by id
   const studentFound = await Student.findById(req.params.id);
   if (!studentFound) {
-    throw new Error("Student not found");
+    return res.status(404).json({ error: "Student not found" });
   }
 
   // Fetch programs, class levels, academic years, and subjects from the database
@@ -306,7 +306,6 @@ exports.renderSelectExam = async (req, res) => {
       exams: limitedExams,
     });
   } catch (error) {
-    console.error("Error retrieving exams:", error);
     res.status(500).json({ error: "Failed to retrieve exams" });
   }
 };
@@ -316,7 +315,7 @@ exports.writeExam = async (req, res) => {
     // Get student
     const studentFound = await Student.findById(req.userAuth?._id);
     if (!studentFound) {
-      throw new Error("Student not found");
+      return res.status(404).json({ error: "Student not found" });
     }
 
     // Get exam
@@ -364,7 +363,7 @@ exports.submitExam = async (req, res) => {
     // Check if the student exists
     const student = await Student.findById(studentId);
     if (!student) {
-      throw new Error("Student not found");
+      return res.status(404).json({ error: "Student not found" });
     }
 
     // Check if the exam exists and populate related data
@@ -372,7 +371,7 @@ exports.submitExam = async (req, res) => {
       .populate("questions")
       .populate("academicTerm");
     if (!exam) {
-      throw new Error("Exam not found");
+      return res.status(404).json({ error: "Exam not found" });
     }
 
     // Get questions and student's answers
@@ -385,12 +384,16 @@ exports.submitExam = async (req, res) => {
       exam: examId,
     });
     if (existingResult) {
-      throw new Error("You have already taken this exam");
+      return res
+        .status(404)
+        .json({ error: "You have already taken this exam" });
     }
 
     // Check if the student is suspended/withdrawn
     if (student.isWithdrawn || student.isSuspended) {
-      throw new Error("You are suspended/withdrawn and cannot take this exam");
+      return res.status(404).json({
+        error: "You are suspended/withdrawn and cannot take this exam",
+      });
     }
 
     // Calculate exam result
