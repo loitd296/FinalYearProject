@@ -85,10 +85,11 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-          <div class="navbar-nav font-weight-bold mx-auto py-0">
+          <div class="navbar-nav font-weight-bold mx-auto py-0">\
+
             <!-- ...Nav items... -->
             {{#if loggedIn}}
-            {{#if (eq teacher 'teacher')}}
+            {{#if (eq teacher 'teacher')}}  
             <a href="/exam/index" class="nav-item nav-link">Exam</a>
             <a href="/question/index" class="nav-item nav-link">Question</a>
             <a href="/category/index" class="nav-item nav-link">Category</a>
@@ -101,6 +102,7 @@
 
             {{/if}}
             {{else}}
+
             {{/if}}
           </div>
           <!-- Login/Logout Section -->
@@ -124,6 +126,8 @@
                 {{/if}}
               </div>
               {{else}}
+                          <a href="/student/login" class="nav-item nav-link">Login</a>
+
               {{/if}}
             </div>
           </div>
@@ -147,5 +151,5 @@
         }, 500);
       });
     });
-    
+
   </script>

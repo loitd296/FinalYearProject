@@ -545,7 +545,7 @@ exports.createExamForm = async (req, res) => {
   const classLevels = await ClassLevel.find();
   const teacher = await Teacher.findById(req.userAuth._id);
 
-  res.render("exam/create-exam", {
+  res.render("exam/create-auto-exam", {
     categories: categories,
     subjects,
     programs,
