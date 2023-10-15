@@ -1,8 +1,6 @@
 const Admin = require("../model/Staff/Admin");
 
 const isAdmin = async (req, res, next) => {
-  console.log("isAdmin middleware is being called");
-
   //find the user
   const userId = req?.userAuth?._id;
   const adminFound = await Admin.findById(userId);
@@ -10,8 +8,7 @@ const isAdmin = async (req, res, next) => {
   if (adminFound?.role === "admin") {
     next();
   } else {
-    next(new Error("Access Denied, admin only"));
-    console.log(adminFound);
+    res.status(500).json({ error: "Access Denied, admin only" });
   }
 };
 

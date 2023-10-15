@@ -389,7 +389,6 @@ exports.renderDashboard = async (req, res) => {
       loggedIn: res.locals.loggedIn,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error: "Failed to retrieve dashboard data" });
   }
 };
