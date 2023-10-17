@@ -25,7 +25,8 @@
                             <div class="btn_group text-right" style="margin-top: 10px;">
                                 <a href="/exam/createExam" class="btn btn-default"><i class="fas fa-plus"></i></a>
                             
-                                <a class="btn btn-default" href="/exam/create-exam" style="margin-left: 10px;"><i class="fas fa-cogs"></i></a>
+                                <a class="btn btn-default" href="/exam/create-exam" style="margin-left: 10px;"><i
+                                        class="fas fa-plus"></i></a>
 
                             </div>
                         </div>
@@ -46,9 +47,9 @@
                                 <th scope="col">examTime</th>
                                 <th scope="col">subject</th>
                                 <th scope="col">program</th>
-                                <th scope="col" style="text-align: center;">Feedback</th>
-                                <th scope="col" style="text-align: center;">Attach question</th>
-                                <th scope="col">Export</th>
+                                <th scope="col">Create question and attach-question to exam</th>
+                                <th scope="col">Attach question</th>
+                                <th scope="col">Export to Word</th>
                                 <th scope="col">Action</th>
 
 
@@ -66,11 +67,12 @@
                                 <td>{{this.examTime}}</td>
                                 <td>{{this.subject.name}}</td>
                                 <td>{{this.program.name}}</td>
-                                <td style="text-align: center;"><a href="/exam/{{this._id}}/add-question" data-tip="add question" ><i
+                                <td><a href="/exam/{{this._id}}/add-question" data-tip="add question"><i
                                             class="fas fa-plus"></i></a></td>
-                                <td style="text-align: center;"><a href="/exam/{{this._id}}/attach-question" data-tip="add question"><i
+                                <td><a href="/exam/{{this._id}}/attach-question" data-tip="add question"><i
                                             class="fas fa-plus"></i></a></td>
-                                <td><a href="/exam/{{this.id}}/export-word" class="btn btn-primary"><i class="fas fa-file-word"></i></a></td>
+                                <td><a href="/exam/{{this.id}}/export-word" class="btn btn-primary">Export to
+                                        Word</a></td>
                                 <td>
                                     <ul class="action-list">
                                         <li><a href="/exam/{{this._id}}/update" data-tip="edit"><i
@@ -79,6 +81,8 @@
                                                     class="fa fa-trash"></i></a></li>
                                         <li><a href="/exam/{{this._id}}" data-tip="view"><i class="fas fa-eye"></i></a>
                                         </li>
+                                        <li></li>
+                                        <li></li>
                                         <li><a href="/exam/{{this._id}}/edit-question" data-tip="add question"><i
                                                     class="fas fa-plus"></i></a></li>
                                     </ul>
