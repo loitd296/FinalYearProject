@@ -470,10 +470,7 @@ exports.submitExam = async (req, res) => {
       await student.save();
     }
 
-    res.status(200).json({
-      status: "success",
-      data: "You have submitted your exam. Check later for the results",
-    });
+    res.redirect("/student/profile");
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

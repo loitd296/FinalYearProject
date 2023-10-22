@@ -28,7 +28,7 @@
     "express-async-handler": "^1.2.0",
     "express-handlebars": "^7.1.2",
     "express-session": "^1.17.3",
-    "hbs": "^4.2.0",
+    "hbs": "^4.0.4",
     "html-docx-js": "^0.3.1",
     "html-to-docx": "^1.8.0",
     "jsdom": "^22.1.0",
