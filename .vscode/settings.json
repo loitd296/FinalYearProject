@@ -1,4 +1,0 @@
-{
-    "appService.defaultWebAppToDeploy": "/subscriptions/09d271c7-627d-4df1-8782-5151555047ac/resourceGroups/School/providers/Microsoft.Web/sites/SchoolManagementFinalYearProject",
-    "appService.deploySubpath": "."
-}
