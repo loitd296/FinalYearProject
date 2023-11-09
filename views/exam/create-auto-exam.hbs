@@ -23,7 +23,7 @@
           <label for="subject">Subject:</label>
           <select class="form-control" id="subject" name="subject" required>
             {{#each subjects}}
-              <option value="{{this._id}}">{{this.name}}</option>
+            <option value="{{this._id}}">{{this.name}}</option>
             {{/each}}
           </select>
         </div>
@@ -32,7 +32,7 @@
           <label for="program">Program:</label>
           <select class="form-control" id="program" name="program" required>
             {{#each programs}}
-              <option value="{{this._id}}">{{this.name}}</option>
+            <option value="{{this._id}}">{{this.name}}</option>
             {{/each}}
           </select>
         </div>
@@ -41,7 +41,7 @@
           <label for="academicTerm">Academic Term:</label>
           <select class="form-control" id="academicTerm" name="academicTerm" required>
             {{#each academicTerms}}
-              <option value="{{this._id}}">{{this.name}}</option>
+            <option value="{{this._id}}">{{this.name}}</option>
             {{/each}}
           </select>
         </div>
@@ -55,14 +55,20 @@
           <label for="classLevel">Class Level:</label>
           <select class="form-control" id="classLevel" name="classLevel" required>
             {{#each classLevels}}
-              <option value="{{this._id}}">{{this.name}}</option>
+            <option value="{{this._id}}">{{this.name}}</option>
             {{/each}}
           </select>
         </div>
 
         <div class="form-group">
           <label for="duration">Duration:</label>
-          <input type="text" class="form-control" id="duration" name="duration" required>
+          <select class="form-control" id="duration" name="duration" required>
+            <option value="00:30">30 minutes</option>
+            <option value="00:40">45 minutes</option>
+            <option value="01:00">60 minutes</option>
+            <option value="01:30">90 minutes</option>
+            <option value="02:00">120 minutes</option>
+          </select>
         </div>
 
         <div class="form-group">
@@ -74,7 +80,7 @@
           <label for="academicYear">Academic Year:</label>
           <select class="form-control" id="academicYear" name="academicYear" required>
             {{#each academicYears}}
-              <option value="{{this._id}}">{{this.name}}</option>
+            <option value="{{this._id}}">{{this.name}}</option>
             {{/each}}
           </select>
         </div>
@@ -83,24 +89,49 @@
           <label for="categories">Categories:</label>
           <select id="categories" name="categories" class="form-control" multiple>
             {{#each categories}}
-              <option value="{{this._id}}">{{this.name}}</option>
+            <option value="{{this._id}}">{{this.name}}</option>
             {{/each}}
           </select>
+          <span id="categories-error" class="error-message" style="color: red;"></span>
         </div>
 
         <div class="form-group">
           <label for="numQuestions">Number of Questions</label>
-          <input type="number" class="form-control" id="numQuestions" name="numQuestions" />
+          <input type="number" class="form-control" id="numQuestions" name="numQuestions" min="0" />
         </div>
+
 
         <!-- Add similar input fields for each of the examDetails fields -->
 
         <div class="text-center">
-          <button type="submit" class="btn btn-primary">Create Exam</button>
+          <button type="submit" class="btn btn-primary" id="createExamButton">Create Exam</button>
         </div>
       </form>
     </div>
   </div>
 </div>
 
+<script>
+    function validateCategories() {
+        var selectedCategories = document.getElementById("categories").selectedOptions;
+        var categoriesError = document.getElementById("categories-error");
+        var createExamButton = document.getElementById("createExamButton");
+
+        if (selectedCategories.length === 0) {
+            categoriesError.textContent = "Please select at least one category.";
+            createExamButton.disabled = true;
+        } else {
+            categoriesError.textContent = "";
+            createExamButton.disabled = false;
+        }
+    }
+
+    document.getElementById("categories").addEventListener("change", validateCategories);
+
+    // Initial validation on page load
+    validateCategories();
+</script>
+
+
 {{> footer}}
+

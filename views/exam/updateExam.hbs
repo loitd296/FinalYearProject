@@ -82,9 +82,15 @@
         </select>
       </div>
       <div class="form-group">
-        <label for="duration">Duration</label>
-        <input type="text" id="duration" name="duration" class="form-control" value="{{exam.duration}}">
-      </div>
+          <label for="duration">Duration:</label>
+          <select class="form-control" id="duration" name="duration" required>
+            <option value="00:30">30 minutes</option>
+            <option value="00:40">45 minutes</option>
+            <option value="01:00">60 minutes</option>
+            <option value="01:30">90 minutes</option>
+            <option value="02:00">120 minutes</option>
+          </select>
+        </div>
       <div class="form-group">
         <label for="examDate">Exam Date</label>
         <input type="date" id="examDate" name="examDate" class="form-control" value="{{exam.examDate}}">

@@ -1,68 +1,121 @@
 {{> header}}
 
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-lg-6">
-      <div class="content text-center">
-        <h1>Teacher Login</h1>
-        <form action="/teacher/login" method="POST" onsubmit="return validateForm()">
-          <div class="form-group row">
-            <label for="email" class="col-sm-2 col-form-label">Email:</label>
-            <div class="col-sm-10">
-              <input type="email" name="email" class="form-control" required />
-              <div class="error-message" id="email-error"></div>
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="password" class="col-sm-2 col-form-label">Password:</label>
-            <div class="col-sm-10">
-              <input type="password" name="password" class="form-control" required />
-              <div class="error-message" id="password-error"></div>
-            </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-sm-2"></div>
-            <div class="col-sm-10">
-              <button type="submit" class="btn btn-primary">Login</button>
-              
-            </div>
-          </div>
-        </form>
-        <!-- Add a button to navigate to the student login page -->
-        <div class="form-group row">
-          <div class="col-sm-2"></div>
-          <div class="col-sm-10">
-            <a href="/student/login" class="btn btn-secondary">Student</a>
-          </div>
-        </div>
+
+<style>
+  /* Add your custom CSS styles here */
+  .content {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 40px;
+    background-color: #F3F5F7;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .content h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .form-group label {
+    color: #333;
+  }
+
+  .form-control {
+    background-color: #FFF;
+    color: #555;
+    border: 2px solid #FFF;
+    transition: border-color 0.3s ease-in-out;
+  }
+
+  .form-control:focus {
+    border-color: #5CB85C;
+    outline: none;
+  }
+
+  button.btn-primary {
+    background-color: #337AB7;
+    border-color: #337AB7;
+    color: #FFF;
+  }
+
+  button.btn-primary:hover {
+    background-color: #286090;
+    border-color: #204D74;
+  }
+
+  a.btn.btn-primary {
+    background-color: #5CB85C;
+    border-color: #5CB85C;
+    color: #FFF;
+    margin-left: 10px;
+  }
+
+  a.btn.btn-primary:hover {
+    background-color: #449D44;
+    border-color: #398439;
+  }
+</style>
+
+<div class="content">
+  <h1>Teacher Login</h1>
+  <form action="/teacher/login" method="POST">
+    <div class="form-group row">
+      <label for="email" class="col-sm-2 col-form-label">Email:</label>
+      <div class="col-sm-6">
+        <input type="email" name="email" class="form-control" required />
       </div>
     </div>
+    <div class="form-group row">
+      <label for="password" class="col-sm-2 col-form-label">Password:</label>
+      <div class="col-sm-6">
+        <input type="password" name="password" class="form-control" required />
+      </div>
+    </div>
+    <div class="form-group row">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-6">
+        <button type="submit" class="btn btn-primary">Login</button>
+      </div>
+    </div>
+  </form>
+ 
+  <!-- Add a button to navigate to the student login page -->
+  <div class="form-group row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-10">
+      <a href="/student/login" class="btn btn-secondary">Student</a>
+    </div>
   </div>
+</div>
+</div>
+</div>
 </div>
 
 {{> footer}}
 <script>
-function validateForm() {
-  var email = document.querySelector('input[name="email"]').value;
-  var password = document.querySelector('input[name="password"]').value;
-  var isValid = true;
+  function validateForm() {
+    var email = document.querySelector('input[name="email"]').value;
+    var password = document.querySelector('input[name="password"]').value;
+    var isValid = true;
 
-  var emailError = document.querySelector('#email-error');
-  var passwordError = document.querySelector('#password-error');
+    var emailError = document.querySelector('#email-error');
+    var passwordError = document.querySelector('#password-error');
 
-  emailError.textContent = "";
-  passwordError.textContent = "";
+    emailError.textContent = "";
+    passwordError.textContent = "";
 
-  if (email === "") {
-    emailError.textContent = "Please enter your email.";
-    isValid = false;
+    if (email === "") {
+      emailError.textContent = "Please enter your email.";
+      isValid = false;
+    }
+
+    if (password === "") {
+      passwordError.textContent = "Please enter your password.";
+      isValid = false;
+    }
+
+    return isValid;
   }
-
-  if (password === "") {
-    passwordError.textContent = "Please enter your password.";
-    isValid = false;
-  }
-
-  return isValid;
-}
 </script>

@@ -265,9 +265,6 @@ exports.updateExam = AsyncHandler(async (req, res) => {
     name,
     _id: { $ne: examFound._id },
   });
-  if (existingExam) {
-    return res.status(400).json({ error: "Exam name already exists" });
-  }
 
   // Update the exam
   examFound.name = name;
