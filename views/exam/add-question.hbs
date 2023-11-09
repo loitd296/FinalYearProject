@@ -28,6 +28,24 @@
         <label for="correctAnswer">Correct Answer:</label>
         <input type="text" class="form-control" id="correctAnswer" name="correctAnswer" required>
       </div>
+       <div class="form-group">
+        <label for="category">Category:</label>
+        <select class="form-control" id="category" name="category" required>
+          {{#each categories}}
+            <option value="{{_id}}">{{name}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="difficulty">Difficulty:</label>
+        <!-- Add input field for difficulty selection, assuming you have a select dropdown for difficulty levels -->
+        <select class="form-control" id="difficulty" name="difficulty" required>
+          <!-- Populate options based on your difficulty levels -->
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
       <button type="submit" class="btn btn-primary">Add Question</button>
     </form>
   </div>

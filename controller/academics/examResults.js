@@ -1,6 +1,11 @@
 const AsyncHandler = require("express-async-handler");
 const ExamResult = require("../../model/Academic/ExamResults");
 const Student = require("../../model/Academic/Student");
+const AcademicTerm = require("../../model/Academic/AcademicTerm");
+const AcademicYear = require("../../model/Academic/AcademicYear");
+const Exam = require("../../model/Academic/Exam");
+const ClassLevel = require("../../model/Academic/ClassLevel");
+
 const { calculatePageRange } = require("../../utils/paginationUtils");
 
 //@desc  Exam results checking
@@ -71,17 +76,40 @@ exports.getAllExamResults = AsyncHandler(async (req, res) => {
 
 exports.adminExamResults = AsyncHandler(async (req, res) => {
   try {
-    const { page } = req.query;
-    const limit = 10; // Number of exam results to show per page
+    const { page, academicTerm, academicYear, search } = req.query;
+    const limit = 10;
     const currentPage = parseInt(page) || 1;
 
-    // Count the total number of exam results
-    const totalExamResults = await ExamResult.countDocuments({});
+    const query = {};
 
-    // Calculate the total number of pages based on the limit
+    if (academicTerm) {
+      query.academicTerm = academicTerm;
+    }
+
+    if (academicYear) {
+      query.academicYear = academicYear;
+    }
+
+    if (search) {
+      const searchRegex = new RegExp(search, "i");
+      const [students, exams, classLevels] = await Promise.all([
+        Student.find({ name: searchRegex }),
+        Exam.find({ name: searchRegex }),
+        ClassLevel.find({ name: searchRegex }),
+      ]);
+
+      // Use the IDs of found students, exams, and class levels in the query
+      query.$or = [
+        { student: { $in: students.map((student) => student._id) } },
+        { exam: { $in: exams.map((exam) => exam._id) } },
+        {
+          classLevel: { $in: classLevels.map((classLevel) => classLevel._id) },
+        },
+      ];
+    }
+
+    const totalExamResults = await ExamResult.countDocuments(query);
     const totalPages = Math.ceil(totalExamResults / limit);
-
-    // Calculate the range of page numbers to display
     const range = 5;
     const { startPage, endPage } = calculatePageRange(
       currentPage,
@@ -89,15 +117,18 @@ exports.adminExamResults = AsyncHandler(async (req, res) => {
       range
     );
 
-    // Get the exam results for the current page with proper population
-    const examResults = await ExamResult.find()
-      .populate("academicYear", "name")
-      .populate("academicTerm", "name")
-      .populate("classLevel", "name")
-      .populate("exam", "name")
+    const examResults = await ExamResult.find(query)
       .populate("student", "name")
+      .populate("exam", "name")
+      .populate("classLevel", "name")
+      .populate("academicTerm", "name")
+      .populate("academicYear", "name")
       .skip((currentPage - 1) * limit)
       .limit(limit);
+
+    const academicTerms = await AcademicTerm.find();
+    const academicYears = await AcademicYear.find();
+    const classLevels = await ClassLevel.find();
 
     res.render("exam-result/index_admin", {
       title: "Exam Results List",
@@ -114,21 +145,17 @@ exports.adminExamResults = AsyncHandler(async (req, res) => {
         { length: endPage - startPage + 1 },
         (_, i) => startPage + i
       ),
+      academicTerms,
+      academicYears,
+      classLevels,
+      academicTermFilter: academicTerm,
+      academicYearFilter: academicYear,
+      classLevelFilter: classLevels,
+      searchFilter: search,
     });
   } catch (err) {
-    res.render("exam-result/index_admin", {
-      title: "Exam Results List",
-      data: [],
-      currentPage: 1,
-      totalPages: 1,
-      currentPageEntries: 0,
-      totalEntries: 0,
-      hasPreviousPage: false,
-      previousPage: 0,
-      hasNextPage: false,
-      nextPage: 0,
-      pages: [],
-    });
+    console.error(err);
+    res.status(500).send("Internal Server Error");
   }
 });
 

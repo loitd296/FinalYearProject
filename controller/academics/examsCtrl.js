@@ -366,10 +366,14 @@ exports.deleteExam = AsyncHandler(async (req, res) => {
 // Controller function for rendering the add question page
 exports.renderAddQuestionPage = async (req, res) => {
   try {
-    const { examId } = req.params;
-    const exam = await Exam.findById(examId);
+    const exam = await Exam.findById(req.params.id);
+    const categories = await Category.find();
     const teacher = await Teacher.findById(req.userAuth._id);
-    res.render("exam/add-question", { exam, teacher: teacher.role });
+    res.render("exam/add-question", {
+      exam,
+      teacher: teacher.role,
+      categories,
+    });
   } catch (error) {
     console.error("Error rendering add question page:", error);
     res.status(500).send("Internal Server Error");
@@ -379,10 +383,18 @@ exports.renderAddQuestionPage = async (req, res) => {
 // Controller function for adding a question to an exam
 exports.addQuestionToExam = async (req, res) => {
   try {
-    const { examId } = req.params;
-    const { question, optionA, optionB, optionC, optionD, correctAnswer } =
-      req.body;
+    const {
+      question,
+      optionA,
+      optionB,
+      optionC,
+      optionD,
+      correctAnswer,
+      category,
+      difficulty,
+    } = req.body;
 
+    // Create a new question using the Question model
     const newQuestion = new Question({
       question,
       optionA,
@@ -390,17 +402,28 @@ exports.addQuestionToExam = async (req, res) => {
       optionC,
       optionD,
       correctAnswer,
-      exam: examId,
+      category,
+      difficulty,
+      createdBy: req.userAuth._id,
     });
 
+    // Save the new question to the database
     await newQuestion.save();
 
-    const exam = await Exam.findById(examId);
+    // Find the exam by its ID
+    const exam = await Exam.findById(req.params.id);
+
+    // Push the new question into the exam's questions array
     exam.questions.push(newQuestion);
+
+    // Save the updated exam with the new question attached
     await exam.save();
 
-    res.redirect(`/exam/${examId}`);
+    // Redirect to the exam index page after adding the question
+    res.redirect("/exam/index");
   } catch (error) {
+    // Handle errors
+    console.error(error);
     res.status(500).send("Internal Server Error");
   }
 };

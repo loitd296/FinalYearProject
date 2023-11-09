@@ -38,10 +38,17 @@
           <label for="correctAnswer">Correct Answer:</label>
           <input type="text" class="form-control" id="correctAnswer" name="correctAnswer" value="{{this.correctAnswer}}" placeholder="Correct Answer" />
         </div>
-        <div class="mb-2">
-          <label for="difficulty">Difficulty:</label>
-          <input type="text" class="form-control" id="difficulty" name="difficulty" value="{{this.difficulty}}" placeholder="Difficulty" />
-        </div>
+       
+        <div class="form-group">
+        <label for="difficulty">Difficulty:</label>
+        <!-- Add input field for difficulty selection, assuming you have a select dropdown for difficulty levels -->
+        <select class="form-control" id="difficulty" name="difficulty" value="{{this.difficulty}}" required>
+          <!-- Populate options based on your difficulty levels -->
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
         <div class="mb-2">
           <label for="category">Category:</label>
           <input type="text" class="form-control" id="category" name="category" value="{{this.category}}" placeholder="Category" />
