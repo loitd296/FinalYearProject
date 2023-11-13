@@ -8,7 +8,7 @@ const isStudent = async (req, res, next) => {
   if (studentFound?.role === "student") {
     next();
   } else {
-    next(new Error("Access Denied, Student only"));
+    res.render("admin/error");
   }
 };
 

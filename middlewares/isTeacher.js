@@ -9,7 +9,7 @@ const isTeacher = async (req, res, next) => {
     req.teacher = teacherFound; // Set the teacher object on the request
     next();
   } else {
-    next(new Error("Access Denied, Teachers only"));
+    res.render("admin/error");
   }
 };
 

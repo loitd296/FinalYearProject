@@ -10,8 +10,8 @@ const isAdmin = async (req, res, next) => {
   if (adminFound?.role === "admin") {
     next();
   } else {
-    next(new Error("Access Denied, admin only"));
-    console.log(adminFound);
+    res.render("admin/error");
+    // next(new Error("Access Denied, admin only"));
   }
 };
 

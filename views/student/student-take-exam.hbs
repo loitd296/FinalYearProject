@@ -2,7 +2,7 @@
 
 <div class="content">
   <h1>Exam</h1>
-  <h2>Exam End Time: {{examEndTime}}</h2>
+  <h2 id="remainingTime"></h2>
 
   <form action="/student/submit/{{exam._id}}" method="POST" id="examForm">
     <h2>Student: {{student.name}}</h2>
@@ -42,16 +42,29 @@
 
 
 <script>
-  var endTime = new Date('{{examEndTime}}');
-  var duration = '{{exam.duration}}';
-  var durationParts = duration.split(':');
-  var durationInMinutes = parseInt(durationParts[0]) * 60 + parseInt(durationParts[1]);
+  // Function to update the remaining time
+  function updateRemainingTime() {
+    var currentTime = new Date();
+    var endTime = new Date('{{examEndTime}}');
+    var timeLeft = endTime - currentTime; // in milliseconds
 
-  var timeLeft = endTime - new Date(); // in milliseconds
+    // Convert timeLeft to minutes and seconds
+    var minutes = Math.floor(timeLeft / (60 * 1000));
+    var seconds = Math.floor((timeLeft % (60 * 1000)) / 1000);
 
-  if (timeLeft <= durationInMinutes * 60 * 1000) {
-    setTimeout(function() {
+    // Display the remaining time in the HTML
+    document.getElementById('remainingTime').innerText = 'Time Remaining: ' + minutes + 'm ' + seconds + 's';
+
+    // Check if time is up and submit the form
+    if (timeLeft <= 0) {
       document.getElementById('examForm').submit();
-    }, timeLeft);
+    }
   }
+
+  // Update the remaining time every second
+  setInterval(updateRemainingTime, 1000);
+  
+  // Initial call to set the remaining time when the page loads
+  updateRemainingTime();
 </script>
+
