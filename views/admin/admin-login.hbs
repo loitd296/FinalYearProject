@@ -57,29 +57,84 @@
     background-color: #449D44;
     border-color: #398439;
   }
+   .error-message {
+    color: #d9534f; /* Red color for error messages */
+    margin-top: 5px;
+    font-size: 14px;
+  }
+  .success-message {
+    color: #5cb85c; /* Green color for success messages */
+    margin-top: 5px;
+    font-size: 14px;
+  }
 </style>
 <div class="content">
   <h1>Admin Login</h1>
-  <form action="/admin/login" method="POST">
+  <form id="loginForm" action="/admin/login" method="POST">
     <div class="form-group row">
       <label for="email" class="col-sm-2 col-form-label">Email:</label>
       <div class="col-sm-6">
-        <input type="email" name="email" class="form-control" required />
+        <input type="email" name="email" id="email" class="form-control" required />
+        <div id="emailError" class="error-message"></div>
       </div>
     </div>
     <div class="form-group row">
       <label for="password" class="col-sm-2 col-form-label">Password:</label>
       <div class="col-sm-6">
-        <input type="password" name="password" class="form-control" required />
+        <input type="password" name="password" id="password" class="form-control" required />
+        <div id="passwordError" class="error-message"></div>
       </div>
     </div>
     <div class="form-group row">
       <div class="col-sm-2"></div>
       <div class="col-sm-6">
         <button type="submit" class="btn btn-primary">Login</button>
+        <div id="successMessage" class="success-message" style="display: none;">Login successful!</div>
       </div>
     </div>
   </form>
 </div>
+
+<script>
+  // JavaScript for client-side validation
+  const form = document.getElementById('loginForm');
+  form.addEventListener('submit', function(event) {
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+    const successMessage = document.getElementById('successMessage');
+    let valid = true;
+
+    // Validate email format (you can use a more sophisticated validation if needed)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailInput.value)) {
+      emailError.textContent = 'Please enter a valid email address.';
+      valid = false;
+    } else {
+      emailError.textContent = ''; // Clear error message if valid
+    }
+
+    // Check if the password meets certain criteria (e.g., minimum length)
+    // You can add more password validation rules here
+
+    if (passwordInput.value.length < 6) {
+      passwordError.textContent = 'Password must be at least 6 characters.';
+      valid = false;
+    } else {
+      passwordError.textContent = ''; // Clear error message if valid
+    }
+
+    if (valid) {
+      // Hide error messages and show success message upon successful form submission
+      emailError.textContent = '';
+      passwordError.textContent = '';
+      successMessage.style.display = 'block';
+    } else {
+      event.preventDefault(); // Prevent form submission if there are errors
+      successMessage.style.display = 'none'; // Hide success message if there are errors
+    }
+  });
+</script>
 
 

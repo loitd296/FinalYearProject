@@ -109,13 +109,14 @@ exports.getExams = AsyncHandler(async (req, res) => {
   const limit = 10; // Number of categories to show per page
   const currentPage = parseInt(page) || 1;
 
-  // Build the query based on the search term
-  const query = {};
+  // Build the query based on the search term and teacher ID
+  const query = { createdBy: req.userAuth._id }; // Assuming createdBy field stores the teacher's ID
+
   if (search) {
     query.name = { $regex: search, $options: "i" };
   }
 
-  // Count the total number of categories matching the search filter
+  // Count the total number of exams matching the search filter and teacher ID
   const totalExam = await Exam.countDocuments(query);
 
   // Calculate the total number of pages based on the limit
@@ -128,6 +129,8 @@ exports.getExams = AsyncHandler(async (req, res) => {
     totalPages,
     range
   );
+
+  // Retrieve exams created by the teacher
   const exams = await Exam.find(query)
     .populate("academicYear", "name")
     .populate("academicTerm", "name")
@@ -137,6 +140,8 @@ exports.getExams = AsyncHandler(async (req, res) => {
     .populate("program", "name")
     .skip((currentPage - 1) * limit)
     .limit(limit);
+
+  // Fetch teacher details
   const teacher = await Teacher.findById(req.userAuth._id);
 
   res.render("exam/index", {

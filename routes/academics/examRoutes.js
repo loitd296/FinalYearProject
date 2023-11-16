@@ -30,8 +30,8 @@ examRouter.get("/createExam", isTeacherLogin, isTeacher, rendercreateExam);
 
 examRouter.post("/createExam", isTeacherLogin, isTeacher, createExam);
 
-examRouter.get("/create-exam", createExamForm);
-examRouter.post("/create-exam", createExamAuto);
+examRouter.get("/create-exam", isTeacherLogin, isTeacher, createExamForm);
+examRouter.post("/create-exam", isTeacherLogin, isTeacher, createExamAuto);
 
 examRouter.get("/index", isTeacherLogin, isTeacher, getExams);
 

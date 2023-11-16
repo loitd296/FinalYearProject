@@ -1,14 +1,15 @@
 {{> header_admin}}
 
 <div class="content">
-     <!-- Filter Form -->
+    <!-- Filter Form -->
     <form class="form-inline mb-3">
         <div class="form-group mr-2">
             <label for="academicTermFilter">Academic Term:</label>
             <select class="form-control" id="academicTermFilter" name="academicTerm" value="{{academicTermFilter}}">
                 <!-- Populate options dynamically based on available academic terms -->
                 {{#each academicTerms}}
-                <option value="{{this._id}}" {{#eq this._id ../academicTermFilter}}selected{{/eq}}>{{this.name}}</option>
+                <option value="{{this._id}}" {{#eq this._id ../academicTermFilter}}selected{{/eq}}>{{this.name}}
+                </option>
                 {{/each}}
             </select>
         </div>
@@ -17,7 +18,8 @@
             <select class="form-control" id="academicYearFilter" name="academicYear" value="{{academicYearFilter}}">
                 <!-- Populate options dynamically based on available academic years -->
                 {{#each academicYears}}
-                <option value="{{this._id}}" {{#eq this._id ../academicYearFilter}}selected{{/eq}}>{{this.name}}</option>
+                <option value="{{this._id}}" {{#eq this._id ../academicYearFilter}}selected{{/eq}}>{{this.name}}
+                </option>
                 {{/each}}
             </select>
         </div>
@@ -93,20 +95,24 @@
                 <div class="panel-footer">
                     <div class="row">
                         <div class="col col-sm-6 col-xs-6">showing <b>{{currentPageEntries}}</b> out of
-                            <b>{{totalEntries}}</b> entries</div>
+                            <b>{{totalEntries}}</b> entries
+                        </div>
                         <div class="col-sm-6 col-xs-6">
                             <ul class="pagination hidden-xs pull-right">
                                 {{#if hasPreviousPage}}
-                                <li><a href="/exam-result/index_admin?page={{previousPage}}&search={{search}}">&lt;</a></li>
+                                <li><a href="/exam-result/index_admin?page={{previousPage}}&search={{search}}">&lt;</a>
+                                </li>
                                 {{/if}}
                                 {{#each pages}}
                                 <li{{#if current}} class="active" {{/if}}><a
-                                        href="/exam-result/index_admin?page={{this}}&search={{search}}">{{this}}</a></li>
-                                {{/each}}       
-                                {{#if hasNextPage}}
-                                <li><a href="/exam-result/index_admin?page={{nextPage}}&search={{search}}">&gt;</a></li>
+                                        href="/exam-result/index_admin?page={{this}}&search={{search}}">{{this}}</a>
+                                    </li>
+                                    {{/each}}
+                                    {{#if hasNextPage}}
+                                    <li><a href="/exam-result/index_admin?page={{nextPage}}&search={{search}}">&gt;</a>
+                                    </li>
 
-                                {{/if}}
+                                    {{/if}}
                             </ul>
                         </div>
                     </div>

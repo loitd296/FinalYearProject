@@ -150,7 +150,7 @@ exports.adminExamResults = AsyncHandler(async (req, res) => {
       classLevels,
       academicTermFilter: academicTerm,
       academicYearFilter: academicYear,
-      classLevelFilter: classLevels,
+      classLevelFilter: req.query.classLevel,
       searchFilter: search,
     });
   } catch (err) {
