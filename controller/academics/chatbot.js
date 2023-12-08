@@ -1,6 +1,6 @@
 const fetch = require("node-fetch");
 
-const apiKey = "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"; // Replace with your ChatGPT API key
+const apiKey = "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"; // Replace with your ChatGPT API key
 const apiEndpoint = "https://api.openai.com/v1/chat/completions";
 
 // Rate limiting settings
@@ -36,6 +36,7 @@ const chatbotInteraction = async (message) => {
           { role: "system", content: "You are a helpful assistant." },
           { role: "user", content: message },
         ],
+        max_tokens: 100, // Set the maximum number of tokens (words) in the response
       }),
     });
 
