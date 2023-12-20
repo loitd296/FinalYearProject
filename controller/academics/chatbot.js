@@ -1,6 +1,6 @@
 const fetch = require("node-fetch");
 
-const apiKey = "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"; // Replace with your ChatGPT API key
+const apiKey = "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"; // Replace with your ChatGPT API key
 const apiEndpoint = "https://api.openai.com/v1/chat/completions";
 
 // Rate limiting settings
